@@ -3,7 +3,7 @@
 2021/11/11  作者：[@BILIBILI：m-RNA](https://space.bilibili.com/41224928  "@BILIBILI：m-RNA 个人主页")    E-mail：m-RNA@qq.com      
 ​		准满分！2021电赛A题省一！MSP432P401R的Keil工程。
 
-​		在单片机方面，感觉这个A题很像老师布置了检验MSP432学习成果的作业（不是），个人认为难点在于单品机片内ADC与DMA的联动配置，数字信号处理理论知识以及软件各算法的优化，如基波谐波的幅值查找、波形显示等的优化（“个人见解”）。  
+​		在单片机方面，感觉这个A题很像老师布置了检验MSP432学习成果的作业（不是），个人认为难点在于单品机片内ADC与DMA的联动配置，数字信号处理理论知识以及软件各算法的优化，如基波谐波的幅值查找、波形显示等的优化（“个人见解”）
 
 ​        此工程为了让学过Stm32的电赛人，能更易上手MSP432平台，将单片机外设初始化函数的封装都采用了Stm32正点原子风格。而且电赛人一般对Keil比较熟，故使用了Keil配置工程，方便VScode与Keil联动。当然CCS也可，如果会的话（可能后续会支持CCS）  
 
@@ -77,11 +77,48 @@ Adobe XD 单片机交互原型设计示意：
 ### 谜之开源
 
 - 本代码基于Apache-2.0开源，有引用或者修改本代码的地方，请标明作者及出处。尊重作者，尊重开源~  
-- 仓库地址 ：https://gitee.com/chenjjian/RNA_2021_Game_A  
+- 仓库地址
+  - Github：https://github.com/m-RNA/RNA_2021_Game_A
+  - Gitee：https://gitee.com/chenjjian/RNA_2021_Game_A  
 
 ## 外设说明
 
-### 1 串口
+### 0 引脚连接
+
+<table>
+	<tr>
+	    <th>外设</th>
+	    <th>连接引脚</th>
+	</tr>
+    <tr>
+	    <td>ADC采样</td>
+	    <td>P4.6</td>
+	</tr>
+    <tr>
+	    <td>过零比较</td>
+	    <td>P5.7</td>
+	</tr>
+	<tr >
+	    <td rowspan="2">OLED显示</td>
+	    <td>P3.6(SDA)</td>
+	</tr>
+	<tr>
+	  	<td>P3.7(SCL)</td>
+	</tr>
+	<tr>
+    <tr >
+	    <td rowspan="2">蓝牙串口</td>
+	    <td>P3.2(TXD)</td>
+	</tr>
+	<tr>
+	  	<td>P3.3(RXD)</td>
+	</tr>
+</table>
+
+> 引脚可自行配置，OLED引脚更改下文有提示。
+
+### 1 串口使用
+
 - 使用串口0打印调试信息至电脑，调试助手的波特率是1382400；
 
 - 使用串口2与蓝牙通信进而与手机通信。  
@@ -108,10 +145,6 @@ TimA0_Int_Init(60, 1); // 第8讲 定时器配置 （ADC触发时钟源 fs）
 
  <img src="Doc/image/wave1.png" alt="image" style="zoom:80%;" />    
 
- <img src="Doc/image/wave2.png" alt="image" style="zoom:80%;" />  
-
-  
-
 ### 3 ADC采集+DMA传输
 - P4.6输入 使用了内部2.5V参考电压源，放大后电压别超过2.5V。
 
@@ -135,8 +168,8 @@ TimA0_Int_Init(60, 1); // 第8讲 定时器配置 （ADC触发时钟源 fs）
 
 >  使用两个小OLED的原因: 我们之前是做电源题的，考虑到降低功耗提高效率就使用了小OLED，怕OLED坏了，就买了很多备着，于是比赛时没有SPI协议或者IIC协议的较大屏幕，只能配合着OLED图形库，稍微添加了几条函数，使用IIC驱动两个小OLED。
 
-### 5 蓝牙模块
-使用了HC-05模块作为单片机与手机的无线通信模块。
+### 5 无线通信
+使用了HC-05蓝牙模块作为单片机与手机的无线通信模块。
 
 ### 6 外围电路
 
