@@ -19,15 +19,9 @@
 
 <img src="Doc/image/close2~1.png" alt="image" style="zoom:80%;" /> 
 
-<img src="Doc/image/close1~1.png" alt="image" style="zoom:80%;" />   
-
 手机蓝牙APP：
 
 <img src='Doc/image/APP.png' width=50%/>
-
-整体合照：  
-
-<img src="Doc/image/together~1.png" alt="image" style="zoom:80%;" />
 
 ### 性能指标
 
@@ -179,11 +173,19 @@ TimA0_Int_Init(60, 1); // 第8讲 定时器配置 （ADC触发时钟源 fs）
 
 - 过零比较器（如：TLV3501）
 
+整体合照：  
+
+<img src="Doc/image/together~1.png" alt="image" style="zoom:80%;" />
+
 ## 赛后复盘
 
 - 这道题是涉及”数字信号处理“的Ti-MCU限定题，MCU选型为C2000较有优势；
 - 可以用滞回比较器来解决过零比较器的多零点问题，来减轻软件压力；
 - 可以免去按键，改为开机自动测量，并多次测量，将测量结果去掉最值后求平均值，将单片机OLED的测量动画与手机显示动画去除，实时显示测量结果。
+
+电赛时拍半成品：
+
+<img src="Doc/image/close1~1.png" alt="image" style="zoom:80%;" />
 
 ## 致谢名单
 
