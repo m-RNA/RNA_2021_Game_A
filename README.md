@@ -82,7 +82,7 @@ Adobe XD 单片机交互原型设计示意：
 <table>
 	<tr>
 	    <th>外设</th>
-	    <th>连接引脚</th>
+	    <th>引脚(外设)</th>
 	</tr>
     <tr>
 	    <td>ADC采样</td>
