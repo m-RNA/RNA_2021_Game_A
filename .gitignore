@@ -1,0 +1,76 @@
+# Prerequisites
+*.d
+
+# Object files
+*.o
+*.ko
+*.obj
+*.elf
+
+# Linker output
+*.ilk
+*.map
+*.exp
+
+# Precompiled Headers
+*.gch
+*.pch
+
+# Libraries
+*.la
+*.lo
+
+# Shared objects (inc. Windows DLLs)
+*.dll
+*.so
+*.so.*
+*.dylib
+
+# Executables
+
+*.out
+*.app
+*.i*86
+*.x86_64
+*.hex
+
+# Debug files
+*.dSYM/
+*.su
+*.idb
+*.pdb
+
+# Kernel Module Compile Results
+*.mod*
+*.cmd
+.tmp_versions/
+modules.order
+Module.symvers
+Mkfile.old
+dkms.conf
+
+# Other
+*.zip
+.vscode
+Build
+*.orig
+*.json
+*.log
+*.crf
+*.htm
+*.crf
+*.lst
+keilkill.bat
+RNA_UART/keil/.vscode/c_cpp_properties.json
+RTE
+git命令.txt
+ADS1115
+Debug
+Build
+Other_Opensoure_Prejects
+波形图1.jpg
+波形图1.psd
+波形图2.jpg
+波形图2.psd
+Doc/report/
+单片机交互原型设计(2).png
