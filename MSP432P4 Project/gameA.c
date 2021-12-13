@@ -149,7 +149,7 @@ void ShowGYH_XY(void)
 void UpdateGYH(float *gyh, float thd)
 {
     uint8_t i;
-    char strBuf[6]; // !! Waring  应该改strBuf[9] 但是这个是我在电赛之后整理代码后发现的 故不改 留个纪念
+    char strBuf[9];
     SelectDownOLED();
     ClearScreen();
     ShowGYH_XY();

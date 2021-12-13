@@ -130,7 +130,7 @@ int main(void)
                 fx[i] = FloatMax_WithWindow(fft_outputbuf, f0 * (i + 2) - (FDBS / 2), f0 * (i + 2) + (FDBS / 2)); // 优化过的算法 更加准确
 
                 /**  计算归一化幅值  **/
-                gyh[i] = ceil(fft_outputbuf[fx[i]] / fft_outputbuf[f0] * 100.0f) / 100.0f; // 向上取整
+                gyh[i] = floor(fft_outputbuf[fx[i]] / fft_outputbuf[f0] * 100.0f) / 100.0f; // 向上取整
             }
 
             /****************************   THD计算与显示到OLED   ****************************/
