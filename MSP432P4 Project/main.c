@@ -18,7 +18,7 @@
 #include "gameA.h"
 
 // 是否调试 是则定义 DEBUG
-#define DEBUG 
+#define DEBUG
 
 float fft_outputbuf[ADC_SAMPLING_NUMBER * MM];           // FFT输出数组
 static float fft_inputbuf[ADC_SAMPLING_NUMBER * 2 * MM]; // FFT输入数组
@@ -130,7 +130,7 @@ int main(void)
                 fx[i] = FloatMax_WithWindow(fft_outputbuf, f0 * (i + 2) - (FDBS / 2), f0 * (i + 2) + (FDBS / 2)); // 优化过的算法 更加准确
 
                 /**  计算归一化幅值  **/
-                gyh[i] = floor(fft_outputbuf[fx[i]] / fft_outputbuf[f0] * 100.0f) / 100.0f; // 向上取整
+                gyh[i] = floor(fft_outputbuf[fx[i]] / fft_outputbuf[f0] * 100.0f) / 100.0f; // 向下取整 误差更小
             }
 
             /****************************   THD计算与显示到OLED   ****************************/
@@ -160,7 +160,7 @@ int main(void)
             printf("\r\nFFT后求幅值数据:\r\n");
             for (i = 0; i < ADC_SAMPLING_NUMBER; ++i)
             {
-                printf("[%d]:%.3f\r\n",i, fft_outputbuf[i]);
+                printf("[%d]:%.3f\r\n", i, fft_outputbuf[i]);
             }
 
             printf("\r\n基波周期：%.2fus\r\n", true_T / 3.0f);
