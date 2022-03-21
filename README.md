@@ -168,7 +168,7 @@ TimA0_Int_Init(60, 1); // 第8讲 定时器配置 （ADC触发时钟源 fs）
 
 - 使用了OLED图像库 [[移植：项目地址]](https://github.com/hello-myj/stm32_oled  "@GitHub： STM32 OLED图形库")
 
-- 2个IIC协议的OLED，从机地址分别为0X78、0X7C，需要4个4.7k或10k电阻作为IIC上拉电阻。
+- 2个IIC协议的OLED，从机地址分别为0X78、0X7C，需要2个4.7k或10k电阻作为IIC上拉电阻。
 
 ```c
 // 默认使用IIC_2 想更改硬件IIC引脚可以去oled_config.h第81行代码更改
