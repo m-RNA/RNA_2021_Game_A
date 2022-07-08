@@ -1,198 +1,169 @@
 /*******************************************
-// 2021Äê µçÈüAÌâ
-// Bilibili£ºm-RNA
+// 2021å¹´ ç”µèµ›Aé¢˜
+// Bilibiliï¼šm-RNA
 // E-mail:m-RNA@qq.com
-// ´´½¨ÈÕÆÚ:2021/11/11
+// åˆ›å»ºæ—¥æœŸ:2021/11/11
 *******************************************/
 
+#include "main.h"
 #include "stdio.h"
+#include "stdlib.h"
+#include "stdarg.h"
 
-// ÊÇ·ñµ÷ÊÔ ÊÇÔò¶¨Òå DEBUG
-#define DEBUG
+// #ifdef DEBUG
+// #define log_debug(fmt, ...) __log_print(fmt, );
+// #else
+// #define log_debug(fmt, ...) ((void)0);
+// #endif
 
-float fft_outputbuf[ADC_SAMPLING_NUMBER * MM];           // FFTÊä³öÊý×é
-static float fft_inputbuf[ADC_SAMPLING_NUMBER * 2 * MM]; // FFTÊäÈëÊý×é
+void log_debug(char *fmt, ...)
+{
+#ifdef DEBUG
+    va_list arg;
+    va_start(arg, fmt);
+    char buf[1 + vsnprintf(NULL, 0, fmt, arg)];
+    vsnprintf(buf, sizeof(buf), fmt, arg);
+    va_end(arg);
+    printf("%s\n", buf);
+#endif
+}
 
+void NVIC_Init(void)
+{
+    log_debug("config NVIC...\r\n");
+}
+
+void Clock_Init(void)
+{
+    log_debug("config Clock_Init...\r\n");
+}
+
+void Delay_Init(void)
+{
+    log_debug("config Delay_Init...\r\n");
+}
+
+void BSP_Sample_ADC_with_DMA_Init(void)
+{
+    log_debug("config BSP_Sample_ADC_with_DMA_Init...\r\n");
+}
+
+void BSP_Sample_Timer_Init(void)
+{
+    log_debug("config BSP_Sample_Timer_Init...\r\n");
+}
+
+void BSP_Uart_PC(void)
+{
+    log_debug("config BSP_Uart_PC...\r\n");
+}
+
+void BSP_Uart_Blueteech(void)
+{
+    log_debug("config BSP_Uart_Blueteech...\r\n");
+}
+
+void BSP_LED_Init(void)
+{
+    log_debug("config BSP_LED_Init...\r\n");
+}
+
+void BSP_BEEP_Init(void)
+{
+    log_debug("config BSP_BEEP_Init...\r\n");
+}
+
+void BSP_KEY_Init(void)
+{
+    log_debug("config BSP_KEY_Init...\r\n");
+}
+
+void BLL_Init(void)
+{
+    log_debug("config BLL_Init...\r\n");
+}
+
+void HAL_Init(void)
+{
+    NVIC_Init();
+    Clock_Init();
+    Delay_Init();
+}
+
+void Signal_Sample_Init(void)
+{
+    BSP_Sample_ADC_with_DMA_Init();
+    BSP_Sample_Timer_Init();
+}
+
+void BSP_Init(void)
+{
+    BSP_Uart_PC();
+    BSP_Uart_Blueteech();
+    BSP_LED_Init();
+    BSP_BEEP_Init();
+    BSP_KEY_Init();
+}
+
+void System_Init(void)
+{
+    HAL_Init();
+    BSP_Init();
+    BLL_Init();
+
+    Signal_Sample_Init();
+}
+
+void BSP_Set_Fs_CCR(u32 CCR)
+{
+    return;
+}
+u32 BSP_Get_Signal_CCR(void)
+{
+    return (rand() & 0xFF);
+}
+
+void Signal_F0_Measure(u32 *Captured_Value)
+{
+    *Captured_Value = BSP_Get_Signal_CCR();
+    log_debug("F0_CCR:%u\r\n", *Captured_Value);
+}
+
+#define TimerSoureFreq 48000000
+#define SignalSample_Point_Bit 4 //é‡‡æ ·ä½æ•°ï¼ˆé‡‡æ ·ç‚¹æ•° = 2^é‡‡æ ·ä½æ•°)
+#define SignalSample_Freq_MAX 1000000
+#define SignalSample_Period_MIN (TimerSoureFreq / Signal_Fs_MAX)
+
+void Signal_Fs_Adjust_Auto(u32 Captured_Value)
+{
+    u32 Fs_CCR = 0;
+    Fs_CCR = Captured_Value >> SignalSample_Point_Bit;
+
+    if (Captured_Value <= SignalSample_Period_MIN)
+    {
+        Fs_CCR += Captured_Value;
+        printf("Oversampling!\r\n");
+    }
+    BSP_Set_Fs_CCR(Fs_CCR);
+    log_debug("Fs_CCR:%u\r\n", Fs_CCR);
+}
+
+void SignalSample_Start(u16 *Data, u16 Num)
+{
+    BSP_ADC_DMA_Start(Data, Num);
+}
+// Flow lock
 int main(void)
 {
-    uint16_t i;
-    uint16_t j;
-    uint8_t key_val; // °´¼ü¼üÖµ
-    char strBuf[9];  // OLED_printfÔÝ´æ
-
-    float THDx;                  // THDx
-    float gyh[4] = {0, 0, 0, 0}; //¹éÒ»»¯·ùÖµ
-    arm_cfft_radix4_instance_f32 scfft;
-
-    /***   Èý´ó³õÊ¼»¯º¯Êý   ***/
-    SysInit();       // µÚ3½² Ê±ÖÓÅäÖÃ£¨48M£©
-    delay_init();    // µÚ4½² µÎ´ðÑÓÊ±
-    BaseBoardInit(); // µÚ2½² GPIO (KEY LED BEEP OLED)
-
-    BEEP = 0; // ´ò¿ª·äÃùÆ÷
-
-    /**  ÏÔÊ¾ TiºÍµçÈü Logo  **/
-    DrawBitmap(0, 0, TiLOGO, 128, 64);   // Ti logo
-    UpdateScreen();                      // ¸üÐÂÆÁÄ»
-    SelectDownOLED();                    // Ñ¡ÓÃÏÂÆÁ
-    ClearScreen();                       // ÇåÆÁ
-    DrawBitmap(0, 0, GameLOGO, 128, 64); // µçÈü logo
-    UpdateScreen();                      // ¸üÐÂÆÁÄ»
-
-    uart_init(1382400);    // µÚ7½² ´®¿ÚÅäÖÃ £¨µ÷ÊÔ£©
-    usart3_init(9600);     // µÚ7½² ´®¿ÚÅäÖÃ £¨À¶ÑÀ£©
-    TimA0_Int_Init(60, 1); // µÚ8½² ¶¨Ê±Æ÷ÅäÖÃ £¨ADC´¥·¢Ê±ÖÓÔ´ fs£©
-    TimA2_Cap_Init();      // µÚ8½² ¶¨Ê±Æ÷²¶»ñ £¨¹ýÁã±È½ÏÆ÷²ÉÆµÂÊ£©
-    adc_dma_init(1024);    // µÚ12½² DMA
-    BEEP = 1;              // ¹Ø±Õ ·äÃùÆ÷
-    ADC_Config();          // µÚ11½² ADC
-
-    arm_cfft_radix4_init_f32(&scfft, ADC_SAMPLING_NUMBER * MM, 0, 1); //³õÊ¼»¯scfft½á¹¹Ìå£¬Éè¶¨FFTÏà¹Ø²ÎÊý
-
-    /* ³õÊ¼»¯Íê±Ï ÌáÊ¾¿ÉÒÔ²âÁ¿ */
-    printf("Hello,MSP432!\r\n");
-    DrawString(0, 0, "OK");
-    UpdateScreen();
-
-    MAP_Interrupt_enableMaster(); // ¿ªÆô×ÜÖÐ¶Ï
-    while (1)
+    u32 Signal_Captured_Value;
+    vu8 i = 10;
+    System_Init();
+    while (--i)
     {
-        key_val = KEY_Scan(0); //É¨Ãè¼üÖµ
-
-        switch (key_val)
-        {
-        case KEY1_OnBoard_PRES: // KEY1 °´ÏÂ£¬ ¿ªÊ¼Ò»¼ü²âÁ¿
-
-            /*****************************   ²âÁ¿f¡¢µ÷Õûfs   ******************************/
-
-            LED_B = 0;         // ¹ØÀ¶µÆ
-            LED_G = 1;         // ¿ªÂÌµÆ
-            TIMA2_CAP_STA = 0; // ²¶»ñÍê³É±êÖ¾Î»ÇåÁã
-
-            MAP_Timer_A_clearTimer(CAP_TIMA_SELECTION);                            // ²¶»ñ¶¨Ê±Æ÷ÇåÁã
-            MAP_Timer_A_startCounter(CAP_TIMA_SELECTION, TIMER_A_CONTINUOUS_MODE); // ¿ªÊ¼²âÁ¿f
-
-            delay_ms(200); // µÈ´ýf²âÁ¿Íê³É
-
-            MAP_Timer_A_setCompareValue(TIMER_A0_BASE, TIMER_A_CAPTURECOMPARE_REGISTER_0, true_T); // µ÷Õûfs
-
-            WaitingAnimat(1); // µÈ´ý¶¯»­£¨µÈ´ý¶¨Ê±Æ÷AÎÈ¶¨£©(...)
-
-            LED_G = 0; //¹ØÂÌµÆ
-
-            /********************************   ¿ªÆôDMA´«Êä   ********************************/
-
-            MAP_DMA_setChannelTransfer(DMA_CH7_ADC14 | UDMA_PRI_SELECT, UDMA_MODE_BASIC, (void *)&ADC14->MEM[0], (void *)adc_inputbuf, 1024);
-            MAP_DMA_enableChannel(7); // Ê¹ÄÜ7Í¨µÀ£¨ADC£©
-
-            MAP_Timer_A_startCounter(TIMER_A0_BASE, TIMER_A_UP_MODE); // ¿ªÊ¼¼ÆÊý ´¥·¢ADC¶¨Ê±²ÉÑù
-
-            recv_done_flag = 0;     // ´«ÊäÍê³É±êÖ¾Î»ÇåÁã
-            while (!recv_done_flag) // µÈ´ý´«ÊäÍê³É
-                ;
-
-            /**********************************   FFT ¼ÆËã   **********************************/
-            LED_RED = 1; // ¿ªºìµÆ
-
-            /**  ½«Êý¾Ý×ª»»Îª¸´Êý  **/
-            for (j = 0; j < MM; ++j)
-            {
-                for (i = 0; i < ADC_SAMPLING_NUMBER; ++i)
-                {
-                    fft_inputbuf[2 * i] = adc_inputbuf[j][i]; // Êµ²¿ÎªADC
-                    fft_inputbuf[2 * i + 1] = 0;              // Ðé²¿Îª0
-                }
-            }
-
-            arm_cfft_radix4_f32(&scfft, fft_inputbuf);                                // FFT¼ÆËã£¨»ù4£©
-            arm_cmplx_mag_f32(fft_inputbuf, fft_outputbuf, ADC_SAMPLING_NUMBER * MM); //°ÑÔËËã½á¹û¸´ÊýÇóÄ£µÃ·ùÖµ
-
-            LED_RED = 0; // ¹ØºìµÆ
-
-            /********************      ÕÒ³ö»ù²¨Ð³²¨Î»ÖÃ ¼ÆËã¹éÒ»»¯·ùÖµ      *******************/
-
-            /* ÕÒ³ö»ù²¨Î»ÖÃ */
-            f0 = FloatMax(fft_outputbuf);
-
-            for (i = 0; i < 4; ++i)
-            {
-                /**   ÕÒ³öÐ³²¨Î»ÖÃ   **/
-                fx[i] = FloatMax_WithWindow(fft_outputbuf, f0 * (i + 2) - (FDBS / 2), f0 * (i + 2) + (FDBS / 2)); // ÓÅ»¯¹ýµÄËã·¨ ¸ü¼Ó×¼È·
-
-                /**  ¼ÆËã¹éÒ»»¯·ùÖµ  **/
-                gyh[i] = floor(fft_outputbuf[fx[i]] / fft_outputbuf[f0] * 100.0f) / 100.0f; // ÏòÏÂÈ¡Õû Îó²î¸üÐ¡
-            }
-
-            /****************************   THD¼ÆËãÓëÏÔÊ¾µ½OLED   ****************************/
-
-            THDx = THDx_calculate(); // ¼ÆËãTHDx
-            UpdateGYH(gyh, THDx);    // ¸üÐÂµ½ÆÁÄ»
-
-            /*********************   ¼ÆËã²¨ÐÎºóÏÔÊ¾µ½OLEDÓë·¢ËÍÖÁÊÖ»ú   *********************/
-
-            ShowWave_AndTran(gyh); //¼ÆËã¡¢×ª»»²¢ÏÔÊ¾²¨ÐÎ
-
-            BEEP = 0;                               // ¿ªÊ¼Ãù½Ð
-            BluetoothSendDate(gyh, THDx, waveTran); // ·¢ËÍÊý¾Ý¸øÊÖ»ú
-            BEEP = 1;                               // Í£Ö¹Ãù½Ð
-
-// ¶¨ÒåDEBUG Ôò¿ªÆô´òÓ¡ÄÚ²¿ÐÅÏ¢
-#ifdef DEBUG
-            printf("\r\nADC²ÉÑùÊý¾Ý:\r\n");
-            for (j = 0; j < MM; ++j)
-            {
-                for (i = 0; i < ADC_SAMPLING_NUMBER; ++i)
-                {
-                    printf("%d\r\n", adc_inputbuf[j][i]);
-                }
-            }
-
-            printf("\r\nFFTºóÇó·ùÖµÊý¾Ý:\r\n");
-            for (i = 0; i < ADC_SAMPLING_NUMBER; ++i)
-            {
-                printf("[%d]:%.3f\r\n", i, fft_outputbuf[i]);
-            }
-
-            printf("\r\n»ù²¨ÖÜÆÚ£º%.2fus\r\n", true_T / 3.0f);
-            printf("»ù²¨Î»ÖÃ£º%d\r\n", f0);
-            for (i = 0; i < 4; ++i)
-            {
-                printf("%dÐ³Î»ÖÃ£º%d\r\n", i + 2, f0);
-            }
-
-            printf("\r\nTHD£º%2.2f\r\n", THDx);
-
-            printf("¹éÒ»»¯·ùÖµ£º\r\n");
-            printf("»ù:1.00\r\n");
-            for (i = 0; i < 4; ++i)
-            {
-                printf("%d:%1.2f\r\n", i + 2, gyh[i]);
-            }
-#endif
-            break;
-
-        case KEY2_PRES:   // ²âÊÔµ¥Æ¬»úÊÇ·ñ¿¨ËÀ
-            LED_RED ^= 1; // ·­×ªºìµÆµçÆ½
-            break;
-
-        case KEY3_PRES:   // ²âÊÔ¹ýÁã±È½ÏÆ÷ÊÇ·ñÕý³£¹¤×÷
-            LED_RED ^= 1; // ·­×ªºìµÆµçÆ½
-            TIMA2_CAP_STA = 0;
-            MAP_Timer_A_clearTimer(CAP_TIMA_SELECTION);
-            MAP_Timer_A_startCounter(CAP_TIMA_SELECTION, TIMER_A_CONTINUOUS_MODE);
-            snprintf(strBuf, 9, "T:%4dus", true_T / 3); // ²âÁ¿ÖÜÆÚ
-            DrawString(80, 0, strBuf);
-            UpdateScreen();
-
-            break;
-
-        case KEY4_PRES:   // ²âÊÔÀ¶ÑÀÊÇ·ñÕýÈ·Á¬½Ó
-            LED_RED ^= 1; // ·­×ªºìµÆµçÆ½
-            MAP_UART_transmitData(HC_05_USART_BASE, 1920);
-            break;
-        }
-
-        key_val = NOT_PRES; //ÇåÁã¼üÖµ
-        delay_ms(10);       //ÑÓÊ±10ms
+        Signal_F0_Measure(&Signal_Captured_Value);
+        Signal_Fs_Adjust_Auto(Signal_Captured_Value);
+        SignalSample_Start();
+        // SignalSample_FFT();
     }
+    getchar();
 }

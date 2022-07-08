@@ -75,3 +75,6 @@ Other_Opensoure_Prejects
 Doc/report/
 单片机交互原型设计(2).png
 *.LCP
+MCU Project/Win11_Simulation/main.exe
+MSP432P4 Project/project/keil/EventRecorderStub.scvd
+MCU Project/Win_Simulation/main.exe
