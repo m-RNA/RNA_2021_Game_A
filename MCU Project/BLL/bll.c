@@ -62,7 +62,6 @@ void SignalSample_FFT_to_Am(u16 *SampleData, float *Output)
 
     // arm_cfft_f32(&arm_cfft_sR_f32_len1024, fft_inputbuf, 0, 1); // FFT计算
     // arm_cmplx_mag_f32(fft_inputbuf, Output, ADC_SAMPLING_NUM);  //把运算结果复数求模得幅值
-    // #warning ADC_SAMPLING_NUM should be 1024 
 }
 
 /* 在一定范围内找出最大值位置 */
@@ -79,8 +78,6 @@ u16 FloatMaxIndex_WithinRange(float Data[], u16 Left, u16 Right) // 最优算法
     }
     return MaxIndex;
 }
-
-// log_assert("Error: ADC_SAMPLING_NUM should be a multiple of 2.\r\n");
 
 #define FFT_To_Am_IndexErrorRange 4
 void NormalizedAm_And_CalculateTHD(float *Am_Data, float *Norm_Am, float *THD)

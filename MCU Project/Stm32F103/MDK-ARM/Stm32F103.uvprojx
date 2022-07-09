@@ -339,7 +339,7 @@
               <MiscControls></MiscControls>
               <Define>USE_HAL_DRIVER,STM32F103xB</Define>
               <Undefine></Undefine>
-              <IncludePath>../Core/Inc;  ../Drivers/STM32F1xx_HAL_Driver/Inc;  ../Drivers/STM32F1xx_HAL_Driver/Inc/Legacy;  ../Drivers/CMSIS/Device/ST/STM32F1xx/Include;  ../Drivers/CMSIS/Include;  ..\..\BLL\Inc;  ..\..\BSP\Inc</IncludePath>
+              <IncludePath>../Core/Inc;../Drivers/STM32F1xx_HAL_Driver/Inc;../Drivers/STM32F1xx_HAL_Driver/Inc/Legacy;../Drivers/CMSIS/Device/ST/STM32F1xx/Include;../Drivers/CMSIS/Include;..\..\BLL\Inc;..\..\BSP\Inc;..\..\OLED_Lib</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -557,6 +557,61 @@
               <FileName>bll.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\BLL\bll.c</FilePath>
+            </File>
+            <File>
+              <FileName>bll_oled.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\BLL\bll_oled.c</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>OLEDLIB</GroupName>
+          <Files>
+            <File>
+              <FileName>oled_basic.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\OLED_Lib\oled_basic.c</FilePath>
+            </File>
+            <File>
+              <FileName>oled_bmp.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\OLED_Lib\oled_bmp.c</FilePath>
+            </File>
+            <File>
+              <FileName>oled_buffer.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\OLED_Lib\oled_buffer.c</FilePath>
+            </File>
+            <File>
+              <FileName>oled_color.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\OLED_Lib\oled_color.c</FilePath>
+            </File>
+            <File>
+              <FileName>oled_config.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\OLED_Lib\oled_config.c</FilePath>
+            </File>
+            <File>
+              <FileName>oled_debug.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\OLED_Lib\oled_debug.c</FilePath>
+            </File>
+            <File>
+              <FileName>oled_draw.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\OLED_Lib\oled_draw.c</FilePath>
+            </File>
+            <File>
+              <FileName>oled_driver.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\OLED_Lib\oled_driver.c</FilePath>
+            </File>
+            <File>
+              <FileName>oled_font.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\OLED_Lib\oled_font.c</FilePath>
             </File>
           </Files>
         </Group>

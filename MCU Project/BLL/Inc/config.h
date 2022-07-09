@@ -25,4 +25,6 @@
 #warning ADC_SAMPLING_NUM should be 1024
 #endif
 
+#define delay_ms(MS) HAL_Delay(MS)
+
 #endif

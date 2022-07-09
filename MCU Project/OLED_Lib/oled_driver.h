@@ -1,6 +1,6 @@
 #ifndef __OLED_DRIVER_H
 #define __OLED_DRIVER_H
-#include "main.h"
+//#include "sysinit.h"
 #include "oled_config.h"
 #include "oled_basic.h"
 
