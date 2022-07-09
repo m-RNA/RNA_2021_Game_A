@@ -1,7 +1,7 @@
 Dependencies for Project 'Stm32F103', Target 'Stm32F103': (DO NOT MODIFY !)
 CompilerVersion: 5060960::V5.06 update 7 (build 960)::ARMCC
 F (startup_stm32f103xb.s)(0x62C81742)(--cpu Cortex-M3 -g --apcs=interwork --pd "__MICROLIB SETA 1"-I.\RTE\_Stm32F103-Id:\Keil_v5\ARM\PACK\ARM\CMSIS\5.8.0\CMSIS\Core\Include-Id:\Keil_v5\ARM\PACK\Keil\STM32F1xx_DFP\2.3.0\Device\Include--pd "__UVISION_VERSION SETA 536" --pd "_RTE_ SETA 1" --pd "STM32F10X_MD SETA 1" --pd "_RTE_ SETA 1"--list startup_stm32f103xb.lst --xref -o stm32f103\startup_stm32f103xb.o --depend stm32f103\startup_stm32f103xb.d)
-F (../Core/Src/main.c)(0x62C94988)(--c99 -c --cpu Cortex-M3 -D__MICROLIB -g -O3 --apcs=interwork --split_sections -I ../Core/Inc -I ../Drivers/STM32F1xx_HAL_Driver/Inc -I ../Drivers/STM32F1xx_HAL_Driver/Inc/Legacy -I ../Drivers/CMSIS/Device/ST/STM32F1xx/Include -I ../Drivers/CMSIS/Include -I ..\..\BLL\Inc -I ..\..\BSP\Inc-I.\RTE\_Stm32F103-Id:\Keil_v5\ARM\PACK\ARM\CMSIS\5.8.0\CMSIS\Core\Include-Id:\Keil_v5\ARM\PACK\Keil\STM32F1xx_DFP\2.3.0\Device\Include-D__UVISION_VERSION="536" -D_RTE_ -DSTM32F10X_MD -D_RTE_ -DUSE_HAL_DRIVER -DSTM32F103xB-o stm32f103\main.o --omf_browse stm32f103\main.crf --depend stm32f103\main.d)
+F (../Core/Src/main.c)(0x62C9730F)(--c99 -c --cpu Cortex-M3 -D__MICROLIB -g -O3 --apcs=interwork --split_sections -I ../Core/Inc -I ../Drivers/STM32F1xx_HAL_Driver/Inc -I ../Drivers/STM32F1xx_HAL_Driver/Inc/Legacy -I ../Drivers/CMSIS/Device/ST/STM32F1xx/Include -I ../Drivers/CMSIS/Include -I ..\..\BLL\Inc -I ..\..\BSP\Inc-I.\RTE\_Stm32F103-Id:\Keil_v5\ARM\PACK\ARM\CMSIS\5.8.0\CMSIS\Core\Include-Id:\Keil_v5\ARM\PACK\Keil\STM32F1xx_DFP\2.3.0\Device\Include-D__UVISION_VERSION="536" -D_RTE_ -DSTM32F10X_MD -D_RTE_ -DUSE_HAL_DRIVER -DSTM32F103xB-o stm32f103\main.o --omf_browse stm32f103\main.crf --depend stm32f103\main.d)
 I (../Core/Inc/main.h)(0x62C90EF3)
 I (../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal.h)(0x615309D4)
 I (../Core/Inc/stm32f1xx_hal_conf.h)(0x62C90EF3)
@@ -38,8 +38,9 @@ I (../Core/Inc/tim.h)(0x62C90EF2)
 I (../Core/Inc/usart.h)(0x62C90EF2)
 I (../Core/Inc/gpio.h)(0x62C90EF1)
 I (..\..\BSP\Inc\bsp.h)(0x62C82963)
-I (..\..\BLL\Inc\log.h)(0x62C82922)
-I (..\..\BLL\Inc\config.h)(0x62C8291B)
+I (..\..\BLL\Inc\log.h)(0x62C971C2)
+I (..\..\BLL\Inc\config.h)(0x62C9717B)
+I (d:\Keil_v5\ARM\ARMCC\include\stdio.h)(0x60252374)
 I (..\..\BLL\Inc\bll.h)(0x62C94684)
 F (../Core/Src/gpio.c)(0x62C90EF0)(--c99 -c --cpu Cortex-M3 -D__MICROLIB -g -O3 --apcs=interwork --split_sections -I ../Core/Inc -I ../Drivers/STM32F1xx_HAL_Driver/Inc -I ../Drivers/STM32F1xx_HAL_Driver/Inc/Legacy -I ../Drivers/CMSIS/Device/ST/STM32F1xx/Include -I ../Drivers/CMSIS/Include -I ..\..\BLL\Inc -I ..\..\BSP\Inc-I.\RTE\_Stm32F103-Id:\Keil_v5\ARM\PACK\ARM\CMSIS\5.8.0\CMSIS\Core\Include-Id:\Keil_v5\ARM\PACK\Keil\STM32F1xx_DFP\2.3.0\Device\Include-D__UVISION_VERSION="536" -D_RTE_ -DSTM32F10X_MD -D_RTE_ -DUSE_HAL_DRIVER -DSTM32F103xB-o stm32f103\gpio.o --omf_browse stm32f103\gpio.crf --depend stm32f103\gpio.d)
 I (../Core/Inc/gpio.h)(0x62C90EF1)
@@ -806,12 +807,13 @@ I (../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_pwr.h)(0x615309D4)
 I (../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_tim.h)(0x615309D4)
 I (../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_tim_ex.h)(0x615309D4)
 I (../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_uart.h)(0x615309D4)
-I (..\..\BLL\Inc\log.h)(0x62C82922)
-I (..\..\BLL\Inc\config.h)(0x62C8291B)
+I (..\..\BLL\Inc\log.h)(0x62C971C2)
+I (..\..\BLL\Inc\config.h)(0x62C9717B)
+I (d:\Keil_v5\ARM\ARMCC\include\stdio.h)(0x60252374)
 I (d:\Keil_v5\ARM\ARMCC\include\stdlib.h)(0x60252374)
 F (..\..\BLL\fft.c)(0x62C70AA2)(--c99 -c --cpu Cortex-M3 -D__MICROLIB -g -O3 --apcs=interwork --split_sections -I ../Core/Inc -I ../Drivers/STM32F1xx_HAL_Driver/Inc -I ../Drivers/STM32F1xx_HAL_Driver/Inc/Legacy -I ../Drivers/CMSIS/Device/ST/STM32F1xx/Include -I ../Drivers/CMSIS/Include -I ..\..\BLL\Inc -I ..\..\BSP\Inc-I.\RTE\_Stm32F103-Id:\Keil_v5\ARM\PACK\ARM\CMSIS\5.8.0\CMSIS\Core\Include-Id:\Keil_v5\ARM\PACK\Keil\STM32F1xx_DFP\2.3.0\Device\Include-D__UVISION_VERSION="536" -D_RTE_ -DSTM32F10X_MD -D_RTE_ -DUSE_HAL_DRIVER -DSTM32F103xB-o stm32f103\fft.o --omf_browse stm32f103\fft.crf --depend stm32f103\fft.d)
-F (..\..\BLL\log.c)(0x62C82312)(--c99 -c --cpu Cortex-M3 -D__MICROLIB -g -O3 --apcs=interwork --split_sections -I ../Core/Inc -I ../Drivers/STM32F1xx_HAL_Driver/Inc -I ../Drivers/STM32F1xx_HAL_Driver/Inc/Legacy -I ../Drivers/CMSIS/Device/ST/STM32F1xx/Include -I ../Drivers/CMSIS/Include -I ..\..\BLL\Inc -I ..\..\BSP\Inc-I.\RTE\_Stm32F103-Id:\Keil_v5\ARM\PACK\ARM\CMSIS\5.8.0\CMSIS\Core\Include-Id:\Keil_v5\ARM\PACK\Keil\STM32F1xx_DFP\2.3.0\Device\Include-D__UVISION_VERSION="536" -D_RTE_ -DSTM32F10X_MD -D_RTE_ -DUSE_HAL_DRIVER -DSTM32F103xB-o stm32f103\log.o --omf_browse stm32f103\log.crf --depend stm32f103\log.d)
-I (..\..\BLL\Inc\log.h)(0x62C82922)
+F (..\..\BLL\log.c)(0x62C9722A)(--c99 -c --cpu Cortex-M3 -D__MICROLIB -g -O3 --apcs=interwork --split_sections -I ../Core/Inc -I ../Drivers/STM32F1xx_HAL_Driver/Inc -I ../Drivers/STM32F1xx_HAL_Driver/Inc/Legacy -I ../Drivers/CMSIS/Device/ST/STM32F1xx/Include -I ../Drivers/CMSIS/Include -I ..\..\BLL\Inc -I ..\..\BSP\Inc-I.\RTE\_Stm32F103-Id:\Keil_v5\ARM\PACK\ARM\CMSIS\5.8.0\CMSIS\Core\Include-Id:\Keil_v5\ARM\PACK\Keil\STM32F1xx_DFP\2.3.0\Device\Include-D__UVISION_VERSION="536" -D_RTE_ -DSTM32F10X_MD -D_RTE_ -DUSE_HAL_DRIVER -DSTM32F103xB-o stm32f103\log.o --omf_browse stm32f103\log.crf --depend stm32f103\log.d)
+I (..\..\BLL\Inc\log.h)(0x62C971C2)
 I (../Core/Inc/main.h)(0x62C90EF3)
 I (../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal.h)(0x615309D4)
 I (../Core/Inc/stm32f1xx_hal_conf.h)(0x62C90EF3)
@@ -842,11 +844,10 @@ I (../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_pwr.h)(0x615309D4)
 I (../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_tim.h)(0x615309D4)
 I (../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_tim_ex.h)(0x615309D4)
 I (../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_uart.h)(0x615309D4)
-I (..\..\BLL\Inc\config.h)(0x62C8291B)
-I (../Core/Inc/usart.h)(0x62C90EF2)
-I (d:\Keil_v5\ARM\ARMCC\include\stdarg.h)(0x60252376)
+I (..\..\BLL\Inc\config.h)(0x62C9717B)
 I (d:\Keil_v5\ARM\ARMCC\include\stdio.h)(0x60252374)
-F (..\..\BLL\bll.c)(0x62C9616C)(--c99 -c --cpu Cortex-M3 -D__MICROLIB -g -O3 --apcs=interwork --split_sections -I ../Core/Inc -I ../Drivers/STM32F1xx_HAL_Driver/Inc -I ../Drivers/STM32F1xx_HAL_Driver/Inc/Legacy -I ../Drivers/CMSIS/Device/ST/STM32F1xx/Include -I ../Drivers/CMSIS/Include -I ..\..\BLL\Inc -I ..\..\BSP\Inc-I.\RTE\_Stm32F103-Id:\Keil_v5\ARM\PACK\ARM\CMSIS\5.8.0\CMSIS\Core\Include-Id:\Keil_v5\ARM\PACK\Keil\STM32F1xx_DFP\2.3.0\Device\Include-D__UVISION_VERSION="536" -D_RTE_ -DSTM32F10X_MD -D_RTE_ -DUSE_HAL_DRIVER -DSTM32F103xB-o stm32f103\bll.o --omf_browse stm32f103\bll.crf --depend stm32f103\bll.d)
+I (../Core/Inc/usart.h)(0x62C90EF2)
+F (..\..\BLL\bll.c)(0x62C97129)(--c99 -c --cpu Cortex-M3 -D__MICROLIB -g -O3 --apcs=interwork --split_sections -I ../Core/Inc -I ../Drivers/STM32F1xx_HAL_Driver/Inc -I ../Drivers/STM32F1xx_HAL_Driver/Inc/Legacy -I ../Drivers/CMSIS/Device/ST/STM32F1xx/Include -I ../Drivers/CMSIS/Include -I ..\..\BLL\Inc -I ..\..\BSP\Inc-I.\RTE\_Stm32F103-Id:\Keil_v5\ARM\PACK\ARM\CMSIS\5.8.0\CMSIS\Core\Include-Id:\Keil_v5\ARM\PACK\Keil\STM32F1xx_DFP\2.3.0\Device\Include-D__UVISION_VERSION="536" -D_RTE_ -DSTM32F10X_MD -D_RTE_ -DUSE_HAL_DRIVER -DSTM32F103xB-o stm32f103\bll.o --omf_browse stm32f103\bll.crf --depend stm32f103\bll.d)
 I (..\..\BLL\Inc\bll.h)(0x62C94684)
 I (../Core/Inc/main.h)(0x62C90EF3)
 I (../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal.h)(0x615309D4)
@@ -878,8 +879,8 @@ I (../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_pwr.h)(0x615309D4)
 I (../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_tim.h)(0x615309D4)
 I (../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_tim_ex.h)(0x615309D4)
 I (../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_uart.h)(0x615309D4)
-I (..\..\BLL\Inc\config.h)(0x62C8291B)
+I (..\..\BLL\Inc\config.h)(0x62C9717B)
 I (..\..\BSP\Inc\bsp.h)(0x62C82963)
-I (..\..\BLL\Inc\log.h)(0x62C82922)
+I (..\..\BLL\Inc\log.h)(0x62C971C2)
 I (d:\Keil_v5\ARM\ARMCC\include\stdio.h)(0x60252374)
 I (d:\Keil_v5\ARM\ARMCC\include\math.h)(0x60252378)

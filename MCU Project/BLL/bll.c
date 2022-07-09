@@ -1,6 +1,7 @@
 #include "bll.h"
 #include "bsp.h"
 #include "log.h"
+#include "config.h"
 #include "stdio.h"
 #include "math.h"
 
@@ -16,17 +17,12 @@ void Signal_F0_Measure(u32 *Captured_Value)
     log_debug("F0_CCR:%u\r\n", *Captured_Value);
 }
 
-#define TimerSourerFreq 48000000
-#define SignalSample_Freq_Multiple 16 // 采样频率设定为信号基波频率的几倍（Fs = ？F0）
-#define SignalSample_Freq_MAX 1000000
-#define SignalSample_Period_MIN (TimerSourerFreq / SignalSample_Freq_MAX)
-
 void Signal_Fs_Adjust(u32 Captured_Value)
 {
     u32 Fs_CCR = 0;
-    Fs_CCR = Captured_Value / SignalSample_Freq_Multiple;
+    Fs_CCR = Captured_Value / SignalSampleFreq_Multiple;
 
-    if (Captured_Value <= SignalSample_Period_MIN)
+    if (Captured_Value <= SignalSamplePeriod_MIN)
     {
         Fs_CCR += Captured_Value;
         printf("Oversampling!\r\n");
@@ -56,50 +52,53 @@ void System_Init(void)
 
 void SignalSample_FFT_to_Am(u16 *SampleData, float *Output)
 {
-    float fft_inputbuf[ADC_SAMPLING_NUM * 2];
     u16 i;
+    float fft_inputbuf[ADC_SAMPLING_NUM * 2];
     for (i = 0; i < ADC_SAMPLING_NUM; ++i)
     {
-        fft_inputbuf[i << 1] = SampleData[i]; // 实部为ADC
-        fft_inputbuf[i << 1 + 1] = 0;         // 虚部为0
+        fft_inputbuf[0 + (i << 1)] = SampleData[i]; // 实部为ADC
+        fft_inputbuf[1 + (i << 1)] = 0;         // 虚部为0
     }
+
     // arm_cfft_f32(&arm_cfft_sR_f32_len1024, fft_inputbuf, 0, 1); // FFT计算
     // arm_cmplx_mag_f32(fft_inputbuf, Output, ADC_SAMPLING_NUM);  //把运算结果复数求模得幅值
+    // #warning ADC_SAMPLING_NUM should be 1024 
 }
 
 /* 在一定范围内找出最大值位置 */
-// 最优算法应为分治法
-u16 FloatMax_Index_WithinRange(float Data[], u16 Left, u16 Right)
+u16 FloatMaxIndex_WithinRange(float Data[], u16 Left, u16 Right) // 最优算法应为分治法
 {
-    u16 i, Fn_Num;
-    Fn_Num = Left;
+    u16 i, MaxIndex;
+    MaxIndex = Left;
     for (i = Left; i <= Right; ++i)
     {
-        if (Data[Fn_Num] < Data[i])
+        if (Data[MaxIndex] < Data[i])
         {
-            Fn_Num = i;
+            MaxIndex = i;
         }
     }
-    return Fn_Num;
+    return MaxIndex;
 }
-#define FFT_To_Am_IndexErrorRange 4
 
-void Normalized_Am_Calculate_THD(float *Am_Data, float *Norm_Am, float *THD)
+// log_assert("Error: ADC_SAMPLING_NUM should be a multiple of 2.\r\n");
+
+#define FFT_To_Am_IndexErrorRange 4
+void NormalizedAm_And_CalculateTHD(float *Am_Data, float *Norm_Am, float *THD)
 {
     u16 i;
     u16 Fx_Index[5] = {0};
     float sum = 0.0f;
 
     /* 找出基波位置 */
-    Fx_Index[0] = FloatMax_Index_WithinRange(Am_Data, 1 + (FFT_To_Am_IndexErrorRange >> 1), (ADC_SAMPLING_NUM >> 1));
+    Fx_Index[0] = FloatMaxIndex_WithinRange(Am_Data, 1 + (FFT_To_Am_IndexErrorRange >> 1), (ADC_SAMPLING_NUM >> 1));
 
     for (i = 0; i < 4; ++i)
     {
-        /**   找出谐波位置   **/
-        Fx_Index[i + 1] = FloatMax_Index_WithinRange(Am_Data, Fx_Index[0] * (i + 2) - (FFT_To_Am_IndexErrorRange >> 1), Fx_Index[0] * (i + 2) + (FFT_To_Am_IndexErrorRange >> 1)); // 优化过的算法 更加准确
+        /* 找出谐波位置 */
+        Fx_Index[i + 1] = FloatMaxIndex_WithinRange(Am_Data, Fx_Index[0] * (i + 2) - (FFT_To_Am_IndexErrorRange >> 1), Fx_Index[0] * (i + 2) + (FFT_To_Am_IndexErrorRange >> 1)); // 优化过的算法 更加准确
 
-        /**  计算归一化幅值  **/
-        Norm_Am[i] = floor(Am_Data[Fx_Index[i + 1]] / Am_Data[Fx_Index[0]] * 100.0f) / 100.0f; // 向下取整 误差更小
+        /* 计算归一化幅值 */
+        Norm_Am[i] = floor(Am_Data[Fx_Index[i + 1]] / Am_Data[Fx_Index[0]] * 100.0f) / 100.0f; // 向下取整floor() 误差更小
     }
 
     /* THDx计算 */
@@ -107,5 +106,5 @@ void Normalized_Am_Calculate_THD(float *Am_Data, float *Norm_Am, float *THD)
     {
         sum += Am_Data[Fx_Index[i + 1]] * Am_Data[Fx_Index[i + 1]];
     }
-    *THD = ceil(sqrt(sum) / Am_Data[Fx_Index[0]] * 10000) / 100.0f;
+    *THD = ceil(sqrt(sum) / Am_Data[Fx_Index[0]] * 10000) / 100.0f; // 向上取整ceil()
 }

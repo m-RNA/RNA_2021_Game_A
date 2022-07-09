@@ -120,9 +120,10 @@ int main(void)
   u32 Signal_Captured_Value;
   u16 Signal_ADC_Data[ADC_SAMPLING_NUM];
   float FFT_Output[ADC_SAMPLING_NUM];
-  
+
   System_Init();
-  // log_debug("Init Completed!\r\n");
+  log_debug("Init Completed!\r\n");
+
   while (--i)
   {
     Signal_F0_Measure(&Signal_Captured_Value);
