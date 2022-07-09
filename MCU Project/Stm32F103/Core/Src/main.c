@@ -120,9 +120,9 @@ int main(void)
   u32 Signal_Captured_Value;
   u16 Signal_ADC_Data[ADC_SAMPLING_NUM];
   float FFT_Output[ADC_SAMPLING_NUM];
-  float Normalized_Am[5] = {0}; // 归一化幅值 基波-5次谐波
+  float NormalizedAm[5] = {0}; // 归一化幅值 基波-5次谐波
   float THD = 0.0f;
-  
+  u16 WaveformData[128] = {0};
   System_Init();
   log_debug("Init Completed!\r\n");
 
@@ -132,11 +132,11 @@ int main(void)
     Signal_Fs_Adjust(Signal_Captured_Value);
     SignalSample_Start(Signal_ADC_Data);
     SignalSample_FFT_to_Am(Signal_ADC_Data, FFT_Output);
-    NormalizedAm_And_CalculateTHD(FFT_Output, Normalized_Am, &THD);
-    // OLEDInterface_Update_NormAm_And_THD(Normalized_Am, &THD);
-    // OLEDInterface_Update_Waveform(Normalized_Am);
-    // Bluetooth_SendDate_To_Phone(Normalized_Am, &THD);
-      
+    NormalizedAm_And_CalculateTHD(FFT_Output, NormalizedAm, &THD);
+    // OLEDInterface_Update_Norm_Am_And_THD(NormalizedAm, &THD);
+    Transform_NormAm_To_WaveformData(NormalizedAm, WaveformData);
+    // OLEDInterface_Update_Waveform(WaveformData);
+    // Bluetooth_SendDate_To_Phone(NormalizedAm, &THD, WaveformData);
   }
 
   /* USER CODE END 2 */

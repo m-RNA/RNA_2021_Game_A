@@ -57,7 +57,7 @@ void SignalSample_FFT_to_Am(u16 *SampleData, float *Output)
     for (i = 0; i < ADC_SAMPLING_NUM; ++i)
     {
         fft_inputbuf[0 + (i << 1)] = SampleData[i]; // 实部为ADC
-        fft_inputbuf[1 + (i << 1)] = 0;         // 虚部为0
+        fft_inputbuf[1 + (i << 1)] = 0;             // 虚部为0
     }
 
     // arm_cfft_f32(&arm_cfft_sR_f32_len1024, fft_inputbuf, 0, 1); // FFT计算
@@ -80,7 +80,7 @@ u16 FloatMaxIndex_WithinRange(float Data[], u16 Left, u16 Right) // 最优算法
 }
 
 #define FFT_To_Am_IndexErrorRange 4
-void NormalizedAm_And_CalculateTHD(float *Am_Data, float *Norm_Am, float *THD)
+void NormalizedAm_And_CalculateTHD(float *Am_Data, float *NormAm, float *THD)
 {
     u16 i;
     u16 Fx_Index[5] = {0};
@@ -95,7 +95,7 @@ void NormalizedAm_And_CalculateTHD(float *Am_Data, float *Norm_Am, float *THD)
         Fx_Index[i + 1] = FloatMaxIndex_WithinRange(Am_Data, Fx_Index[0] * (i + 2) - (FFT_To_Am_IndexErrorRange >> 1), Fx_Index[0] * (i + 2) + (FFT_To_Am_IndexErrorRange >> 1)); // 优化过的算法 更加准确
 
         /* 计算归一化幅值 */
-        Norm_Am[i] = floor(Am_Data[Fx_Index[i + 1]] / Am_Data[Fx_Index[0]] * 100.0f) / 100.0f; // 向下取整floor() 误差更小
+        NormAm[i] = floor(Am_Data[Fx_Index[i + 1]] / Am_Data[Fx_Index[0]] * 100.0f) / 100.0f; // 向下取整floor() 误差更小
     }
 
     /* THDx计算 */
@@ -104,4 +104,82 @@ void NormalizedAm_And_CalculateTHD(float *Am_Data, float *Norm_Am, float *THD)
         sum += Am_Data[Fx_Index[i + 1]] * Am_Data[Fx_Index[i + 1]];
     }
     *THD = ceil(sqrt(sum) / Am_Data[Fx_Index[0]] * 10000) / 100.0f; // 向上取整ceil()
+}
+
+// 找出最大值位置
+u16 Compare_Max(float Mag[], u16 len)
+{
+    u16 i, Fn_Num;
+    Fn_Num = 0;
+    Mag[Fn_Num] = Mag[0];
+    for (i = 1; i < len; i++)
+    {
+        if (Mag[Fn_Num] < Mag[i])
+        {
+            Fn_Num = i;
+        }
+    }
+    return Fn_Num;
+}
+
+// 找出最小值位置
+u16 Compare_Min(float Mag[], u16 len)
+{
+    u16 i, Fn_Num;
+    Fn_Num = 0;
+    Mag[Fn_Num] = Mag[0];
+    for (i = 1; i < len; i++)
+    {
+        if (Mag[Fn_Num] > Mag[i])
+        {
+            Fn_Num = i;
+        }
+    }
+    return Fn_Num;
+}
+
+#define X_MAX 128
+#define Y_MAX 64
+#define Y_MULTI 54
+#define Y_UP_MOVE 64
+void Transform_NormAm_To_WaveformData(float *NormAm, u16 *WaveformData)
+{
+    u16 i;
+    u16 minNum;
+    u16 maxNum;
+    u16 vm;
+    vu16 temp_last, temp;
+    float OriginalWaveDate[X_MAX];
+    for (int i = 0; i < X_MAX; ++i)
+    {
+        OriginalWaveDate[i] = Y_MULTI * sin(PI * i / 64.0f);
+        // OriginalWaveDate[i] = Y_MULTI * arm_sin_f32(PI * i / 64.0f);
+        for (int j = 0; j < 4; ++j)
+        {
+            OriginalWaveDate[i] += Y_MULTI * sin(PI * i * (j + 1) / 64.0f) * NormAm[j];
+            // OriginalWaveDate[i] += Y_MULTI * arm_sin_f32(PI * i * (j + 1) / 64.0f) * NormAm[j];
+        }
+        OriginalWaveDate[i] += Y_UP_MOVE;
+        log_debug("%f\n", OriginalWaveDate[i]);
+    }
+
+    minNum = Compare_Min(OriginalWaveDate, X_MAX);
+    maxNum = Compare_Max(OriginalWaveDate, X_MAX);
+    vm = OriginalWaveDate[maxNum] - OriginalWaveDate[minNum];
+    // SelectUpOLED();
+    // ClearScreen();
+    // WaveBox();
+    WaveformData[0] = OriginalWaveDate[0] - OriginalWaveDate[minNum];
+    // DrawPixel(i, temp_last);
+    WaveformData[1] = OriginalWaveDate[1] - OriginalWaveDate[minNum];
+    temp_last = (u16)(64 - WaveformData[1] * 54 / (float)vm - 5);
+    for (i = 2; i < X_MAX; ++i)
+    {
+        WaveformData[i] = OriginalWaveDate[i] - OriginalWaveDate[minNum];
+        temp = (u16)(64 - WaveformData[i] * 54 / (float)vm - 5);
+        // printf("%d,", WaveformData[i]);
+        // DrawLine(i, temp_last, i + 1, temp);
+        // printf("%d\r\n", temp);
+    }
+    // UpdateScreen();
 }

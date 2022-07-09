@@ -25,6 +25,10 @@
 #warning ADC_SAMPLING_NUM should be 1024
 #endif
 
+#ifndef PI
+#define PI 3.1415926f
+#endif
+
 #define delay_ms(MS) HAL_Delay(MS)
 
 #endif
