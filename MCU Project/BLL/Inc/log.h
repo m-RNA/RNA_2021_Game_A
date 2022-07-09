@@ -2,12 +2,21 @@
 #define __LOG_H__
 #include "main.h"
 #include "config.h"
+#include "stdio.h"
 
-#ifdef DEBUG 
-#define log_debug(fmt, ...) __log_print(fmt, ##__VA_ARGS__)
+#ifdef DEBUG
+#define log_debug(fmt, ...) \
+    printf("[Log Debug] "); \
+    printf(fmt, ##__VA_ARGS__)
 #else
 #define log_debug(fmt, ...) ((void)0)
 #endif
-void __log_print(char *fmt, ...);
+
+#define log_assert(fmt, ...)                                                                       \
+    printf("[Log Assert] File: %s, Function: %s, Line: %d\r\n", __FILE__, __FUNCTION__, __LINE__); \
+    printf(fmt, ##__VA_ARGS__);                                                                    \
+    while (1)
+
+// void __log_print(char *fmt, ...);
 
 #endif
