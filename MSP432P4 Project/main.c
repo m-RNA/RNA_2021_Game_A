@@ -13,6 +13,7 @@
 #include "delay.h"
 #include "baseboard.h"
 #include "arm_math.h"
+#include "arm_const_structs.h"
 #include "adc.h"
 #include "usart3.h"
 #include "gameA.h"
@@ -30,9 +31,8 @@ int main(void)
     uint8_t key_val; // 按键键值
     char strBuf[9];  // OLED_printf暂存
 
-    float THDx;                  //THDx
+    float THDx;                  // THDx
     float gyh[4] = {0, 0, 0, 0}; //归一化幅值
-    arm_cfft_radix4_instance_f32 scfft;
 
     /***   三大初始化函数   ***/
     SysInit();       // 第3讲 时钟配置（48M）
@@ -57,8 +57,6 @@ int main(void)
     BEEP = 1;              // 关闭 蜂鸣器
     ADC_Config();          // 第11讲 ADC
 
-    arm_cfft_radix4_init_f32(&scfft, ADC_SAMPLING_NUMBER * MM, 0, 1); //初始化scfft结构体，设定FFT相关参数
-
     /* 初始化完毕 提示可以测量 */
     printf("Hello,MSP432!\r\n");
     DrawString(0, 0, "OK");
@@ -71,7 +69,7 @@ int main(void)
 
         switch (key_val)
         {
-        case KEY1_OnBoard_PRES: //KEY1 按下， 开始一键测量
+        case KEY1_OnBoard_PRES: // KEY1 按下， 开始一键测量
 
             /*****************************   测量f、调整fs   ******************************/
 
@@ -114,7 +112,7 @@ int main(void)
                 }
             }
 
-            arm_cfft_radix4_f32(&scfft, fft_inputbuf);                                //FFT计算（基4）
+            arm_cfft_f32(&arm_cfft_sR_f32_len1024, fft_inputbuf, 0, 1);               // FFT计算
             arm_cmplx_mag_f32(fft_inputbuf, fft_outputbuf, ADC_SAMPLING_NUMBER * MM); //把运算结果复数求模得幅值
 
             LED_RED = 0; // 关红灯
