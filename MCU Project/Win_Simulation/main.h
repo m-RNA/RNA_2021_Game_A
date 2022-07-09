@@ -15,14 +15,14 @@ typedef const uint32_t uc32; /*!< Read Only */
 typedef const uint16_t uc16; /*!< Read Only */
 typedef const uint8_t uc8;   /*!< Read Only */
 
-#define KEY1_Pin GPIO_PIN_0
-#define KEY1_GPIO_Port GPIOB
-#define KEY2_Pin GPIO_PIN_1
-#define KEY2_GPIO_Port GPIOB
-#define LED_LOCK_Pin GPIO_PIN_2
-#define LED_LOCK_GPIO_Port GPIOD
-#define BEEP_Pin GPIO_PIN_3
-#define BEEP_GPIO_Port GPIOB
+// #define KEY1_Pin GPIO_PIN_0
+// #define KEY1_GPIO_Port GPIOB
+// #define KEY2_Pin GPIO_PIN_1
+// #define KEY2_GPIO_Port GPIOB
+// #define LED_LOCK_Pin GPIO_PIN_2
+// #define LED_LOCK_GPIO_Port GPIOD
+// #define BEEP_Pin GPIO_PIN_3
+// #define BEEP_GPIO_Port GPIOB
 
 #define DEBUG
 
