@@ -1,6 +1,7 @@
 #include "bsp.h"
 #include "log.h"
 #include "stdlib.h"
+#include "math.h"
 
 void BSP_Sample_ADC_with_DMA_Init(void)
 {
@@ -55,9 +56,26 @@ u32 BSP_Get_Signal_CCR(void)
     return (rand() & 0xFF);
 }
 
+
+#define Y_RANGE_OF_WAVE 54
+#define Y_UP_MOVE 64
+
 void BSP_ADC_DMA_Start(u16 *Data, u16 Num)
 {
-    return;
+    float NormAm[4] = {0.5f, 0, 0.2f,0};
+    
+    for (u16 i = 0; i < Num; ++i)
+    {
+        *Data = Y_UP_MOVE;
+        *Data += Y_RANGE_OF_WAVE * sin(PI * i / 64.0f);
+        // OriginalWaveDate[i] = Y_RANGE_OF_WAVE * arm_sin_f32(PI * i / 64.0f);
+        for (u16 j = 0; j < 4; ++j)
+        {
+            *Data += Y_RANGE_OF_WAVE * sin(PI * i * (j + 1) / 64.0f) * NormAm[j];
+            // OriginalWaveDate[i] += Y_RANGE_OF_WAVE * arm_sin_f32(PI * i * (j + 1) / 64.0f) * NormAm[j];
+        }
+        ++Data;
+    }
 }
 
 void NVIC_Init(void)

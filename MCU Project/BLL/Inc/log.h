@@ -1,6 +1,6 @@
 #ifndef __LOG_H__
 #define __LOG_H__
-#include "main.h"
+#include "sysinit.h"
 #include "config.h"
 #include "stdio.h"
 
