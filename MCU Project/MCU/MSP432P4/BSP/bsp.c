@@ -5,29 +5,39 @@
 #include "timA.h"
 #include "delay.h"
 #include "adc.h"
+#include "usart.h"
+#include "usart3.h"
+#include "led.h"
 
-void BSP_Sample_ADC_with_DMA_Init(void)
+void BSP_Sample_ADC_with_DMA_Init(u16 *Addr, u16 Length)
 {
+    adc_dma_init(Addr, Length);    // 第12讲 DMA
+    ADC_Config();          // 第11讲 ADC
     log_debug("config BSP_Sample_ADC_with_DMA_Init...\r\n");
 }
 
 void BSP_Sample_Timer_Init(void)
 {
+    TimA0_Int_Init(60, 1); // 第8讲 定时器配置 （ADC触发时钟源 fs）
+    TimA2_Cap_Init();      // 第8讲 定时器捕获 （过零比较器采频率）
     log_debug("config BSP_Sample_Timer_Init...\r\n");
 }
 
-void BSP_Uart_PC(void)
+void BSP_Uart_PC_Init(void)
 {
+    uart_init(1382400); // 第7讲 串口配置（调试）
     log_debug("config BSP_Uart_PC...\r\n");
 }
 
-void BSP_Uart_Bluetooth(void)
+void BSP_Uart_Bluetooth_Init(void)
 {
+    usart3_init(9600); 
     log_debug("config BSP_Uart_Bluetooth...\r\n");
 }
 
 void BSP_LED_Init(void)
 {
+    LED_Init();  // LED
     log_debug("config BSP_LED_Init...\r\n");
 }
 
@@ -43,11 +53,11 @@ void BSP_KEY_Init(void)
 
 void BSP_Init(void)
 {
-    BSP_Uart_PC();
-    BSP_Uart_Bluetooth();
+    BSP_Uart_PC_Init();
+    BSP_Uart_Bluetooth_Init();
     BSP_LED_Init();
-    BSP_BEEP_Init();
-    BSP_KEY_Init();
+    // BSP_BEEP_Init();
+    // BSP_KEY_Init();
 }
 
 void BSP_Set_Fs_CCR(u32 Fs_CCR)
@@ -91,12 +101,14 @@ void NVIC_Init(void)
 
 void Clock_Init(void)
 {
-    log_debug("config Clock_Init...\r\n");
+    SystemClock_Config(); // 第3讲 时钟配置（48M）
+    // log_debug("config Clock_Init...\r\n");
 }
 
 void Delay_Init(void)
 {
-    log_debug("config Delay_Init...\r\n");
+    delay_init();       // 第4讲 滴答延时
+    // log_debug("config Delay_Init...\r\n");
 }
 
 

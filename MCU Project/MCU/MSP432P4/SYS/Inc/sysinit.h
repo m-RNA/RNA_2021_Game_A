@@ -27,6 +27,6 @@ typedef const uint32_t uc32;  /*!< Read Only */
 typedef const uint16_t uc16;  /*!< Read Only */
 typedef const uint8_t uc8;   /*!< Read Only */
 
-void SysInit(void);
+void SystemClock_Config(void);
 
 #endif

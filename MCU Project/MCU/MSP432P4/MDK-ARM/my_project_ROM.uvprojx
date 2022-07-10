@@ -398,11 +398,6 @@
               <FileType>1</FileType>
               <FilePath>.\system_msp432p401r.c</FilePath>
             </File>
-            <File>
-              <FileName>gameA.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\Hardware\gameA.c</FilePath>
-            </File>
           </Files>
         </Group>
         <Group>

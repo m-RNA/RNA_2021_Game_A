@@ -10,7 +10,7 @@
 
 //High:48MHz  Low:32768Hz
 //MCLK=48MHz  SMCLK=48MHz
-void SysInit(void)
+void SystemClock_Config(void)
 {
     WDTCTL = WDTPW | WDTHOLD; // 停用看门狗
 

@@ -17,6 +17,7 @@
 #include "adc.h"
 #include "usart3.h"
 #include "gameA.h"
+#include "bsp.h"
 #include "bll.h"
 #include "bll_oled.h"
 #include "config.h"
@@ -34,21 +35,18 @@ int main(void)
     MAP_Interrupt_disableMaster(); // 关闭总中断
     
     /***   三大初始化函数   ***/
-    SysInit();          // 第3讲 时钟配置（48M）
-    delay_init();       // 第4讲 滴答延时
-    uart_init(1382400); // 第7讲 串口配置 （调试）
+    SystemClock_Config(); // 第3讲 时钟配置（48M）
+    Delay_Init();         // 第4讲 滴答延时
+    BSP_Uart_PC_Init(); // 第7讲 串口配置（调试）
     
     InitGraph(); // OLED
-    LED_Init();  // LED
 
     /**  显示 Ti和电赛 Logo  **/
     OLEDInterface_Display_TiGame_Logo();
 
-    usart3_init(9600);     // 第7讲 串口配置 （蓝牙）
-    TimA0_Int_Init(60, 1); // 第8讲 定时器配置 （ADC触发时钟源 fs）
-    TimA2_Cap_Init();      // 第8讲 定时器捕获 （过零比较器采频率）
-    adc_dma_init(Signal_ADC_Data, ADC_SAMPLING_NUM);    // 第12讲 DMA
-    ADC_Config();          // 第11讲 ADC
+    BSP_Uart_Bluetooth_Init(); // 第7讲 串口配置 （蓝牙）
+    BSP_Sample_Timer_Init(); // 第8讲 定时器配置 （ADC触发时钟源 fs）（过零比较器采频率）
+    BSP_Sample_ADC_with_DMA_Init(Signal_ADC_Data, ADC_SAMPLING_NUM);    // 第11讲 ADC 第12讲 DMA
 
     /* 初始化完毕 可以测量 */
     log_debug("All Init Completed!\r\n");

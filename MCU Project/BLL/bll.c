@@ -11,7 +11,7 @@
 
 void Signal_Sample_Init(void)
 {
-    BSP_Sample_ADC_with_DMA_Init();
+    // BSP_Sample_ADC_with_DMA_Init(Signal_ADC_Data, ADC_SAMPLING_NUM); // 第11讲 ADC 第12讲 DMA
     BSP_Sample_Timer_Init();
 }
 
@@ -50,12 +50,12 @@ void SignalSample_Start(u16 *Data)
     LED_W_Off();
     log_debug("Signal Sampling...\r\n");
     BSP_ADC_DMA_Start(Data, ADC_SAMPLING_NUM);
-    
+
 #ifdef DEBUG_PRINT_INTERNAL_DATA
     log_debug("ADC Sampling Data:\r\n");
-    for(u16 i = 0; i < ADC_SAMPLING_NUM; ++i)
+    for (u16 i = 0; i < ADC_SAMPLING_NUM; ++i)
     {
-        printf("%u\r\n",Data[i]);
+        printf("%u\r\n", Data[i]);
     }
 #endif
     log_debug("Signal Sample Completed!\r\n");
@@ -90,8 +90,8 @@ void SignalSample_FFT_to_Am(u16 *SampleData, float *Output)
 
     arm_cfft_f32(&arm_cfft_sR_f32_len1024, fft_inputbuf, 0, 1); // FFT计算
     arm_cmplx_mag_f32(fft_inputbuf, Output, ADC_SAMPLING_NUM);  //把运算结果复数求模得幅值
-    
-#ifdef DEBUG_PRINT_INTERNAL_DATA    
+
+#ifdef DEBUG_PRINT_INTERNAL_DATA
     printf("Am Data:\r\n");
     for (i = 0; i < ADC_SAMPLING_NUM; ++i)
     {
@@ -127,39 +127,37 @@ void NormalizedAm_And_CalculateTHD(float *Am_Data, float *NormAm, float *THD)
 
     /* 找出基波位置 */
     Fx_Index[0] = FloatMaxIndex_WithinRange(Am_Data, 1 + (FFT_To_Am_IndexErrorRange >> 1), (ADC_SAMPLING_NUM >> 1));
-    log_debug("F0 Freq: %uHz\r\n",FFT_Freq_Calculate(Fx_Index[0]));
+    log_debug("F0 Freq: %uHz\r\n", FFT_Freq_Calculate(Fx_Index[0]));
 
     for (i = 0; i < 4; ++i)
     {
         /* 找出谐波位置 */
         Fx_Index[i + 1] = FloatMaxIndex_WithinRange(Am_Data, Fx_Index[0] * (i + 2) - (FFT_To_Am_IndexErrorRange >> 1), Fx_Index[0] * (i + 2) + (FFT_To_Am_IndexErrorRange >> 1)); // 优化过的算法 更加准确
-        log_debug("F%u Freq: %uHz\r\n",(i + 2), FFT_Freq_Calculate(Fx_Index[i]));
+        log_debug("F%u Freq: %uHz\r\n", (i + 2), FFT_Freq_Calculate(Fx_Index[i]));
 
         /* 计算归一化幅值 */
         NormAm[i] = floor(Am_Data[Fx_Index[i + 1]] / Am_Data[Fx_Index[0]] * 100.0f) / 100.0f; // 向下取整floor() 误差更小
     }
-    
+
     log_debug("Normalized Am Data: 1, "); // 归一化幅值
 
     /* THDx计算 */
     for (i = 0; i < 4; ++i)
     {
 #ifdef DEBUG
-        printf("%0.3f, ",NormAm[i]);  // 借用 打印归一化幅值
+        printf("%0.3f, ", NormAm[i]); // 借用 打印归一化幅值
 #endif
         sum += Am_Data[Fx_Index[i + 1]] * Am_Data[Fx_Index[i + 1]];
     }
 #ifdef DEBUG
-        printf("\r\n");
+    printf("\r\n");
 #endif
-    
+
     *THD = ceil(sqrt(sum) / Am_Data[Fx_Index[0]] * 10000) / 100.0f; // 向上取整ceil()
-    log_debug("THDx: %.2f%%\r\n",*THD);
+    log_debug("THDx: %.2f%%\r\n", *THD);
 
     LED_W_Off();
 }
-
-
 
 // 找出最小值位置
 u16 Compare_Min(float Mag[], u16 len)
@@ -184,10 +182,9 @@ void Transform_NormalizedAm_To_WaveformData(float *NormAm, u16 *WaveformData)
     u16 i;
     u16 MinIndex;
     float OriginalWaveDate[OLED_X_MAX];
-    LED_P_On();    
+    LED_P_On();
     log_debug("Transforming Normalized Am To Waveform Data...\r\n");
 
-    
     for (int i = 0; i < OLED_X_MAX; ++i)
     {
         OriginalWaveDate[i] = SIN(PI * i / ((float)(OLED_X_MAX >> 1)));
@@ -197,7 +194,7 @@ void Transform_NormalizedAm_To_WaveformData(float *NormAm, u16 *WaveformData)
         }
         log_debug("%f\n", OriginalWaveDate[i]);
     }
-    
+
     // 找出最小的小数的位置
     MinIndex = Compare_Min(OriginalWaveDate, OLED_X_MAX);
 
@@ -222,29 +219,27 @@ void Bluetooth_SendByte(u8 Data)
 
 void Bluetooth_SendDate_To_Phone(float *NormalizedAm, float THDx, u16 *WaveformData)
 {
-	uint8_t i;
+    uint8_t i;
     LED_B_On();
     log_debug("Bluetooth Sending Date To Phone.\r\n");
 
-	/* 发送THD */
-	Bluetooth_SendByte(((uint16_t)(THDx * 100)) >> 8);
-	Bluetooth_SendByte(((uint16_t)(THDx * 100)) & 0xFF);
+    /* 发送THD */
+    Bluetooth_SendByte(((uint16_t)(THDx * 100)) >> 8);
+    Bluetooth_SendByte(((uint16_t)(THDx * 100)) & 0xFF);
 
-	/* 发送拟合值 */
-	for (i = 0; i < 128; ++i)
-	{
-		Bluetooth_SendByte(WaveformData[i] >> 8);
-		Bluetooth_SendByte(WaveformData[i] & 0xFF);
-	}
+    /* 发送拟合值 */
+    for (i = 0; i < 128; ++i)
+    {
+        Bluetooth_SendByte(WaveformData[i] >> 8);
+        Bluetooth_SendByte(WaveformData[i] & 0xFF);
+    }
 
-	/* 发送归一化幅值 */
-	for (i = 0; i < 4; ++i)
-	{
-		Bluetooth_SendByte(((uint16_t)(NormalizedAm[i + 1] * 100)) >> 8);
-		Bluetooth_SendByte(((uint16_t)(NormalizedAm[i + 1] * 100)) & 0xFF);
-	}
+    /* 发送归一化幅值 */
+    for (i = 0; i < 4; ++i)
+    {
+        Bluetooth_SendByte(((uint16_t)(NormalizedAm[i + 1] * 100)) >> 8);
+        Bluetooth_SendByte(((uint16_t)(NormalizedAm[i + 1] * 100)) & 0xFF);
+    }
     log_debug("Bluetooth Sending Completed!\r\n");
     LED_W_Off();
 }
-
-
