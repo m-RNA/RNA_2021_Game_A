@@ -116,11 +116,12 @@ int main(void)
   MX_USART1_UART_Init();
   MX_USART2_UART_Init();
   /* USER CODE BEGIN 2 */
+  
   vu8 i = 10;
   u32 Signal_Captured_Value;
   u16 Signal_ADC_Data[ADC_SAMPLING_NUM];
   float FFT_Output[ADC_SAMPLING_NUM];
-  float NormalizedAm[5] = {0}; // 归一化幅值 基波-5次谐波
+  float NormalizedAm[4] = {0}; // 归一化幅值 基波-5次谐波
   float THD = 0.0f;
   u16 WaveformData[128] = {0};
   System_Init();
@@ -134,9 +135,9 @@ int main(void)
     SignalSample_FFT_to_Am(Signal_ADC_Data, FFT_Output);
     NormalizedAm_And_CalculateTHD(FFT_Output, NormalizedAm, &THD);
     // OLEDInterface_Update_Norm_Am_And_THD(NormalizedAm, &THD);
-    Transform_NormAm_To_WaveformData(NormalizedAm, WaveformData);
+    Transform_NormalizedAm_To_WaveformData(NormalizedAm, WaveformData);
     // OLEDInterface_Update_Waveform(WaveformData);
-    // Bluetooth_SendDate_To_Phone(NormalizedAm, &THD, WaveformData);
+    Bluetooth_SendDate_To_Phone(NormalizedAm, THD, WaveformData);
   }
 
   /* USER CODE END 2 */
