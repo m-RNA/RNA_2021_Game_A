@@ -1,5 +1,6 @@
 --cpu Cortex-M3
 "stm32f103\startup_stm32f103xb.o"
+"stm32f103\main_app.o"
 "stm32f103\main.o"
 "stm32f103\gpio.o"
 "stm32f103\adc.o"
@@ -26,9 +27,9 @@
 "stm32f103\stm32f1xx_hal_uart.o"
 "stm32f103\system_stm32f1xx.o"
 "stm32f103\bsp.o"
+"stm32f103\bll.o"
 "stm32f103\fft.o"
 "stm32f103\log.o"
-"stm32f103\bll.o"
 --library_type=microlib --strict --scatter "Stm32F103\Stm32F103.sct"
 --summary_stderr --info summarysizes --map --load_addr_map_info --xref --callgraph --symbols
 --info sizes --info totals --info unused --info veneers

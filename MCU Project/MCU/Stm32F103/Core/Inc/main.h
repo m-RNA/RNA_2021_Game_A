@@ -66,6 +66,7 @@ typedef const uint8_t uc8;   /*!< Read Only */
 void Error_Handler(void);
 
 /* USER CODE BEGIN EFP */
+void SystemClock_Config(void);
 
 /* USER CODE END EFP */
 

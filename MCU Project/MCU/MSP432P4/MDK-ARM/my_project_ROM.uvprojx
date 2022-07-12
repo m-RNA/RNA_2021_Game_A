@@ -339,7 +339,7 @@
               <MiscControls></MiscControls>
               <Define>__MSP432P401R__,__TARGET_FPU_VFP,__FPU_PRESENT,ARM_MATH_CM4,__CC_ARM,ARM_MATH_MATRIX_CHECK,ARM_MATH_ROUNDING</Define>
               <Undefine></Undefine>
-              <IncludePath>..\Hardware\Inc;..\SYS\Inc;..\Drivers;..\..\..\DSP_Lib\CMSIS\Include;..\..\..\OLED_Lib;..\..\..\BLL\Inc;..\BSP\Inc</IncludePath>
+              <IncludePath>..\Hardware\Inc;..\SYS\Inc;..\Drivers;..\..\..\DSP_Lib\CMSIS\Include;..\..\..\OLED_Lib;..\..\..\BLL\Inc;..\BSP\Inc;..\..\MSP432P4</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
