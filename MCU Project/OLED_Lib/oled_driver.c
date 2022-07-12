@@ -5,7 +5,7 @@ void SelectDownOLED(void)
 #ifdef __MSP432P401R__
 	MAP_I2C_setSlaveAddress(EUSCI_BX, 0x3C);
 #else
-    OLED_ADDRESS = 0x3C;
+    OLED_ADDRESS = 0x78;
 #endif
 }
 void SelectUpOLED(void)
@@ -13,7 +13,7 @@ void SelectUpOLED(void)
 #ifdef __MSP432P401R__
 	MAP_I2C_setSlaveAddress(EUSCI_BX, 0x3D);
 #else
-    OLED_ADDRESS = 0x3D;
+    OLED_ADDRESS = 0x79;
 #endif
 }
 
