@@ -9,9 +9,11 @@
 
 #ifdef USE_HAL_DRIVER
 #include "main.h"
-#include "usart.h"
 #include "tim.h"
 #include "adc.h"
+#include "usart.h"
+#include "dma.h"
+#include "gpio.h"
 
 #define BLUETOOTH_UART &huart2
 #define SIGNAL_CAPTURE_TIMER &htim2

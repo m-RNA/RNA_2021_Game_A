@@ -8,7 +8,7 @@
 #include "config.h"
 #include "bsp.h"
 #include "bll.h"
-#include "bll_oled.h"
+#include "oled_interface.h"
 #include "log.h"
 
 void log_Internal_data(void);
@@ -56,6 +56,8 @@ int main(void)
 
         log_Internal_data(); // 内部数据
         delay_ms(100);       //延时100ms
+        
+        
 
 #ifdef DEBUG
         printf("\r\n\r\n***********************  0%u0  ****************************\r\n\r\n", ++i);
