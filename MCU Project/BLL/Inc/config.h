@@ -20,6 +20,7 @@
 #define SIGNAL_SAMPLE_TIMER_ACTIVE_CHANNEL HAL_TIM_ACTIVE_CHANNEL_1
 #define SIGNAL_SAMPLE_ADC &hadc1
 
+#define delay_ms(MS) HAL_Delay(MS)
 
 #elif defined __MSP432P401R__
 #include "sysinit.h"
@@ -28,18 +29,14 @@
 #error Doesnt contain top-level header file
 #endif
 
-
 #if defined __STM32F1xx_HAL_H
 #define TimerSourerFreq 72000000
 #define SignalSampleFreq_MAX 1000000
-#define delay_ms(MS) HAL_Delay(MS)
 // #define true_T 1000
-
 
 #elif defined STM32G431xx
 #define TimerSourerFreq 170000000
 #define SignalSampleFreq_MAX 2000000
-#define delay_ms(MS) HAL_Delay(MS)
 
 #elif defined __MSP432P401R__
 #define TimerSourerFreq 48000000
@@ -53,15 +50,12 @@
 #define SignalSampleFreq_Multiple 16 // 采样频率设定为信号基波频率的几倍（Fs = ？F0）
 #define SignalSamplePeriod_MIN (TimerSourerFreq / SignalSampleFreq_MAX)
 
-
-
 #if (ADC_SAMPLING_NUM != 1024)
 #warning ADC_SAMPLING_NUM should be 1024
 #endif
 
-#ifdef Simulation    
-#define Simulation_Times 7
-extern u8 Simulation_Times_Index;
-extern u32 Simulation_CCR[10];
+#ifdef Simulation
+#include "simulation.h"
 #endif
+
 #endif
