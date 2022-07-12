@@ -188,7 +188,7 @@ void ShowWave_AndTran(float *gyh)
         waveDate[i] = Y_MULTI * arm_sin_f32(PI * i / 64.0f);
         for (int j = 0; j < 4; ++j)
         {
-            waveDate[i] += Y_MULTI * arm_sin_f32(PI * i * (j + 1) / 64.0f) * gyh[j];
+            waveDate[i] += Y_MULTI * arm_sin_f32(PI * i * (j + 2) / 64.0f) * gyh[j];
         }
         waveDate[i] += Y_UPMOVE;
         //printf("%f\n", waveDate[i]);
