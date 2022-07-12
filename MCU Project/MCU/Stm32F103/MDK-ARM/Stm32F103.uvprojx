@@ -558,6 +558,11 @@
               <FileType>1</FileType>
               <FilePath>..\..\..\BLL\log.c</FilePath>
             </File>
+            <File>
+              <FileName>simulation.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\BLL\simulation.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>

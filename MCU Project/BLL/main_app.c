@@ -11,10 +11,7 @@
 #include "bll_oled.h"
 #include "log.h"
 
-#ifdef Simulation    
-u8 Simulation_Times_Index  = 0;
 void log_Internal_data(void);
-#endif
     
 u32 Signal_Captured_Value; // 滞回比较器 定时器捕获值
 u16 Signal_ADC_Data[ADC_SAMPLING_NUM]; // 信号采样ADC数据

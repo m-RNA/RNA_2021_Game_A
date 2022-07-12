@@ -29,6 +29,7 @@
 "stm32f103\bsp.o"
 "stm32f103\bll.o"
 "stm32f103\log.o"
+"stm32f103\simulation.o"
 "..\..\..\DSP_Lib\CMSIS\DSP_Lib\lib\keil\m3\arm_cortexM3l_math.lib"
 --library_type=microlib --strict --scatter "Stm32F103\Stm32F103.sct"
 --summary_stderr --info summarysizes --map --load_addr_map_info --xref --callgraph --symbols
