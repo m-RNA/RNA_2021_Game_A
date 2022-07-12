@@ -5,7 +5,7 @@
 
 extern vu16 true_T;
 
-void BSP_LED_KEY_BEEP_Init(void);
+void BSP_GPIO_Init(void);
 void BSP_OLEDInterface_Init(void);
 void BSP_Uart_PC_Init(void);
 void BSP_Uart_Bluetooth_Init(void);

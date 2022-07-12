@@ -27,12 +27,14 @@ int main(void)
     HAL_Init();
     SystemClock_Config();
 
-    BSP_LED_KEY_BEEP_Init();
+    BSP_GPIO_Init();    // 第2讲 GPIO配置
     BSP_Uart_PC_Init(); // 第7讲 串口配置（调试）
-    BSP_OLEDInterface_Init(); // OLED 
-    OLEDInterface_Display_TiGame_Logo(); //  显示 Ti和电赛 Logo
 
-    BSP_Uart_Bluetooth_Init();                                       // 第7讲 串口配置 （蓝牙）
+    BSP_OLEDInterface_Init();            // 第7讲 OLED显示
+    OLEDInterface_Display_TiGame_Logo(); // 显示 Ti和电赛 Logo
+
+    BSP_Uart_Bluetooth_Init(); // 第7讲 串口配置 （蓝牙）
+
     BSP_Sample_ADC_with_DMA_Init(Signal_ADC_Data, ADC_SAMPLING_NUM); // 第11讲 ADC 第12讲 DMA
     BSP_Sample_Timer_Init();                                         // 第8讲 定时器配置 （ADC触发时钟源 fs）（过零比较器采频率）
 
@@ -46,18 +48,17 @@ int main(void)
         Signal_Fs_Adjust(Signal_Captured_Value);   // 调整fs 红灯
         SignalSample_Start(Signal_ADC_Data);       // 开启ADC采集DMA传输 关灯
 
-        SignalSample_FFT_to_Am(Signal_ADC_Data, FFT_Output);            // 通过FFT 计算各个频率分量幅值 白灯
-        NormalizedAm_And_CalculateTHD(FFT_Output, NormalizedAm, &THDx); // 归一化幅值 和 计算THDx 绿色
-
-        OLEDInterface_Update_Data(NormalizedAm, THDx, Signal_Captured_Value);        // 更新OLED上的信息 青色
+        SignalSample_FFT_to_Am(Signal_ADC_Data, FFT_Output);                         // 通过FFT 计算各个频率分量幅值 白灯
+        NormalizedAm_And_CalculateTHD(FFT_Output, NormalizedAm, &THDx);              // 归一化幅值 和 计算THDx 绿色
         Transform_NormalizedAm_To_WaveformData(NormalizedAm, WaveformData_Restored); // 将归一化幅值转化为波形数据（长度内定为OLED的X分辨率128） 品红
-        OLEDInterface_Update_Waveform(WaveformData_Restored);                        // 将波形数据传入 让OLED在对应位置画出波形 单红
+
+        OLEDInterface_Update_Data(NormalizedAm, THDx, Signal_Captured_Value);   // 更新OLED上的信息 青色
+        OLEDInterface_Update_Waveform(WaveformData_Restored);                   // 将波形数据传入 让OLED在对应位置画出波形 单红
+        
         Bluetooth_SendDate_To_Phone(NormalizedAm, THDx, WaveformData_Restored); // 将数据通过蓝牙发至手机 蓝色
 
         log_Internal_data(); // 内部数据
         delay_ms(100);       //延时100ms
-        
-        
 
 #ifdef DEBUG
         printf("\r\n\r\n***********************  0%u0  ****************************\r\n\r\n", ++i);
@@ -87,7 +88,7 @@ void log_Internal_data(void)
     }
 
     log_indata("\r\n*********************\r\n");
-    
+
     log_indata("Am Data(a half):\r\n");
     for (i = 0; i < (ADC_SAMPLING_NUM >> 1); ++i)
     {
@@ -97,19 +98,19 @@ void log_Internal_data(void)
     log_indata("\r\n");
 
     log_indata("\r\n*********************\r\n");
-    
+
     log_indata("Waveform Data:\r\n");
     for (i = 0; i < OLED_X_MAX; ++i)
     {
         log_indata("%u\r\n", WaveformData_Restored[i]);
     }
-    
+
     log_indata("\r\n*********************\r\n");
-    
+
     log_indata("Normalized Am Data:\r\n"); // 归一化幅值
-    log_indata("1.000\r\n"); 
+    log_indata("1.000\r\n");
     for (i = 0; i < 4; ++i)
     {
-        log_indata("%0.3f\r\n", NormalizedAm[i]); 
+        log_indata("%0.3f\r\n", NormalizedAm[i]);
     }
 }
