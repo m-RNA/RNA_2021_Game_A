@@ -30,7 +30,7 @@ int main(void)
     BSP_GPIO_Init();    // 第2讲 GPIO配置
     BSP_Uart_PC_Init(); // 第7讲 串口配置（调试）
 
-    BSP_OLEDInterface_Init();            // 第7讲 OLED显示
+    BSP_OLEDInterface_Init();            // 第10讲 OLED显示
     OLEDInterface_Display_TiGame_Logo(); // 显示 Ti和电赛 Logo
 
     BSP_Uart_Bluetooth_Init(); // 第7讲 串口配置 （蓝牙）
