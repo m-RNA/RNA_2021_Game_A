@@ -5,7 +5,7 @@
 // 是否调试 是则定义 DEBUG
 #define DEBUG (1u)
 #define DEBUG_PRINT_INTERNAL_DATA (1u)
-// #define Simulation
+#define Simulation
 
 #ifdef USE_HAL_DRIVER
 #include "main.h"
