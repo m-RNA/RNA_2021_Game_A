@@ -28,5 +28,6 @@ typedef const uint16_t uc16;  /*!< Read Only */
 typedef const uint8_t uc8;   /*!< Read Only */
 
 void SystemClock_Config(void);
+void HAL_Init(void);
 
 #endif

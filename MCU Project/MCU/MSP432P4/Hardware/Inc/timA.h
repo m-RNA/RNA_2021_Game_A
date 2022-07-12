@@ -15,9 +15,6 @@
 #define CAP_CCR_NUM 2                                            //在这里改定时器通道
 #define CAP_PORT_PIN GPIO_PORT_P5, GPIO_PIN7                     //在这里改复用引脚
 
-extern vu8 SignalCaptureTimerState;
-extern uint16_t true_T;
-
 void TimA2_Cap_Init(void);
 void TimA0_Int_Init(uint16_t ccr0, uint16_t psc);
 

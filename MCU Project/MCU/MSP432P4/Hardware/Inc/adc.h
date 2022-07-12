@@ -22,7 +22,6 @@
 
 
 extern volatile bool recv_done_flag;
-extern u16 true_T;
 
 void ADC_Config(void);
 void adc_dma_init(u16 *Data, uint16_t Length);

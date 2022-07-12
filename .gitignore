@@ -81,3 +81,4 @@ MCU Project/Win_Simulation/main.exe
 Stm32F401
 *.axf
 *.mp4
+MCU Project/MCU/MSP432P4/BSP0/
