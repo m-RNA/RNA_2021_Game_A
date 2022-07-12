@@ -7,6 +7,7 @@
 /****************************************************/
 
 #include "sysinit.h"
+#include "delay.h"
 
 //High:48MHz  Low:32768Hz
 //MCLK=48MHz  SMCLK=48MHz
@@ -35,4 +36,6 @@ void SystemClock_Config(void)
 
     MAP_CS_initClockSignal(CS_MCLK, CS_HFXTCLK_SELECT, CS_CLOCK_DIVIDER_1);  //48MHz   16分频时，滴答延时可达到最长
     MAP_CS_initClockSignal(CS_SMCLK, CS_HFXTCLK_SELECT, CS_CLOCK_DIVIDER_1); //48MHz
+    
+    delay_init();
 }

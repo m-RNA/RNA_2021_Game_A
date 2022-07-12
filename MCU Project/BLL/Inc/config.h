@@ -5,7 +5,7 @@
 // 是否调试 是则定义 DEBUG
 #define DEBUG (1u)
 #define DEBUG_PRINT_INTERNAL_DATA (1u)
-#define Simulation
+// #define Simulation
 
 #ifdef USE_HAL_DRIVER
 #include "main.h"
@@ -26,6 +26,13 @@
 
 #elif defined __MSP432P401R__
 #include "sysinit.h"
+#include "timA.h"
+#include "delay.h"
+#include "adc.h"
+#include "usart.h"
+#include "usart3.h"
+#include "led.h"
+
 #define BLUETOOTH_UART EUSCI_A2_BASE
 #else
 #error Doesnt contain top-level header file

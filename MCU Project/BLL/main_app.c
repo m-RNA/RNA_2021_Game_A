@@ -8,8 +8,8 @@
 #include "config.h"
 #include "bsp.h"
 #include "bll.h"
-#include "oled_interface.h"
 #include "log.h"
+#include "oled_interface.h"
 
 void log_Internal_data(void);
 
@@ -49,9 +49,9 @@ int main(void)
         SignalSample_FFT_to_Am(Signal_ADC_Data, FFT_Output);            // 通过FFT 计算各个频率分量幅值 白灯
         NormalizedAm_And_CalculateTHD(FFT_Output, NormalizedAm, &THDx); // 归一化幅值 和 计算THDx 绿色
 
-        // OLEDInterface_Update_Data(NormalizedAm, THDx, Signal_Captured_Value);        // 更新OLED上的信息 青色
+        OLEDInterface_Update_Data(NormalizedAm, THDx, Signal_Captured_Value);        // 更新OLED上的信息 青色
         Transform_NormalizedAm_To_WaveformData(NormalizedAm, WaveformData_Restored); // 将归一化幅值转化为波形数据（长度内定为OLED的X分辨率128） 品红
-        // OLEDInterface_Update_Waveform(WaveformData_Restored);                        // 将波形数据传入 让OLED在对应位置画出波形 单红
+        OLEDInterface_Update_Waveform(WaveformData_Restored);                        // 将波形数据传入 让OLED在对应位置画出波形 单红
         Bluetooth_SendDate_To_Phone(NormalizedAm, THDx, WaveformData_Restored); // 将数据通过蓝牙发至手机 蓝色
 
         log_Internal_data(); // 内部数据
