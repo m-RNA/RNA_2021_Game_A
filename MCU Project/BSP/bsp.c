@@ -6,31 +6,21 @@
 #include "simulation.h"
 #endif
 
-void BSP_Sample_ADC_with_DMA_Init(u16 *Addr, u16 Length)
+/********************************************************************************************/
+/******************************   初始化类函数  *********************************************/
+
+void BSP_LED_KEY_BEEP_Init(void)
 {
 #ifdef __MSP432P401R__
-    adc_dma_init(Addr, Length); // 第12讲 DMA
-    ADC_Config();               // 第11讲 ADC
+    LED_Init(); // LED
 #else
-    MX_DMA_Init();
-    MX_ADC1_Init();
+    MX_GPIO_Init();
 #endif
-    log_debug("config BSP_Sample_ADC_with_DMA_Init...\r\n");
 }
 
-void BSP_Sample_Timer_Init(void)
+void BSP_OLEDInterface_Init(void)
 {
-    log_debug("config BSP_Sample_Timer_Init...\r\n");
-#ifdef __MSP432P401R__
-    TimA0_Int_Init(60, 1); // 第8讲 定时器配置 （ADC触发时钟源 fs）
-    TimA2_Cap_Init();      // 第8讲 定时器捕获 （过零比较器采频率）
-#else
-    MX_TIM3_Init(); // 第8讲 定时器配置 （ADC触发时钟源 fs）
-    MX_TIM2_Init(); // 第8讲 定时器捕获 （过零比较器采频率）
-
-    HAL_TIM_IC_Start_IT(SIGNAL_SAMPLE_TIMER, SIGNAL_SAMPLE_TIMER_CHANNEL);
-    HAL_TIM_Base_Start(SIGNAL_SAMPLE_TIMER);
-#endif
+    InitGraph(); 
 }
 
 void BSP_Uart_PC_Init(void)
@@ -53,41 +43,35 @@ void BSP_Uart_Bluetooth_Init(void)
     log_debug("config BSP_Uart_Bluetooth...\r\n");
 }
 
-void BSP_LED_KEY_BEEP_Init(void)
+void BSP_Sample_Timer_Init(void)
+{
+    log_debug("config BSP_Sample_Timer_Init...\r\n");
+#ifdef __MSP432P401R__
+    TimA0_Int_Init(60, 1); // 第8讲 定时器配置 （ADC触发时钟源 fs）
+    TimA2_Cap_Init();      // 第8讲 定时器捕获 （过零比较器采频率）
+#else
+    MX_TIM3_Init(); // 第8讲 定时器配置 （ADC触发时钟源 fs）
+    MX_TIM2_Init(); // 第8讲 定时器捕获 （过零比较器采频率）
+
+    HAL_TIM_IC_Start_IT(SIGNAL_SAMPLE_TIMER, SIGNAL_SAMPLE_TIMER_CHANNEL);
+    HAL_TIM_Base_Start(SIGNAL_SAMPLE_TIMER);
+#endif
+}
+
+void BSP_Sample_ADC_with_DMA_Init(u16 *Addr, u16 Length)
 {
 #ifdef __MSP432P401R__
-    LED_Init(); // LED
+    adc_dma_init(Addr, Length); // 第12讲 DMA
+    ADC_Config();               // 第11讲 ADC
 #else
-    MX_GPIO_Init();
+    MX_DMA_Init();
+    MX_ADC1_Init();
 #endif
+    log_debug("config BSP_Sample_ADC_with_DMA_Init...\r\n");
 }
 
-void BSP_Init(void)
-{
-    BSP_Uart_PC_Init();
-    BSP_Uart_Bluetooth_Init();
-    BSP_LED_KEY_BEEP_Init();
-}
-
-void BSP_Bluetooth_SendByte(u8 Data)
-{
-#if defined __MSP432P401R__
-    MAP_UART_transmitData(BLUETOOTH_UART, Data);
-#elif defined USE_HAL_DRIVER
-    HAL_UART_Transmit(BLUETOOTH_UART, &Data, 1, 50);
-#else
-#error Please Transplant Function: BSP_Bluetooth_SendByte();
-#endif
-}
-
-void BSP_Set_Fs_CCR(u32 Fs_CCR)
-{
-#ifdef __MSP432P401R__
-    MAP_Timer_A_setCompareValue(TIMER_A0_BASE, TIMER_A_CAPTURECOMPARE_REGISTER_0, Fs_CCR); // 调整fs
-#else
-    __HAL_TIM_SET_AUTORELOAD(SIGNAL_SAMPLE_TIMER, Fs_CCR);
-#endif
-}
+/********************************************************************************************/
+/***********************************   中断函数  ********************************************/
 
 vu8 SignalCaptureTimerState = 0; // 捕获状态
 vu16 true_T = 240;               // 真正的测量周期
@@ -155,6 +139,9 @@ void HAL_TIM_IC_CaptureCallback(TIM_HandleTypeDef *htim)
 }
 #endif
 
+/********************************************************************************************/
+/*********************************   操作类函数  ********************************************/
+
 u32 BSP_Get_Signal_CCR(void)
 {
 #ifdef Simulation
@@ -162,8 +149,11 @@ u32 BSP_Get_Signal_CCR(void)
 #else
 
 #ifdef __MSP432P401R__
+    
 #else
+    
 #endif
+    
     delay_ms(19); // 信号捕获最多时长也就 1.4ms * 6 = 8.2ms
     // while(SignalCaptureTimerState == 0); // 阻塞 再次确定
     // SignalCaptureTimerState = 0;
@@ -171,11 +161,24 @@ u32 BSP_Get_Signal_CCR(void)
 #endif
 }
 
+void BSP_Set_Fs_CCR(u32 Fs_CCR)
+{
+#ifdef __MSP432P401R__
+    MAP_Timer_A_setCompareValue(TIMER_A0_BASE, TIMER_A_CAPTURECOMPARE_REGISTER_0, Fs_CCR); // 调整fs
+#else
+    __HAL_TIM_SET_AUTORELOAD(SIGNAL_SAMPLE_TIMER, Fs_CCR);
+#endif
+}
+
 void BSP_ADC_DMA_Start(u16 *Data, u16 Num)
 {
 #ifdef Simulation
-    // Simulate_Signal_WaveformData(Data);
+#if 1 // 两种仿真输入信号生成方式选择（选一个就好）
     Simulate_Signal_Synthesizer(Data);
+#else
+    Simulate_Signal_WaveformData(Data); 
+#endif
+    
 #else
 #ifdef __MSP432P401R__
     MAP_DMA_setChannelTransfer(DMA_CH7_ADC14 | UDMA_PRI_SELECT, UDMA_MODE_BASIC, (void *)&ADC14->MEM[0], (void *)Data, Num);
@@ -194,6 +197,17 @@ void BSP_ADC_DMA_Start(u16 *Data, u16 Num)
 //        ;
 #endif
 
+#endif
+}
+
+void BSP_Bluetooth_SendByte(u8 Data)
+{
+#if defined __MSP432P401R__
+    MAP_UART_transmitData(BLUETOOTH_UART, Data);
+#elif defined USE_HAL_DRIVER
+    HAL_UART_Transmit(BLUETOOTH_UART, &Data, 1, 50);
+#else
+#error Please Transplant Function: BSP_Bluetooth_SendByte();
 #endif
 }
 

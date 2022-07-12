@@ -53,14 +53,6 @@ void SignalSample_Start(u16 *Data)
     log_debug("Signal Sample Completed!\r\n\r\n");
 }
 
-void System_Init(void)
-{
-    // HAL_Init();
-    BSP_Init();
-
-    Signal_Sample_Init();
-}
-
 static float fft_inputbuf[ADC_SAMPLING_NUM * 2];
 void SignalSample_FFT_to_Am(u16 *SampleData, float *Output)
 {
