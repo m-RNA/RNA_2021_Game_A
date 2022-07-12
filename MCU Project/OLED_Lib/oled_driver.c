@@ -1,19 +1,19 @@
 #include "oled_driver.h"
-
+vu8 OLED_ADDRESS = 0x3C;
 void SelectDownOLED(void)
 {
 #ifdef __MSP432P401R__
 	MAP_I2C_setSlaveAddress(EUSCI_BX, 0x3C);
 #else
-    
+    OLED_ADDRESS = 0x3C;
 #endif
-    
 }
 void SelectUpOLED(void)
 {
 #ifdef __MSP432P401R__
 	MAP_I2C_setSlaveAddress(EUSCI_BX, 0x3D);
 #else
+    OLED_ADDRESS = 0x3D;
 #endif
 }
 

@@ -5,7 +5,6 @@
 #include "oled_basic.h"
 
 #if (TRANSFER_METHOD == HW_IIC)
-#define OLED_ADDRESS 0x3C //通过调整0R电阻,屏可以0x78和0x7A两个地址 -- 默认0x78  0x3C = 0x78 >> 1
 
 #if (USE_HW_IIC == IIC_0) // 已验证
 #define IIC_GPIOX GPIO_PORT_P1
