@@ -147,8 +147,7 @@ void Signal_Synthesizer(u16 *Output, u16 Length, u16 Magnification, float *NormA
 {
     u16 i, j;
     u16 MinIndex;
-    log_debug("Transforming Normalized Am To Waveform Data...\r\n");
-
+    
     for (i = 0; i < Length; ++i)
     {
         OriginalWaveDate[i] = arm_sin_f32(PI * i / ((float)(Length >> 1)));
