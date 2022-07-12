@@ -25,9 +25,9 @@ void Signal_F0_Measure(u32 *Captured_Value)
     log_debug("F0(Captured):%ukHz\r\n", TimerSourerFreq / 1000 / (*Captured_Value));
 }
 
-u32 Signal_Fs_CCR = 0;
 void Signal_Fs_Adjust(u32 Captured_Value)
 {
+    u32 Signal_Fs_CCR = 0;
     log_debug("Signal Fs Adjusting...\r\n");
 
     Signal_Fs_CCR = Captured_Value / SignalSampleFreq_Multiple;
