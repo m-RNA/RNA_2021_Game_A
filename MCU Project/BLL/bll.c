@@ -5,7 +5,7 @@
 #include "stdio.h"
 #include "math.h"
 #include "adc.h"
-#include "bll_oled.h"
+#include "oled_interface.h"
 #include "arm_math.h"
 #include "arm_const_structs.h"
 
@@ -18,9 +18,9 @@ void Signal_Sample_Init(void)
 void Signal_F0_Measure(u32 *Captured_Value)
 {
     log_debug("Signal F0 Measuring...\r\n");
-    
+
     *Captured_Value = BSP_Get_Signal_CCR();
-    
+
     log_debug("F0 Captured Value:%u\r\n", *Captured_Value);
     log_debug("F0(Captured):%ukHz\r\n", TimerSourerFreq / 1000 / (*Captured_Value));
 }
@@ -53,16 +53,10 @@ void SignalSample_Start(u16 *Data)
     log_debug("Signal Sample Completed!\r\n\r\n");
 }
 
-void BLL_Init(void)
-{
-    log_debug("config BLL_Init...\r\n");
-}
-
 void System_Init(void)
 {
     // HAL_Init();
     BSP_Init();
-    BLL_Init();
 
     Signal_Sample_Init();
 }
@@ -102,7 +96,7 @@ u16 FloatMaxIndex_WithinRange(float Data[], u16 Left, u16 Right) // 最优算法
 
 #ifdef Simulation
 #define true_T Simulation_CCR[Simulation_Times_Index]
-#endif   
+#endif
 
 #define FFT_To_Am_IndexErrorRange 4
 #define Fs (SignalSampleFreq_Multiple * TimerSourerFreq / true_T)
@@ -122,20 +116,19 @@ void NormalizedAm_And_CalculateTHD(float *Am_Data, float *NormAm, float *THD)
         /* 找出谐波位置 */
         Fx_Index[i] = FloatMaxIndex_WithinRange(
             Am_Data,
-            Fx_Index[0] * (i + 1) - (FFT_To_Am_IndexErrorRange >> 1), 
-            Fx_Index[0] * (i + 1) + (FFT_To_Am_IndexErrorRange >> 1)
-        ); // 优化过的算法 更加准确
+            Fx_Index[0] * (i + 1) - (FFT_To_Am_IndexErrorRange >> 1),
+            Fx_Index[0] * (i + 1) + (FFT_To_Am_IndexErrorRange >> 1)); // 优化过的算法 更加准确
         log_debug("F%u: %ukHz\r\n", (i + 1), FFT_Freq_Calculate(Fx_Index[i]) / 1000);
 
         /* 计算归一化幅值 */
         NormAm[i - 1] = floor(Am_Data[Fx_Index[i]] / Am_Data[Fx_Index[0]] * 100.0f) / 100.0f; // 向下取整floor() 误差更小
     }
-    log_debug("Normalized Am: 1.000, %0.3f, %0.3f, %0.3f, %0.3f\r\n",NormAm[0],NormAm[1],NormAm[2],NormAm[3]); // 归一化幅值
+    log_debug("Normalized Am: 1.000, %0.3f, %0.3f, %0.3f, %0.3f\r\n", NormAm[0], NormAm[1], NormAm[2], NormAm[3]); // 归一化幅值
 
     /* THDx计算 */
     for (i = 1; i < 5; ++i)
     {
-        sum += Am_Data[Fx_Index[i]] * Am_Data[Fx_Index[i]];       
+        sum += Am_Data[Fx_Index[i]] * Am_Data[Fx_Index[i]];
     }
     *THD = ceil(sqrt(sum) / Am_Data[Fx_Index[0]] * 10000) / 100.0f; // 向上取整ceil()
     log_debug("THDx: %.3f%%\r\n\r\n", *THD);
@@ -157,44 +150,39 @@ u16 Compare_Min(float Mag[], u16 len)
     return Fn_Num;
 }
 
-
-
 static float OriginalWaveDate[OLED_X_MAX];
-void Transform_NormalizedAm_To_WaveformData(float *NormAm, u16 *WaveformData)
+void Signal_Synthesizer(u16 *Output, u16 Length, u16 Magnification, float *NormAm, u8 Precision)
 {
-    u16 i;
+    u16 i, j;
     u16 MinIndex;
     log_debug("Transforming Normalized Am To Waveform Data...\r\n");
 
-    for (int i = 0; i < OLED_X_MAX; ++i)
+    for (i = 0; i < Length; ++i)
     {
-        OriginalWaveDate[i] = arm_sin_f32(PI * i / ((float)(OLED_X_MAX >> 1)));
-        for (int j = 0; j < 4; ++j)
+        OriginalWaveDate[i] = arm_sin_f32(PI * i / ((float)(Length >> 1)));
+        for (j = 0; j < Precision - 1; ++j) // 各次谐波叠加
         {
-            OriginalWaveDate[i] += arm_sin_f32(PI * i * (j + 2) / ((float)(OLED_X_MAX >> 1))) * NormAm[j];
+            OriginalWaveDate[i] += arm_sin_f32(PI * i * (j + 2) / ((float)(Length >> 1))) * NormAm[j];
         }
     }
 
     // 找出最小的小数的位置
-    MinIndex = Compare_Min(OriginalWaveDate, OLED_X_MAX);
-    for (i = 0; i < OLED_X_MAX; ++i)
+    MinIndex = Compare_Min(OriginalWaveDate, Length);
+    for (i = 0; i < Length; ++i)
     {
-        // 将小数全转为为正数，再乘以100变为整数
-        WaveformData[i] = 100 * (OriginalWaveDate[i] - OriginalWaveDate[MinIndex]);
-        // 这个100是随便定的，不要太大就好了，目的是把小数转换为整数；OLED显示函数会进一步处理范围
+        // 将小数全转为以0为起点的正数，再乘以 Magnification 变为整数
+        Output[i] = Magnification * (OriginalWaveDate[i] - OriginalWaveDate[MinIndex]); // 将小数全转为为正数
     }
-    log_debug("Transforming Completed!\r\n");
 }
 
-void Bluetooth_SendByte(u8 Data)
+void Transform_NormalizedAm_To_WaveformData(float *NormAm, u16 *WaveformData)
 {
-#if defined USE_HAL_DRIVER
-    HAL_UART_Transmit(BLUETOOTH_UART, &Data, 1, 50);
-#elif defined __MSP432P401R__
-    MAP_UART_transmitData(BLUETOOTH_UART, Data);
-#else
-#error Please Transplant Function: Bluetooth_SendByte();
-#endif
+    log_debug("Transforming Normalized Am To Waveform Data...\r\n");
+
+    Signal_Synthesizer(WaveformData, OLED_X_MAX, 100, // 这个100是随便定的，不要太大就好了，目的是把小数转换为整数；OLED显示函数会进一步处理范围
+                       NormAm, 5);
+
+    log_debug("Transforming Completed!\r\n");
 }
 
 void Bluetooth_SendDate_To_Phone(float *NormalizedAm, float THDx, u16 *WaveData)
@@ -203,22 +191,21 @@ void Bluetooth_SendDate_To_Phone(float *NormalizedAm, float THDx, u16 *WaveData)
     log_debug("Bluetooth Sending Date To Phone...\r\n");
 
     /* 发送THD */
-    Bluetooth_SendByte(((uint16_t)(THDx * 100)) >> 8);
-    Bluetooth_SendByte(((uint16_t)(THDx * 100)) & 0xFF);
+    BSP_Bluetooth_SendByte(((uint16_t)(THDx * 100)) >> 8);
+    BSP_Bluetooth_SendByte(((uint16_t)(THDx * 100)) & 0xFF);
 
     /* 发送拟合值 */
     for (i = 0; i < 128; ++i)
     {
-        Bluetooth_SendByte(WaveData[i] >> 8);
-        Bluetooth_SendByte(WaveData[i] & 0xFF);
+        BSP_Bluetooth_SendByte(WaveData[i] >> 8);
+        BSP_Bluetooth_SendByte(WaveData[i] & 0xFF);
     }
 
     /* 发送归一化幅值 */
     for (i = 0; i < 4; ++i)
     {
-        Bluetooth_SendByte(((uint16_t)(NormalizedAm[i + 1] * 100)) >> 8);
-        Bluetooth_SendByte(((uint16_t)(NormalizedAm[i + 1] * 100)) & 0xFF);
+        BSP_Bluetooth_SendByte(((uint16_t)(NormalizedAm[i + 1] * 100)) >> 8);
+        BSP_Bluetooth_SendByte(((uint16_t)(NormalizedAm[i + 1] * 100)) & 0xFF);
     }
     log_debug("Bluetooth Sending Completed!\r\n");
 }
-

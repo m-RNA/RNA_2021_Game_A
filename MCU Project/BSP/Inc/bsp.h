@@ -16,5 +16,6 @@ void Delay_Init(void);
 void BSP_Set_Fs_CCR(u32 Fs_CCR);
 u32 BSP_Get_Signal_CCR(void);
 void BSP_ADC_DMA_Start(u16 *Data, u16 Num);
+void BSP_Bluetooth_SendByte(u8 Data);
 
 #endif
