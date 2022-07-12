@@ -2,10 +2,7 @@
 #include "arm_math.h"
 #include "log.h"
 #include "stdlib.h"
-#ifdef Simulation
-extern u8 Simulation_Times_Index;
-extern u32 Simulation_CCR[10];
-#endif
+
 #define Simulate_WaveformDate_Period_Length SignalSampleFreq_Multiple
 #define Add_Noise (rand() % Simulate_Sample_ADC_Noise)
 u8 Simulation_Times_Index = 0;
