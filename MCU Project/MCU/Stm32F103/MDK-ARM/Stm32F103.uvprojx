@@ -111,12 +111,12 @@
         <DllOption>
           <SimDllName>SARMCM3.DLL</SimDllName>
           <SimDllArguments>-REMAP</SimDllArguments>
-          <SimDlgDll>DCM.DLL</SimDlgDll>
-          <SimDlgDllArguments>-pCM3</SimDlgDllArguments>
+          <SimDlgDll>DARMSTM.DLL</SimDlgDll>
+          <SimDlgDllArguments>-pSTM32F103C8</SimDlgDllArguments>
           <TargetDllName>SARMCM3.DLL</TargetDllName>
           <TargetDllArguments></TargetDllArguments>
-          <TargetDlgDll>TCM.DLL</TargetDlgDll>
-          <TargetDlgDllArguments>-pCM3</TargetDlgDllArguments>
+          <TargetDlgDll>TARMSTM.DLL</TargetDlgDll>
+          <TargetDlgDllArguments>-pSTM32F103C8</TargetDlgDllArguments>
         </DllOption>
         <DebugOption>
           <OPTHX>
@@ -337,9 +337,9 @@
             <v6Rtti>0</v6Rtti>
             <VariousControls>
               <MiscControls></MiscControls>
-              <Define>USE_HAL_DRIVER,STM32F103xB</Define>
+              <Define>USE_HAL_DRIVER,STM32F103xB,ARM_MATH_CM3</Define>
               <Undefine></Undefine>
-              <IncludePath>../Core/Inc;../Drivers/STM32F1xx_HAL_Driver/Inc;../Drivers/STM32F1xx_HAL_Driver/Inc/Legacy;../Drivers/CMSIS/Device/ST/STM32F1xx/Include;../Drivers/CMSIS/Include;..\..\..\BLL\Inc;..\..\..\BSP\Inc;..\..\..\OLED_Lib</IncludePath>
+              <IncludePath>../Core/Inc;../Drivers/STM32F1xx_HAL_Driver/Inc;../Drivers/STM32F1xx_HAL_Driver/Inc/Legacy;../Drivers/CMSIS/Device/ST/STM32F1xx/Include;../Drivers/CMSIS/Include;..\..\..\BLL\Inc;..\..\..\BSP\Inc;..\..\..\OLED_Lib;..\..\..\DSP_Lib\CMSIS\Include</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -554,14 +554,19 @@
               <FilePath>..\..\..\BLL\bll.c</FilePath>
             </File>
             <File>
-              <FileName>fft.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\BLL\fft.c</FilePath>
-            </File>
-            <File>
               <FileName>log.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\BLL\log.c</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>DSP_Lib</GroupName>
+          <Files>
+            <File>
+              <FileName>arm_cortexM3l_math.lib</FileName>
+              <FileType>4</FileType>
+              <FilePath>E:\RNA_2021_Game_A\MCU Project\DSP_Lib\CMSIS\DSP_Lib\lib\keil\m3\arm_cortexM3l_math.lib</FilePath>
             </File>
           </Files>
         </Group>
