@@ -1,7 +1,6 @@
 #include "oled_config.h"
 /* 屏幕驱动文件引用 */
 #include "oled_driver.h"
-#include "delay.h"
 
 extern unsigned char ScreenBuffer[SCREEN_PAGE_NUM][SCREEN_COLUMN];
 extern unsigned char TempBuffer[SCREEN_PAGE_NUM][SCREEN_COLUMN];

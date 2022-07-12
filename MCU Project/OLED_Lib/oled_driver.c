@@ -1,40 +1,28 @@
 #include "oled_driver.h"
-#include "delay.h"
 
 void SelectDownOLED(void)
 {
+#ifdef __MSP432P401R__
 	MAP_I2C_setSlaveAddress(EUSCI_BX, 0x3C);
+#else
+    
+#endif
+    
 }
 void SelectUpOLED(void)
 {
+#ifdef __MSP432P401R__
 	MAP_I2C_setSlaveAddress(EUSCI_BX, 0x3D);
+#else
+#endif
 }
 
-/* 没写好解决I2C挂死的程序 */
-// void SolveI2CHolding(void)
-// {
-// 	uint8_t i;
-// 	MAP_GPIO_setAsInputPin(IIC_GPIOX, IIC_SDA_Pin);
-// 	if (MAP_GPIO_getInputPinValue(IIC_GPIOX, IIC_SDA_Pin))
-// 	{
-// 		for (i = 0; i < 9; ++i)
-// 		{
-// 			MAP_GPIO_setAsInputPin(IIC_GPIOX, IIC_SCL_Pin);
-// 			MAP_GPIO_setOutputLowOnPin(IIC_GPIOX, IIC_SCL_Pin);
-// 		}
-
-// 		for (i = 0; i < 9; ++i)
-// 		{
-// 			...
-// 		}
-// 	}
-// 	...
-// }
 
 #if (TRANSFER_METHOD == HW_IIC)
 //I2C_Configuration，初始化硬件IIC引脚
 void I2C_Configuration(void)
 {
+#ifdef __MSP432P401R__
 	MAP_GPIO_setAsPeripheralModuleFunctionInputPin(
 		IIC_GPIOX, IIC_SCL_Pin | IIC_SDA_Pin, GPIO_PRIMARY_MODULE_FUNCTION);
 	const eUSCI_I2C_MasterConfig i2cConfig =
@@ -49,12 +37,9 @@ void I2C_Configuration(void)
 	MAP_I2C_setSlaveAddress(EUSCI_BX, 0x3C);
 	MAP_I2C_setMode(EUSCI_BX, EUSCI_B_I2C_TRANSMIT_MODE);
 	MAP_I2C_enableModule(EUSCI_BX);
-
-	// MAP_I2C_clearInterruptFlag(
-	// 	EUSCI_BX, EUSCI_B_I2C_TRANSMIT_INTERRUPT0 | EUSCI_B_I2C_NAK_INTERRUPT);
-	// MAP_I2C_enableInterrupt(
-	// 	EUSCI_BX, EUSCI_B_I2C_TRANSMIT_INTERRUPT0 | EUSCI_B_I2C_NAK_INTERRUPT);
-	// MAP_Interrupt_enableInterrupt(INT_EUSCIB0);
+#else
+    MX_I2C1_Init();
+#endif
 }
 
 /*
@@ -65,21 +50,32 @@ static uint8_t buff;					  // 指令/数据缓存
 
 void WriteCmd(unsigned char cmd) //写命令
 {
+#ifdef __MSP432P401R__
 	MAP_I2C_masterSendMultiByteStartWithTimeout(EUSCI_BX, 0x00, EUSCI_B_I2C_TIMEOUT_31_MS);
 	MAP_I2C_masterSendMultiByteFinishWithTimeout(EUSCI_BX, cmd, EUSCI_B_I2C_TIMEOUT_31_MS);
+#else
+    HAL_I2C_Mem_Write(OLED_Internal_IIC, OLED_ADDRESS, 0x00, I2C_MEMADD_SIZE_8BIT, &cmd, 1, 10);
+#endif
 }
 
 void WriteDat(unsigned char dat) //写数据
 {
+#ifdef __MSP432P401R__
 	MAP_I2C_masterSendMultiByteStartWithTimeout(EUSCI_BX, 0x40, EUSCI_B_I2C_TIMEOUT_31_MS);
 	MAP_I2C_masterSendMultiByteFinishWithTimeout(EUSCI_BX, dat, EUSCI_B_I2C_TIMEOUT_31_MS);
+#else
+    HAL_I2C_Mem_Write(OLED_Internal_IIC, OLED_ADDRESS, 0x40, I2C_MEMADD_SIZE_8BIT, &dat, 1, 10);
+#endif
+
 }
 
 void OLED_FILL(unsigned char BMP[])
 {
-	unsigned char m, n;
 	unsigned char *p;
 	p = BMP;
+
+#ifdef __MSP432P401R__
+	unsigned char m, n;
 	for (m = 0; m < 8; ++m)
 	{
 		WriteCmd(0xb0 + m); //page0-page1
@@ -94,69 +90,13 @@ void OLED_FILL(unsigned char BMP[])
 		}
 		MAP_I2C_masterSendMultiByteFinishWithTimeout(EUSCI_BX, *p++, EUSCI_B_I2C_TIMEOUT_31_MS);
 	}
+#else
+    while(*OLED_Internal_IIC.State != HAL_I2C_STATE_READY);
+    HAL_I2C_Mem_Write_DMA(OLED_Internal_IIC, OLED_ADDRESS, 0x40, I2C_MEMADD_SIZE_8BIT, p, SCREEN_PAGE_NUM * SCREEN_PAGEDATA_NUM);   
+#endif
+
 }
 
-/**
- * @brief   IIC中断处理函数
- */
-/*
-void EUSCIB0_IRQHandler(void)
-{
-	// 中断状态
-	uint_fast16_t status;
-	status = MAP_I2C_getEnabledInterruptStatus(EUSCI_BX);
-
-	// 没接收到应答（ACK）信号
-	if (status & EUSCI_B_I2C_NAK_INTERRUPT)
-	{
-		// 清除中断
-		MAP_I2C_clearInterruptFlag(EUSCI_BX, EUSCI_B_I2C_NAK_INTERRUPT);
-
-		//MAP_I2C_masterSendMultiByteStart(EUSCI_BX, OLED_ADDRESS);
-	}
-
-	// 接收中断
-	if (status & EUSCI_B_I2C_RECEIVE_INTERRUPT0)
-	{
-		// 清除中断
-		MAP_I2C_clearInterruptFlag(EUSCI_BX, EUSCI_B_I2C_RECEIVE_INTERRUPT0);
-		// 失能中断
-		MAP_I2C_disableInterrupt(EUSCI_BX, EUSCI_B_I2C_RECEIVE_INTERRUPT0);
-	}
-
-	// 发送完成中断
-	if (status & EUSCI_B_I2C_TRANSMIT_INTERRUPT0)
-	{
-		// 清除中断
-		MAP_I2C_clearInterruptFlag(EUSCI_BX, EUSCI_B_I2C_TRANSMIT_INTERRUPT0);
-
-		// ---发送完成中断处理--- 
-		if (_OLED_IIC_sending == 0) // 发完了
-		{
-			MAP_I2C_masterSendMultiByteStop(EUSCI_BX); // 发送IIC结束信号
-			_OLED_IIC_sendingPtr = 0;						// 指针处理
-		}
-		else if (_OLED_IIC_sending == 1) // 还有一个就发完了
-		{
-			MAP_I2C_masterSendMultiByteFinish(EUSCI_BX, *_OLED_IIC_sendingPtr); // 发送完下一个信号自动跟上结束信号
-			_OLED_IIC_sendingPtr = 0;												 // 指针处理
-			_OLED_IIC_sending = 0;
-		}
-		else // 还有很多数据待发
-		{
-			MAP_I2C_masterSendMultiByteNext(EUSCI_BX, *_OLED_IIC_sendingPtr); // 放一个数据到发送寄存器
-			_OLED_IIC_sendingPtr++;												   // 指针迭代
-			_OLED_IIC_sending--;												   // 计数器自减
-		}
-	}
-
-	// 发送结束中断
-	if (status & EUSCI_B_I2C_STOP_INTERRUPT)
-	{
-		MAP_I2C_clearInterruptFlag(EUSCI_BX, EUSCI_B_I2C_STOP_INTERRUPT);
-	}
-}
-*/
 #elif (TRANSFER_METHOD == SW_IIC)
 
 void I2C_SW_Configuration(void)
@@ -410,7 +350,8 @@ void OLED_Init(void)
 	SelectDownOLED();
 	WriteCmd(0xAE); //display off
 	WriteCmd(0x20); //Set Memory Addressing Mode
-	WriteCmd(0x10); //00,Horizontal Addressing Mode;01,Vertical Addressing Mode;10,Page Addressing Mode (RESET);11,Invalid
+//	WriteCmd(0x10); //00,Horizontal Addressing Mode;01,Vertical Addressing Mode;10,Page Addressing Mode (RESET);11,Invalid
+	WriteCmd(0x00); //00,Horizontal Addressing Mode;01,Vertical Addressing Mode;10,Page Addressing Mode (RESET);11,Invalid
 	WriteCmd(0xb0); //Set Page Start Address for Page Addressing Mode,0-7
 	WriteCmd(0xc8); //Set COM Output Scan Direction
 	WriteCmd(0x00); //---set low column address
@@ -441,7 +382,8 @@ void OLED_Init(void)
 	SelectUpOLED();
 	WriteCmd(0xAE); //display off
 	WriteCmd(0x20); //Set Memory Addressing Mode
-	WriteCmd(0x10); //00,Horizontal Addressing Mode;01,Vertical Addressing Mode;10,Page Addressing Mode (RESET);11,Invalid
+//	WriteCmd(0x10); //00,Horizontal Addressing Mode;01,Vertical Addressing Mode;10,Page Addressing Mode (RESET);11,Invalid
+	WriteCmd(0x00); //00,Horizontal Addressing Mode;01,Vertical Addressing Mode;10,Page Addressing Mode (RESET);11,Invalid
 	WriteCmd(0xb0); //Set Page Start Address for Page Addressing Mode,0-7
 	WriteCmd(0xc8); //Set COM Output Scan Direction
 	WriteCmd(0x00); //---set low column address
@@ -472,6 +414,7 @@ void OLED_Init(void)
 
 void OLED_CLS(void) //清屏
 {
+#ifdef __MSP432P401R__
 	unsigned char m, n;
 	for (m = 0; m < 8; m++)
 	{
@@ -482,7 +425,18 @@ void OLED_CLS(void) //清屏
 		{
 			WriteDat(0x00);
 		}
-	}
+	}    
+#else
+    extern unsigned char ScreenBuffer[SCREEN_PAGE_NUM][SCREEN_COLUMN];
+    uint16_t i;
+    for (i = 0; i < SCREEN_PAGE_NUM * SCREEN_COLUMN; ++i)
+    {
+        ScreenBuffer[0][i] = 0;
+    }
+	OLED_FILL(ScreenBuffer[0]);    
+#endif
+
+
 }
 
 void OLED_ON(void)

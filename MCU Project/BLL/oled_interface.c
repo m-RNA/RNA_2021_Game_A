@@ -3,7 +3,6 @@
 #include "oled_config.h"
 #include "stdio.h"
 #include "arm_math.h"
-#include "led.h"
 #include "log.h"
 
 void OLEDInterface_Display_TiGame_Logo(void)
@@ -77,8 +76,6 @@ void OLEDInterface_Update_Waveform(u16 *WaveformData)
     u16 i = 0;
     u16 Max_Data;
     u16 Y, Y_Old;
-    LED_W_Off();
-    LED_RED_On();
     log_debug("OLEDInterface Updating Waveform...\r\n");
     SelectUpOLED();
     ClearScreen();
@@ -96,7 +93,6 @@ void OLEDInterface_Update_Waveform(u16 *WaveformData)
     }
     UpdateScreen();
     log_debug("OLEDInterface Update Waveform Completed!\r\n");
-    LED_RED_Off();
 }
 
 /* MinDSO-Pro示波器开源代码 */
@@ -147,7 +143,6 @@ void OLEDInterface_Update_Data(float *NormalizedAm, float THD, u32 Period)
 {
     uint8_t i;
     char strBuf[9];
-    LED_C_On();
     log_debug("OLEDInterface Updating Data...\r\n");
     SelectDownOLED();
     ClearScreen();
@@ -166,5 +161,4 @@ void OLEDInterface_Update_Data(float *NormalizedAm, float THD, u32 Period)
     DrawString(80, 0, strBuf);
     UpdateScreen();
     log_debug("OLEDInterface Update Data Completed!\r\n");
-    LED_W_Off();
 }

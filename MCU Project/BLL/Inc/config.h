@@ -14,6 +14,7 @@
 #include "usart.h"
 #include "dma.h"
 #include "gpio.h"
+#include "i2c.h"
 
 #define BLUETOOTH_UART &huart2
 #define SIGNAL_CAPTURE_TIMER &htim2
@@ -21,6 +22,7 @@
 #define SIGNAL_SAMPLE_TIMER_CHANNEL TIM_CHANNEL_1
 #define SIGNAL_SAMPLE_TIMER_ACTIVE_CHANNEL HAL_TIM_ACTIVE_CHANNEL_1
 #define SIGNAL_SAMPLE_ADC &hadc1
+#define OLED_Internal_IIC &hi2c1
 
 #define delay_ms(MS) HAL_Delay(MS)
 
