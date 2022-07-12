@@ -8,6 +8,136 @@
 #include "dma.h"
 #include "gpio.h"
 
+#ifdef Simulation
+#include "arm_math.h"
+
+#define Simulate_WaveformDate_Period_Length SignalSampleFreq_Multiple
+
+u32 Simulation_CCR[10] = {
+    TimerSourerFreq /   1000, 
+    TimerSourerFreq /  50000, 
+    TimerSourerFreq / 100000, 
+    
+    TimerSourerFreq /  30000, 
+    TimerSourerFreq / 600000, 
+    TimerSourerFreq / 900000, 
+    SignalSamplePeriod_MIN
+};
+#define Precession 10
+float Simulation_NormAm[10][Precession - 1] = {
+    {0.00f, 0.20f, 0.00f, 0.15f}, // µçÈü²âÊÔĞÅºÅ1
+    {0.00f, 0.08f, 0.15f, 0.00f}, // µçÈü²âÊÔĞÅºÅ2
+    {0.00f, 0.00f, 0.00f, 0.10f}, // µçÈü²âÊÔĞÅºÅ3
+
+    {0.00f, -0.1111111111f, 0.00f, 0.04f, 0.0f, -0.0204081633f, 0.0f, 0.0123456790f}, // Èı½Ç²¨
+    {0.00f, 0.3333333333f, 0.0f, 0.2f, 0.0f, 0.1428571429f, 0.0f, 0.1111111111f}, // ·½²¨
+    {0.5f, 0.3333333333f, 0.25f, 0.2f, 0.1666666667f, 0.1428571429f, 0.125f, 0.1111111111f}, // ¾â³İ²¨£¿
+    {0.0f, 0.0f, 0.0f, 0.0f}, // ÕıÏÒ²¨
+};
+
+extern u16 Compare_Min(float Mag[], u16 len);
+static float OWaveDate[Simulate_WaveformDate_Period_Length];
+static void Simulate_Signal_Synthesizer(float *NormAm, u16 *SimulateWaveData)
+{
+    u16 i;
+    u16 MinIndex;
+
+    for (int i = 0; i < Simulate_WaveformDate_Period_Length; ++i)
+    {
+        OWaveDate[i] = arm_sin_f32(2 * PI * i / ((float)Simulate_WaveformDate_Period_Length));
+        for (int j = 0; j < Precession - 1; ++j)
+        {
+            OWaveDate[i] += arm_sin_f32(2 * PI * (j + 2) * i / ((float)Simulate_WaveformDate_Period_Length)) * NormAm[j];
+        }
+    }
+
+    // ÕÒ³ö×îĞ¡µÄĞ¡ÊıµÄÎ»ÖÃ
+    MinIndex = Compare_Min(OWaveDate, Simulate_WaveformDate_Period_Length);
+    for (i = 0; i < Simulate_WaveformDate_Period_Length; ++i)
+    {
+        // ½«Ğ¡ÊıÈ«×ªÎªÎªÕıÊı£¬ÔÙ³ËÒÔ1000±äÎªÕûÊı
+        SimulateWaveData[i] = 1000 * (OWaveDate[i] - OWaveDate[MinIndex]);
+        // Õâ¸ö1000ÊÇËæ±ã¶¨µÄ£¬²»ÒªÌ«´ó¾ÍºÃÁË£¬Ä¿µÄÊÇ°ÑĞ¡Êı×ª»»ÎªÕûÊı
+    }
+}
+
+static u16 Simulation_ADC_Data[Simulate_WaveformDate_Period_Length] = {0};
+void SquareWaveOut(void)
+{
+    u16 i;
+	for(i = 0; i < Simulate_WaveformDate_Period_Length; i++)
+    {
+        if (i < Simulate_WaveformDate_Period_Length>>1)
+            Simulation_ADC_Data[i] = 4095;
+        else
+            Simulation_ADC_Data[i] = 0;  
+    }
+}
+
+// Èı½Ç²¨
+void TriangularWaveOut(void)
+{
+    u16 i, j;
+	for(i = 0, j = 0; i < Simulate_WaveformDate_Period_Length; i++)
+    {
+        Simulation_ADC_Data[i] =  j * 2 * 4095 / Simulate_WaveformDate_Period_Length;
+        
+        if (i < Simulate_WaveformDate_Period_Length>>1)
+            j++;
+        else
+            j--;       
+    }
+}
+
+// ¾â³İ²¨
+void SawtoothWaveOut(void)
+{
+    u16 i;
+	for(i = 0; i < Simulate_WaveformDate_Period_Length; i++)
+    {
+        Simulation_ADC_Data[i] =  i * 4096 / Simulate_WaveformDate_Period_Length;
+    }
+}
+
+void SinWaveOut(void)
+{
+	u16 i;
+	for (i = 0; i < Simulate_WaveformDate_Period_Length; i++)
+	{
+		Simulation_ADC_Data[i] = (u16)(2090 + 1990 * arm_sin_f32((2 * PI * i) / Simulate_WaveformDate_Period_Length));
+	}
+}
+
+static void Simulate_Signal_WaveformData(u16 *SimulateWaveData)
+{
+    switch(Simulation_Times_Index)
+    {
+        case 0:
+            SquareWaveOut();
+            break;
+        case 1:
+            TriangularWaveOut();
+            break;
+        case 2:
+            SawtoothWaveOut();
+            break;    
+        case 3:
+            SinWaveOut();
+            break;
+        default:
+            log_debug("It is same Simulate_WaveformDate!!!");
+            break;
+    }
+    for(u16 i = 0; i < ADC_SAMPLING_NUM / Simulate_WaveformDate_Period_Length; ++i)
+    {
+        for(u16 j = 0; j < Simulate_WaveformDate_Period_Length; ++j)
+        {
+            SimulateWaveData[j + i * Simulate_WaveformDate_Period_Length] = Simulation_ADC_Data[j];
+        }
+    } 
+}
+#endif
+
 void BSP_Sample_ADC_with_DMA_Init(u16 *Addr, u16 Length)
 {
     MX_DMA_Init();
@@ -18,8 +148,8 @@ void BSP_Sample_ADC_with_DMA_Init(u16 *Addr, u16 Length)
 void BSP_Sample_Timer_Init(void)
 {
     log_debug("config BSP_Sample_Timer_Init...\r\n");
-    MX_TIM3_Init(); // ç¬¬8è®² å®šæ—¶å™¨é…ç½® ï¼ˆADCè§¦å‘æ—¶é’Ÿæº fsï¼‰
-    MX_TIM2_Init(); // ç¬¬8è®² å®šæ—¶å™¨æ•è· ï¼ˆè¿‡é›¶æ¯”è¾ƒå™¨é‡‡é¢‘ç‡ï¼‰
+    MX_TIM3_Init(); // µÚ8½² ¶¨Ê±Æ÷ÅäÖÃ £¨ADC´¥·¢Ê±ÖÓÔ´ fs£©
+    MX_TIM2_Init(); // µÚ8½² ¶¨Ê±Æ÷²¶»ñ £¨¹ıÁã±È½ÏÆ÷²ÉÆµÂÊ£©
     
     HAL_TIM_IC_Start_IT(SIGNAL_SAMPLE_TIMER, SIGNAL_SAMPLE_TIMER_CHANNEL); 
     HAL_TIM_Base_Start(SIGNAL_SAMPLE_TIMER);
@@ -27,7 +157,7 @@ void BSP_Sample_Timer_Init(void)
 
 void BSP_Uart_PC_Init(void)
 {
-    MX_USART1_UART_Init();// ç¬¬7è®² ä¸²å£é…ç½®ï¼ˆè°ƒè¯•ï¼‰
+    MX_USART1_UART_Init();// µÚ7½² ´®¿ÚÅäÖÃ£¨µ÷ÊÔ£©
     log_debug("config BSP_Uart_PC...\r\n");
 }
 
@@ -69,7 +199,7 @@ void BSP_Init(void)
 
 void BSP_Set_Fs_CCR(u32 Fs_CCR)
 {
-    // MAP_Timer_A_setCompareValue(TIMER_A0_BASE, TIMER_A_CAPTURECOMPARE_REGISTER_0, Fs_CCR); // è°ƒæ•´fs
+    // MAP_Timer_A_setCompareValue(TIMER_A0_BASE, TIMER_A_CAPTURECOMPARE_REGISTER_0, Fs_CCR); // µ÷Õûfs
     __HAL_TIM_SET_AUTORELOAD(SIGNAL_SAMPLE_TIMER, Fs_CCR);
 }
 
@@ -81,8 +211,8 @@ void HAL_TIM_IC_CaptureCallback(TIM_HandleTypeDef *htim)
     {
         if(htim->Channel == SIGNAL_SAMPLE_TIMER_ACTIVE_CHANNEL)
         {
-			//â€»æ€»PWMå‘¨æœŸ
-            true_T = HAL_TIM_ReadCapturedValue(htim, SIGNAL_SAMPLE_TIMER_CHANNEL) + 1; //â€»æ˜¯TIM_CHANNEL_1 è¦è®°å¾—åŠ 1
+			//¡ù×ÜPWMÖÜÆÚ
+            true_T = HAL_TIM_ReadCapturedValue(htim, SIGNAL_SAMPLE_TIMER_CHANNEL) + 1; //¡ùÊÇTIM_CHANNEL_1 Òª¼ÇµÃ¼Ó1
             SignalCaptureTimerState = 1;
         }	
     }
@@ -90,23 +220,35 @@ void HAL_TIM_IC_CaptureCallback(TIM_HandleTypeDef *htim)
 
 u32 BSP_Get_Signal_CCR(void)
 {
-    SignalCaptureTimerState = 0;
-    HAL_Delay(19); // ä¿¡å·æ•è·æœ€å¤šæ—¶é•¿ä¹Ÿå°± 1.4ms * 6 = 8.2ms
-    while(SignalCaptureTimerState == 0); // é˜»å¡ å†æ¬¡ç¡®å®š
+#ifdef Simulation
+    return Simulation_CCR[Simulation_Times_Index];
+#else
+    // SignalCaptureTimerState = 0;
+    HAL_Delay(19); // ĞÅºÅ²¶»ñ×î¶àÊ±³¤Ò²¾Í 1.4ms * 6 = 8.2ms
+    // while(SignalCaptureTimerState == 0); // ×èÈû ÔÙ´ÎÈ·¶¨
     
-    return true_T;
-
-    //return (rand() & 0xFF);
+    return true_T;      
+#endif
 }
+
+ 
 
 void BSP_ADC_DMA_Start(u16 *Data, u16 Num)
 {
+#ifdef Simulation
+    // Simulate_Signal_WaveformData(Data);
+    for(u16 i = 0; i < Num / Simulate_WaveformDate_Period_Length; ++i)
+    {
+        Simulate_Signal_Synthesizer(Simulation_NormAm[Simulation_Times_Index], &Data[i * Simulate_WaveformDate_Period_Length]);
+    }
+#else
     HAL_ADC_Start_DMA(SIGNAL_SAMPLE_ADC, (u32 *)Data, Num);
-    // ....
+// ....
 
-//    recv_done_flag = 0;     // ä¼ è¾“å®Œæˆæ ‡å¿—ä½æ¸…é›¶
-//    while (!recv_done_flag) // ç­‰å¾…ä¼ è¾“å®Œæˆ
+//    recv_done_flag = 0;     // ´«ÊäÍê³É±êÖ¾Î»ÇåÁã
+//    while (!recv_done_flag) // µÈ´ı´«ÊäÍê³É
 //        ;
+#endif    
 }
 
 void NVIC_Init(void)
@@ -118,7 +260,7 @@ void NVIC_Init(void)
 
 void Delay_Init(void)
 {
-    // delay_init();       // ç¬¬4è®² æ»´ç­”å»¶æ—¶
+    // delay_init();       // µÚ4½² µÎ´ğÑÓÊ±
     // log_debug("config Delay_Init...\r\n");
 }
 

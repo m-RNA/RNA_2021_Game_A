@@ -6,12 +6,8 @@
 #include "math.h"
 #include "adc.h"
 #include "bll_oled.h"
-
-#ifndef Simulation
 #include "arm_math.h"
 #include "arm_const_structs.h"
-#include "led.h"
-#endif
 
 void Signal_Sample_Init(void)
 {
@@ -22,38 +18,38 @@ void Signal_Sample_Init(void)
 void Signal_F0_Measure(u32 *Captured_Value)
 {
     log_debug("Signal F0 Measuring...\r\n");
+    
     *Captured_Value = BSP_Get_Signal_CCR();
+    
     log_debug("F0 Captured Value:%u\r\n", *Captured_Value);
-    log_debug("F0(Captured):%ukHz\r\n\r\n", TimerSourerFreq / 1000 / (*Captured_Value));
+    log_debug("F0(Captured):%ukHz\r\n", TimerSourerFreq / 1000 / (*Captured_Value));
 }
 
+u32 Signal_Fs_CCR = 0;
 void Signal_Fs_Adjust(u32 Captured_Value)
 {
-    u32 Fs_CCR = 0;
     log_debug("Signal Fs Adjusting...\r\n");
 
-    Fs_CCR = Captured_Value / SignalSampleFreq_Multiple;
-
+    Signal_Fs_CCR = Captured_Value / SignalSampleFreq_Multiple;
     if (Captured_Value <= SignalSamplePeriod_MIN)
     {
-        Fs_CCR += Captured_Value;
-        log_debug("Using Equivalent Sampling!\r\n");
+        Signal_Fs_CCR += Captured_Value;
+        log_debug("Fs CCR: %u\r\n", Signal_Fs_CCR);
+        log_debug("Actual Fs: %ukHz\r\n", TimerSourerFreq / 1000 / Signal_Fs_CCR);
+        log_debug("Equivalent Fs: %ukHz\r\n", SignalSampleFreq_Multiple * TimerSourerFreq / 1000 / Captured_Value);
     }
-    BSP_Set_Fs_CCR(Fs_CCR);
-    log_debug("Fs CCR:%u\r\n", Fs_CCR);
-    log_debug("Fs:%ukHz\r\n\r\n", TimerSourerFreq / 1000 / Fs_CCR);
+    else
+    {
+        log_debug("Fs CCR: %u\r\n", Signal_Fs_CCR);
+        log_debug("Fs: %ukHz\r\n", TimerSourerFreq / 1000 / Signal_Fs_CCR);
+    }
+    BSP_Set_Fs_CCR(Signal_Fs_CCR);
 }
 
 void SignalSample_Start(u16 *Data)
 {
     log_debug("Signal Sampling...\r\n");
     BSP_ADC_DMA_Start(Data, ADC_SAMPLING_NUM);
-
-    log_indata("ADC Sampling Data:\r\n");
-    for (u16 i = 0; i < ADC_SAMPLING_NUM; ++i)
-    {
-        log_indata("%u\r\n", Data[i]);
-    }
     log_debug("Signal Sample Completed!\r\n\r\n");
 }
 
@@ -71,7 +67,7 @@ void System_Init(void)
     Signal_Sample_Init();
 }
 
-static float fft_inputbuf[ADC_SAMPLING_NUM << 1];
+static float fft_inputbuf[ADC_SAMPLING_NUM * 2];
 void SignalSample_FFT_to_Am(u16 *SampleData, float *Output)
 {
     u16 i;
@@ -83,19 +79,10 @@ void SignalSample_FFT_to_Am(u16 *SampleData, float *Output)
         fft_inputbuf[1 + (i << 1)] = 0;             // 虚部为0
     }
 
-#ifndef Simulation
     arm_cfft_f32(&arm_cfft_sR_f32_len1024, fft_inputbuf, 0, 1); // FFT计算
     arm_cmplx_mag_f32(fft_inputbuf, Output, ADC_SAMPLING_NUM);  //把运算结果复数求模得幅值
-#endif
 
-    log_debug("FFT Calculate Amplitudes Completed!\r\n\r\n");
-    
-    log_indata("Am Data(a half):\r\n");
-    for (i = 0; i < (ADC_SAMPLING_NUM >> 1); ++i)
-    {
-        log_indata("[%03d] %.3f\r\n", i, Output[i]);
-    }
-    log_indata("\r\n");
+    log_debug("FFT Calculate Amplitudes Completed!\r\n");
 }
 
 /* 在一定范围内找出最大值位置 */
@@ -113,8 +100,13 @@ u16 FloatMaxIndex_WithinRange(float Data[], u16 Left, u16 Right) // 最优算法
     return MaxIndex;
 }
 
+#ifdef Simulation
+#define true_T Simulation_CCR[Simulation_Times_Index]
+#endif   
+
 #define FFT_To_Am_IndexErrorRange 4
-#define FFT_Freq_Calculate(Index) (Index * TimerSourerFreq / true_T / ADC_SAMPLING_NUM)
+#define Fs (SignalSampleFreq_Multiple * TimerSourerFreq / true_T)
+#define FFT_Freq_Calculate(Index) (Index * Fs / ADC_SAMPLING_NUM)
 void NormalizedAm_And_CalculateTHD(float *Am_Data, float *NormAm, float *THD)
 {
     u16 i;
@@ -123,29 +115,29 @@ void NormalizedAm_And_CalculateTHD(float *Am_Data, float *NormAm, float *THD)
 
     /* 找出基波位置 */
     Fx_Index[0] = FloatMaxIndex_WithinRange(Am_Data, 1 + (FFT_To_Am_IndexErrorRange >> 1), (ADC_SAMPLING_NUM >> 1));
-    log_debug("F0 Freq: %uHz\r\n", FFT_Freq_Calculate(Fx_Index[0]));
+    log_debug("F0: %ukHz\r\n", FFT_Freq_Calculate(Fx_Index[0]) / 1000);
 
-    for (i = 0; i < 4; ++i)
+    for (i = 1; i < 5; ++i)
     {
         /* 找出谐波位置 */
-        Fx_Index[i + 1] = FloatMaxIndex_WithinRange(Am_Data, Fx_Index[0] * (i + 2) - (FFT_To_Am_IndexErrorRange >> 1), Fx_Index[0] * (i + 2) + (FFT_To_Am_IndexErrorRange >> 1)); // 优化过的算法 更加准确
-        log_debug("F%u Freq: %uHz\r\n", (i + 2), FFT_Freq_Calculate(Fx_Index[i]));
+        Fx_Index[i] = FloatMaxIndex_WithinRange(
+            Am_Data,
+            Fx_Index[0] * (i + 1) - (FFT_To_Am_IndexErrorRange >> 1), 
+            Fx_Index[0] * (i + 1) + (FFT_To_Am_IndexErrorRange >> 1)
+        ); // 优化过的算法 更加准确
+        log_debug("F%u: %ukHz\r\n", (i + 1), FFT_Freq_Calculate(Fx_Index[i]) / 1000);
 
         /* 计算归一化幅值 */
-        NormAm[i] = floor(Am_Data[Fx_Index[i + 1]] / Am_Data[Fx_Index[0]] * 100.0f) / 100.0f; // 向下取整floor() 误差更小
+        NormAm[i - 1] = floor(Am_Data[Fx_Index[i]] / Am_Data[Fx_Index[0]] * 100.0f) / 100.0f; // 向下取整floor() 误差更小
     }
-#ifdef DEBUG
-        printf("\r\n");
-#endif
+    log_debug("Normalized Am: 1.000, %0.3f, %0.3f, %0.3f, %0.3f\r\n",NormAm[0],NormAm[1],NormAm[2],NormAm[3]); // 归一化幅值
 
     /* THDx计算 */
-    for (i = 0; i < 4; ++i)
+    for (i = 1; i < 5; ++i)
     {
-        sum += Am_Data[Fx_Index[i + 1]] * Am_Data[Fx_Index[i + 1]];       
+        sum += Am_Data[Fx_Index[i]] * Am_Data[Fx_Index[i]];       
     }
     *THD = ceil(sqrt(sum) / Am_Data[Fx_Index[0]] * 10000) / 100.0f; // 向上取整ceil()
-    
-    log_debug("Normalized Am Data: 1.000, %0.3f, %0.3f, %0.3f, %0.3f\r\n",NormAm[0],NormAm[1],NormAm[2],NormAm[3]); // 归一化幅值
     log_debug("THDx: %.3f%%\r\n\r\n", *THD);
 }
 
@@ -165,12 +157,7 @@ u16 Compare_Min(float Mag[], u16 len)
     return Fn_Num;
 }
 
-#ifndef Simulation
-#define SIN(Cita) arm_sin_f32(Cita)
-#else
-#define SIN(Cita) sin(Cita)
-#define PI 3.1415926f
-#endif
+
 
 static float OriginalWaveDate[OLED_X_MAX];
 void Transform_NormalizedAm_To_WaveformData(float *NormAm, u16 *WaveformData)
@@ -181,23 +168,20 @@ void Transform_NormalizedAm_To_WaveformData(float *NormAm, u16 *WaveformData)
 
     for (int i = 0; i < OLED_X_MAX; ++i)
     {
-        OriginalWaveDate[i] = SIN(PI * i / ((float)(OLED_X_MAX >> 1)));
+        OriginalWaveDate[i] = arm_sin_f32(PI * i / ((float)(OLED_X_MAX >> 1)));
         for (int j = 0; j < 4; ++j)
         {
-            OriginalWaveDate[i] += SIN(PI * i * (j + 1) / ((float)(OLED_X_MAX >> 1))) * NormAm[j];
+            OriginalWaveDate[i] += arm_sin_f32(PI * i * (j + 2) / ((float)(OLED_X_MAX >> 1))) * NormAm[j];
         }
     }
 
     // 找出最小的小数的位置
     MinIndex = Compare_Min(OriginalWaveDate, OLED_X_MAX);
-    log_indata("Waveform Data:\r\n");
     for (i = 0; i < OLED_X_MAX; ++i)
     {
         // 将小数全转为为正数，再乘以100变为整数
         WaveformData[i] = 100 * (OriginalWaveDate[i] - OriginalWaveDate[MinIndex]);
         // 这个100是随便定的，不要太大就好了，目的是把小数转换为整数；OLED显示函数会进一步处理范围
-        
-        log_indata("%u\r\n", WaveformData[i]);
     }
     log_debug("Transforming Completed!\r\n");
 }
@@ -213,7 +197,7 @@ void Bluetooth_SendByte(u8 Data)
 #endif
 }
 
-void Bluetooth_SendDate_To_Phone(float *NormalizedAm, float THDx, u16 *WaveformData)
+void Bluetooth_SendDate_To_Phone(float *NormalizedAm, float THDx, u16 *WaveData)
 {
     uint8_t i;
     log_debug("Bluetooth Sending Date To Phone...\r\n");
@@ -225,8 +209,8 @@ void Bluetooth_SendDate_To_Phone(float *NormalizedAm, float THDx, u16 *WaveformD
     /* 发送拟合值 */
     for (i = 0; i < 128; ++i)
     {
-        Bluetooth_SendByte(WaveformData[i] >> 8);
-        Bluetooth_SendByte(WaveformData[i] & 0xFF);
+        Bluetooth_SendByte(WaveData[i] >> 8);
+        Bluetooth_SendByte(WaveData[i] & 0xFF);
     }
 
     /* 发送归一化幅值 */
@@ -237,3 +221,4 @@ void Bluetooth_SendDate_To_Phone(float *NormalizedAm, float THDx, u16 *WaveformD
     }
     log_debug("Bluetooth Sending Completed!\r\n");
 }
+

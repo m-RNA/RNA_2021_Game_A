@@ -1,34 +1,56 @@
 #include "bll_oled.h"
 #include "draw_api.h"
-#include "oled_config.h"
 #include "stdio.h"
-#include "arm_math.h"
-#include "led.h"
-#include "log.h"
+#include "math.h"
+#include "config.h"
 
-#if defined (__FPU_PRESENT) && (__FPU_PRESENT == 1U)
-
-#else
-
+#ifndef PI
+  #define PI 3.14159265358979f
 #endif
 
-void OLEDInterface_Display_TiGame_Logo(void)
-{
-    log_debug("OLEDInterface Drawing TiGame Logo...\r\n");
+uint16_t waveTran[128]; // 转换显示波
+uint16_t true_T = 60; // 真正的测量周期
 
-    DrawBitmap(0, 0, TiLOGO, 128, 64);   // Ti logo
-    UpdateScreen();                      // 更新屏幕
-    SelectDownOLED();                    // 选用下屏
-    ClearScreen();                       // 清屏
-    DrawBitmap(0, 0, GameLOGO, 128, 64); // 电赛 logo
-    UpdateScreen();     
-    log_debug("OLEDInterface Draw Completed!\r\n");    
+/************************************** OLED显示 ***************************************/
+
+// 找出最大值位置
+uint16_t Compare_Max(float Mag[], uint16_t len)
+{
+    uint16_t i, Fn_Num;
+    float Mag_max;
+    Mag_max = Mag[0];
+    Fn_Num = 0;
+    for (i = 0; i < len; i++)
+    {
+        if (Mag_max < Mag[i])
+        {
+            Fn_Num = i;
+            Mag_max = Mag[i];
+        }
+    }
+    return Fn_Num;
 }
-// 更新屏幕
-    
-    
+
+// 找出最小值位置
+uint16_t Compare_Min(float Mag[], uint16_t len)
+{
+    uint16_t i, Num;
+    float min;
+    min = Mag[0];
+    Num = 0;
+    for (i = 0; i < len; i++)
+    {
+        if (min > Mag[i])
+        {
+            Num = i;
+            min = Mag[i];
+        }
+    }
+    return Num;
+}
+
 /* 显示归一化坐标轴 */
-void OLEDInterface_Display_NormAm_XY(void)
+void ShowGYH_XY(void)
 {
     uint8_t i;
     SelectDownOLED();
@@ -57,57 +79,128 @@ void OLEDInterface_Display_NormAm_XY(void)
     DrawNum(32, 20, 1, 1); // 1
 }
 
-
-
-// 找出最大值位置
-u16 Compare_Max(u16 Mag[], u16 len)
+/* 更新归一化幅值、THD */
+void UpdateGYH(float *gyh, float thd)
 {
-    u16 i, Fn_Num;
-    Fn_Num = 0;
-    Mag[Fn_Num] = Mag[0];
-    for (i = 1; i < len; i++)
+    uint8_t i;
+    char strBuf[9];
+    SelectDownOLED();
+    ClearScreen();
+    ShowGYH_XY();
+    for (i = 2; i < 6; ++i)
     {
-        if (Mag[Fn_Num] < Mag[i])
-        {
-            Fn_Num = i;
-        }
+        snprintf(strBuf, 5, "%1.2f", gyh[i - 2]); //归一化幅值 小数显示
+        DrawString(0, 10 + 9 * (i - 1), strBuf);
+
+        DrawLine(40 + 13 * i, 52 - 30 * gyh[i - 2], 40 + 13 * i, 52);                           // 竖线 谐波
+        DrawLine(40 + 13 * i - 1, 52 - 30 * gyh[i - 2], 40 + 13 * i + 1, 52 - 30 * gyh[i - 2]); // 横线 谐波
     }
-    return Fn_Num;
+    snprintf(strBuf, 6, "%2.2f", thd); //THDx 小数显示
+    DrawString(30, 0, strBuf);
+    snprintf(strBuf, 9, "T:%4dus", true_T / 3); // 测量周期
+    DrawString(80, 0, strBuf);
+    UpdateScreen();
 }
 
-#define OLED_Interface_Waveform_Display_Y_Range 54
-#define OLED_Interface_Waveform_Display_Y_Offset 5
-#define OLED_Interface_Waveform_Display_Y_Calculate(DATA, MAX)  \
-        OLED_Y_MAX - OLED_Interface_Waveform_Display_Y_Offset   \
-        - (OLED_Interface_Waveform_Display_Y_Range * DATA / MAX)
-
+#define X_MAX 128
+#define Y_MAX 64
+#define Y_MULTI 54
+#define Y_UPMOVE 64
+#define Y_FW 62
 
 /* 计算、转换并显示波形 */
-void OLEDInterface_Update_Waveform(u16 *WaveformData)
+void ShowWave_AndTran(float *gyh)
 {
-    u16 i = 0;
-    u16 Max_Data;
-    u16 Y, Y_Old;
-    LED_W_Off();
-    LED_RED_On();
-    log_debug("OLEDInterface Updating Waveform...\r\n");
-    SelectUpOLED();
-    ClearScreen(); 
-    //WaveBox();
-    
-    Max_Data = WaveformData[Compare_Max(WaveformData, OLED_X_MAX)];
-    
-    Y_Old = OLED_Interface_Waveform_Display_Y_Calculate(WaveformData[i], Max_Data);
-    for (i = 1; i < OLED_X_MAX - 1; ++i)
+    uint16_t i;
+    uint16_t minNum;
+    uint16_t maxNum;
+    uint16_t vm;
+    uint16_t temp_last, temp;
+    float waveDate[X_MAX];
+    for (int i = 0; i < X_MAX; ++i)
     {
-        Y = OLED_Interface_Waveform_Display_Y_Calculate(WaveformData[i], Max_Data);
-        DrawLine(i, Y_Old, i + 1, Y);
-        DrawPixel(i, Y + 1);// 加粗
-        Y_Old = Y;
+        //waveDate[i] = Y_MULTI * arm_sin_f32(PI * i / 64.0f);
+        waveDate[i] = Y_MULTI * sin(PI * i / 64.0f);
+        for (int j = 0; j < 4; ++j)
+        {
+            // waveDate[i] += Y_MULTI * arm_sin_f32(PI * i * (j + 1) / 64.0f) * gyh[j];
+            waveDate[i] += Y_MULTI * sin(PI * i * (j + 1) / 64.0f) * gyh[j];
+        }
+        waveDate[i] += Y_UPMOVE;
+        //printf("%f\n", waveDate[i]);
+    }
+
+    minNum = Compare_Min(waveDate, X_MAX);
+    maxNum = Compare_Max(waveDate, X_MAX);
+    vm = waveDate[maxNum] - waveDate[minNum];
+    SelectUpOLED();
+    ClearScreen();
+    //WaveBox();
+    waveTran[0] = waveDate[0] - waveDate[minNum];
+    DrawPixel(i, temp_last);
+    waveTran[1] = waveDate[1] - waveDate[minNum];
+    temp_last = (uint16_t)(64 - waveTran[1] * 54 / (float)vm - 5);
+    for (i = 2; i < X_MAX; ++i)
+    {
+        waveTran[i] = waveDate[i] - waveDate[minNum];
+        temp = (uint16_t)(64 - waveTran[i] * 54 / (float)vm - 5);
+        //printf("%d,", waveTran[i]);
+        DrawLine(i, temp_last, i + 1, temp);
+        //printf("%d\r\n", temp);
+        // 加粗
+        DrawPixel(i + 1, temp);
+        temp_last = temp;
     }
     UpdateScreen();
-    log_debug("OLEDInterface Update Waveform Completed!\r\n");
-    LED_RED_Off();
+}
+
+/* OLED_LIB 开源代码 */
+void RoundClock(int hours, int minute, int sec)
+{
+    unsigned char i = 0;
+    TypeXY hourspoint, minutepoint, secpoint, tmp1, tmp2;
+    //时针
+    SetRotateValue(63, 31, hours * 30 + (minute * 30) / 60, 1);
+    hourspoint = GetRotateXY(63 - 14, 31);
+    DrawLine(63, 31, hourspoint.x, hourspoint.y);
+    //分针
+    SetRotateValue(63, 31, minute * 6 + (sec * 6) / 60, 1);
+    minutepoint = GetRotateXY(63 - 21, 31);
+    DrawLine(63, 31, minutepoint.x, minutepoint.y);
+    //秒针
+    SetRotateValue(63, 31, sec * 6, 1);
+    secpoint = GetRotateXY(63 - 28, 31);
+    DrawLine(63, 31, secpoint.x, secpoint.y);
+    //表盘
+    for (i = 0; i < 12; i++)
+    {
+        SetRotateValue(63, 31, i * 30, 1);
+        tmp1 = GetRotateXY(63 - 29, 31);
+        tmp2 = GetRotateXY(63 - 24, 31);
+        DrawLine(tmp1.x, tmp1.y, tmp2.x, tmp2.y);
+    }
+    DrawFillCircle(63, 31, 2);
+    DrawCircle(63, 31, 30);
+    UpdateScreen();
+    ClearScreen();
+}
+
+/* 等待动画 */
+void WaitingAnimat(uint16_t a)
+{
+    uint16_t j, z;
+    SelectUpOLED();
+    ClearScreen();
+    DrawBitmap(0, 0, Measuring, 128, 64); // 显示测量中
+    UpdateScreen();
+    SelectDownOLED();
+    ClearScreen();
+    for (j = 0; j < a; j++)
+        for (z = 0; z < 60; z++)
+        {
+            RoundClock(0, j, z);
+            delay_ms(3);
+        }
 }
 
 /* MinDSO-Pro示波器开源代码 */
@@ -152,32 +245,4 @@ void WaveBox(void)
         DrawFastVLine(CHART_H_MIN + 100, CHART_V_MIN + 1 + i * 8, 3);
     }
     UpdateScreen();
-}
-
-
-
-void OLEDInterface_Update_Data(float *NormalizedAm, float THD, u32 Period)
-{
-    uint8_t i;
-    char strBuf[9];
-    LED_C_On();
-    log_debug("OLEDInterface Updating Data...\r\n");
-    SelectDownOLED();
-    ClearScreen();
-    OLEDInterface_Display_NormAm_XY();
-    for (i = 2; i < 6; ++i)
-    {
-        snprintf(strBuf, 5, "%1.2f", NormalizedAm[i - 2]); //归一化幅值 小数显示
-        DrawString(0, 10 + 9 * (i - 1), strBuf);
-
-        DrawLine(40 + 13 * i, 52 - 30 * NormalizedAm[i - 2], 40 + 13 * i, 52);                           // 竖线 谐波
-        DrawLine(40 + 13 * i - 1, 52 - 30 * NormalizedAm[i - 2], 40 + 13 * i + 1, 52 - 30 * NormalizedAm[i - 2]); // 横线 谐波
-    }
-    snprintf(strBuf, 6, "%2.2f", THD); //THDx 小数显示
-    DrawString(30, 0, strBuf);
-    snprintf(strBuf, 9, "T:%4dus", Period * 1000000 / TimerSourerFreq); // 测量周期
-    DrawString(80, 0, strBuf);
-    UpdateScreen();
-    log_debug("OLEDInterface Update Data Completed!\r\n");
-    LED_W_Off();
 }

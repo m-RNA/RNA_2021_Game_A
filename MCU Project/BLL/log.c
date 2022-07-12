@@ -1,8 +1,6 @@
 #include "log.h"
-//#include "usart.h"
+#include "usart.h"
 // #include "stdarg.h"
-
-#ifdef USE_HAL_DRIVER
 
 #ifdef __GNUC__
 #define PUTCHAR_PROTOTYPE int _io_putchar(int ch)
@@ -15,9 +13,6 @@ PUTCHAR_PROTOTYPE
     HAL_UART_Transmit(&huart1, (uint8_t *)&ch, 1, 0xFFFF);
     return ch;
 }
-
-#endif
-
 
 // void __log_print(char *fmt, ...)
 // {
