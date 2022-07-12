@@ -1,7 +1,7 @@
 #ifndef __BLL_H__
 #define __BLL_H__
-#include "sysinit.h"
 #include "config.h"
+
 void System_Init(void);
 
 void Signal_Sample_Init(void);

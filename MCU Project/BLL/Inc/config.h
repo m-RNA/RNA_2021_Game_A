@@ -2,15 +2,34 @@
 #define __CONFIG_H
 #include "oled_config.h"
 
-// #define __STM32__
+#ifdef USE_HAL_DRIVER
+#include "main.h"
+#include "usart.h"
+#include "tim.h"
+#include "adc.h"
 
-#if defined STM32F103xE || STM32F103xB
+#define BLUETOOTH_UART &huart2
+#define SIGNAL_CAPTURE_TIMER &htim2
+#define SIGNAL_SAMPLE_TIMER &htim3
+#define SIGNAL_SAMPLE_TIMER_CHANNEL TIM_CHANNEL_1
+#define SIGNAL_SAMPLE_TIMER_ACTIVE_CHANNEL HAL_TIM_ACTIVE_CHANNEL_1
+#define SIGNAL_SAMPLE_ADC &hadc1
+
+
+#elif defined __MSP432P401R__
+#include "sysinit.h"
+#define BLUETOOTH_UART EUSCI_A2_BASE
+#else
+#error Doesnt contain top-level header file
+#endif
+
+
+#if defined __STM32F1xx_HAL_H
 #define TimerSourerFreq 72000000
 #define SignalSampleFreq_MAX 1000000
 #define delay_ms(MS) HAL_Delay(MS)
 
-#include "usart.h"
-#define BLUETOOTH_UART &huart2
+
 
 #elif defined STM32G431xx
 #define TimerSourerFreq 170000000
@@ -21,7 +40,6 @@
 #define TimerSourerFreq 48000000
 #define SignalSampleFreq_MAX 1000000
 
-#define BLUETOOTH_UART EUSCI_A2_BASE
 //#define HC_05_USART_PORT_PIN GPIO_PORT_P3, GPIO_PIN2 | GPIO_PIN3
 
 #endif
@@ -41,8 +59,8 @@
 //#ifndef PI
 //#define PI 3.1415926f
 //#endif
+#define Simulation
 
-#define OLED_X_MAX SCREEN_COLUMN
-#define OLED_Y_MAX SCREEN_ROW
+
 
 #endif

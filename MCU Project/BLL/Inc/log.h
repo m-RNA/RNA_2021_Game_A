@@ -1,6 +1,6 @@
 #ifndef __LOG_H__
 #define __LOG_H__
-#include "sysinit.h"
+#include "main.h"
 #include "config.h"
 #include "stdio.h"
 
@@ -10,6 +10,13 @@
     printf(fmt, ##__VA_ARGS__)
 #else
 #define log_debug(fmt, ...) ((void)0)
+#endif
+
+#ifdef DEBUG_PRINT_INTERNAL_DATA
+#define log_indata(fmt, ...) \
+    printf(fmt, ##__VA_ARGS__)
+#else
+#define log_indata(fmt, ...) ((void)0)
 #endif
 
 #define log_assert(fmt, ...)                                                                       \
