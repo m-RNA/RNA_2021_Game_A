@@ -680,6 +680,11 @@
               <FileType>1</FileType>
               <FilePath>..\..\..\BLL\oled_interface.c</FilePath>
             </File>
+            <File>
+              <FileName>my_math.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\BLL\my_math.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>

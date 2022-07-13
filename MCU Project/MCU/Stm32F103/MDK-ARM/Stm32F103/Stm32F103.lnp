@@ -33,6 +33,7 @@
 "stm32f103\log.o"
 "stm32f103\simulation.o"
 "stm32f103\oled_interface.o"
+"stm32f103\my_math.o"
 "..\..\..\DSP_Lib\CMSIS\DSP_Lib\lib\keil\m3\arm_cortexM3l_math.lib"
 "stm32f103\oled_basic.o"
 "stm32f103\oled_bmp.o"
