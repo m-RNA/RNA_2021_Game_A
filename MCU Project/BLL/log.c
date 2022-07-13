@@ -41,9 +41,10 @@ void log_Internal_data(u16 *Signal_ADC_Data, float *Amplitude_Data,
     u16 i;
     printf("\r\n\r\n***********************  ***  ****************************\r\n\r\n");
 
-    log_indata("ADC Sampling Data(A Periods):\r\n");
-    for (i = 0; i <= SignalSampleFreq_Multiple; ++i)
+    log_indata("ADC Sampling Data:\r\n");
+    for (i = 0; i < (ADC_SAMPLING_NUM); ++i)
         log_indata("%u\r\n", Signal_ADC_Data[i]);
+    log_indata("%u\r\n", Signal_ADC_Data[0]);
     log_indata("\r\n*********************\r\n");
 
     log_indata("Am Data(a half):\r\n");

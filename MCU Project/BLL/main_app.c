@@ -40,7 +40,7 @@ int main(void)
     /* 初始化完毕 可以测量 */
     log_debug("All Init Completed!\r\n");
     log_debug("\r\n\r\n***********************  000  ****************************\r\n\r\n");
-    Simulation_Times_Index = 3;
+    
     while (1)
     {
         Signal_F0_Measure(&Signal_Captured_Value); // 测量f 黄灯
