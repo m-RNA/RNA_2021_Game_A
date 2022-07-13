@@ -142,8 +142,10 @@ void HAL_TIM_IC_CaptureCallback(TIM_HandleTypeDef *htim)
 
 u32 BSP_Get_Signal_CCR(void)
 {
-#ifdef Simulation
-    return Simulation_CCR[Simulation_Times_Index];
+#if Simulation
+    if(Simulation_CCR_Data[Simulation_Times_Index] != Simulation_CCR)
+        log_debug("Warning: Simulation_CCR Spilling!!!\r\n");
+    return Simulation_CCR;
 #else
 
 #ifdef __MSP432P401R__
@@ -159,18 +161,22 @@ u32 BSP_Get_Signal_CCR(void)
 #endif
 }
 
-void BSP_Set_Fs_CCR(u32 Fs_CCR)
+void BSP_Set_Fs_ARR(u32 Fs_ARR)
 {
+#if Simulation
+    Simulation_Set_Fs_ARR(Fs_ARR);
+#else
 #ifdef __MSP432P401R__
     MAP_Timer_A_setCompareValue(TIMER_A0_BASE, TIMER_A_CAPTURECOMPARE_REGISTER_0, Fs_CCR); // 调整fs
 #else
     __HAL_TIM_SET_AUTORELOAD(SIGNAL_SAMPLE_TIMER, Fs_CCR);
 #endif
+#endif
 }
 
 void BSP_ADC_DMA_Start(u16 *Data, u16 Num)
 {
-#ifdef Simulation
+#if Simulation
 #if 1 // 两种仿真输入信号生成方式选择（选一个就好）
     Simulate_Signal_Synthesizer(Data);
 #else

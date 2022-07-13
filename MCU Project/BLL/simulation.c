@@ -1,15 +1,15 @@
 #include "simulation.h"
 #include "arm_math.h"
+#include "my_math.h"
+#include "oled_interface.h"
 #include "log.h"
 #include "stdlib.h"
-
-extern void Signal_Synthesizer(u16 *Output, u16 Length, u16 Magnification, float *NormAm, u8 Precision);
 
 #define Simulate_WaveformDate_Period_Length SignalSampleFreq_Multiple
 #define Add_Noise (rand() % Simulate_Sample_ADC_Noise)
 u8 Simulation_Times_Index = 0;
 
-u32 Simulation_CCR[10] = {
+u32 Simulation_CCR_Data[7] = {
     TimerSourerFreq / 1000,   // 电赛测试信号1
     TimerSourerFreq / 50000,  // 电赛测试信号2
     TimerSourerFreq / 100000, // 电赛测试信号3
@@ -21,8 +21,8 @@ u32 Simulation_CCR[10] = {
     TimerSourerFreq / 900000,
 };
 
-#define Synthesize_Precision 10 // 精度 - 到几次谐波
-float Simulation_NormAm[10][Synthesize_Precision - 1] = {
+#define Synthesize_Precision 9 // 精度 - 到几次谐波
+float Simulation_NormAm[7][Synthesize_Precision - 1] = {
     {0.00f, 0.20f, 0.00f, 0.15f}, // 电赛测试信号1
     {0.00f, 0.08f, 0.15f, 0.00f}, // 电赛测试信号2
     {0.00f, 0.00f, 0.00f, 0.10f}, // 电赛测试信号3
@@ -34,27 +34,50 @@ float Simulation_NormAm[10][Synthesize_Precision - 1] = {
     {0.5f, 0.3333333333f, 0.25f, 0.2f, 0.1666666667f, 0.1428571429f, 0.125f, 0.1111111111f}, // 锯齿波
 };
 
+u16 Simulate_Fs_ARR = 0;
+void Simulation_Set_Fs_ARR(u16 Fs_ARR)
+{
+    Simulate_Fs_ARR = Fs_ARR;
+}
+
 void Simulate_Signal_Synthesizer(u16 *SimulateWaveData)
 {
-    Signal_Synthesizer(SimulateWaveData, Simulate_WaveformDate_Period_Length, 1000, // 这个1000是随便定的，不要太大就好了，目的是把小数转换为整数
+    u16 Data_Index;
+    u16 Freq_Multiple;
+    extern u8 OverSamplingFlag;
+    if(!OverSamplingFlag)
+    {
+        Freq_Multiple = Simulation_CCR_Data[Simulation_Times_Index] / Simulate_Fs_ARR;
+    }
+    else
+    {
+        Freq_Multiple = (SignalSampleFreq_Multiple + 1) * Simulation_CCR_Data[Simulation_Times_Index] / Simulate_Fs_ARR;
+    }
+    if(Freq_Multiple >= Signal_Synthesizer_Wave_Length_MAX)
+        log_assert("Simulated ERROR: Freq_Multiple is too Big! Please check Simulation_CCR_Data to find that if Setting Frequency is too low.");
+    
+    Signal_Synthesizer(SimulateWaveData, Freq_Multiple, 1000, // 这个1000是随便定的，不要太大就好了，目的是把小数转换为整数
                        Simulation_NormAm[Simulation_Times_Index], Synthesize_Precision);
 
     // 复制数据
-    for (u16 i = 1; i < ADC_SAMPLING_NUM / Simulate_WaveformDate_Period_Length; ++i)
+    for (u16 i = 1; i < ADC_SAMPLING_NUM / Freq_Multiple; ++i)
     {
-        for (u16 j = 0; j < Simulate_WaveformDate_Period_Length; ++j)
+        for (u16 j = 0; j < Freq_Multiple; ++j)
         {
-            SimulateWaveData[j + i * Simulate_WaveformDate_Period_Length] = SimulateWaveData[j] + Add_Noise;
+            Data_Index = j + i * Freq_Multiple;
+            SimulateWaveData[Data_Index] = SimulateWaveData[j] + Add_Noise;
+            if (Data_Index >= ADC_SAMPLING_NUM)
+                break;
         }
     }
-    for (u16 j = 0; j < Simulate_WaveformDate_Period_Length; ++j)
+    for (u16 j = 0; j < Freq_Multiple; ++j)
     {
         SimulateWaveData[j] += Add_Noise;
     }
 }
 
 /*******************************************************************/
-
+#if 0
 static u16 Simulation_ADC_Data[Simulate_WaveformDate_Period_Length] = {0};
 static void SquareWaveOut(void)
 {
@@ -130,3 +153,4 @@ void Simulate_Signal_WaveformData(u16 *SimulateWaveData)
         }
     }
 }
+#endif
