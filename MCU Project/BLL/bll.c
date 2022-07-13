@@ -21,7 +21,7 @@ void Signal_Fs_Adjust(u32 Captured_Value)
     log_debug("Signal Fs Adjusting...\r\n");
 
     Signal_Fs_ARR = Captured_Value / SignalSampleFreq_Multiple;
-    OverSamplingFlag = Captured_Value <= (SignalSamplePeriod_MIN);
+    OverSamplingFlag = Captured_Value <= (SignalSamplePeriod_MIN * SignalSampleFreq_Multiple);
     if (OverSamplingFlag)
     {
         Signal_Fs_ARR += Captured_Value;
