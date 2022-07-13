@@ -2,10 +2,10 @@
 #define __CONFIG_H
 #include "oled_config.h"
 
-// 是否调试 是则定义 DEBUG
+// 是否调试
 #define DEBUG (1u)
 #define DEBUG_PRINT_INTERNAL_DATA (1u)
-#define Simulation
+#define Simulation (1u)
 
 #ifdef USE_HAL_DRIVER
 #include "main.h"
@@ -36,8 +36,9 @@
 #include "led.h"
 
 #define BLUETOOTH_UART EUSCI_A2_BASE
+
 #else
-#error Doesnt contain top-level header file
+#error Doesn't contain top-level header file
 #endif
 
 #if defined __STM32F1xx_HAL_H
@@ -65,7 +66,11 @@
 #warning ADC_SAMPLING_NUM should be 1024
 #endif
 
-#ifdef Simulation
+#if (TimerSourerFreq >= 0xFFFF * 1000)
+//#warning In this version, it is better for TimerSourerFreq to be Lower than 65535000. 
+#endif
+
+#if Simulation
 #include "simulation.h"
 #endif
 

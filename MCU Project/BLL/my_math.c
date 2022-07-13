@@ -2,8 +2,11 @@
 #include "arm_math.h"
 #include "arm_const_structs.h"
 #include "oled_interface.h"
+#include "log.h"
 
-static float WaveDateBuf[OLED_X_MAX];
+#define FFT_To_Am_IndexErrorRange 4
+
+static float WaveDateBuf[Signal_Synthesizer_Wave_Length_MAX];
 static float fft_inputbuf[ADC_SAMPLING_NUM * 2];
 
 /*
@@ -90,9 +93,12 @@ void Signal_Synthesizer(u16 *Output, u16 Length, u16 Magnification, float *NormA
     }
 }
 
-void CalculateAmplitude_By_FFT(u16 *SampleData, float *Am_Data)
+/* 通过FFT 计算各个频率分量幅值 */
+void CalculateAmplitude_By_FFT(float *Am_Data, u16 *SampleData)
 {
     u16 i;
+    log_debug("Calculating Amplitude...\r\n");
+
     for (i = 0; i < ADC_SAMPLING_NUM; ++i)
     {
         fft_inputbuf[0 + (i << 1)] = SampleData[i]; // 实部为数据
@@ -100,4 +106,45 @@ void CalculateAmplitude_By_FFT(u16 *SampleData, float *Am_Data)
     }
     arm_cfft_f32(&arm_cfft_sR_f32_len1024, fft_inputbuf, 0, 1); // FFT计算
     arm_cmplx_mag_f32(fft_inputbuf, Am_Data, ADC_SAMPLING_NUM); //把运算结果复数求模得幅值
+
+    log_debug("Calculating Amplitude Completed!\r\n");
+}
+
+/*  计算各个频率分量幅值 */
+void NormalizedAm_And_CalculateTHD(float *NormAm, float *THD, float *Am_Data)
+{
+    u16 i;
+    u16 Fx_Index[5] = {0};
+    float Square_Sum = 0.0f;
+
+    /* 找出基波位置 */
+    Fx_Index[0] = Max_Float_WithinRange(Am_Data, 1 + (FFT_To_Am_IndexErrorRange >> 1), (ADC_SAMPLING_NUM >> 1));
+    for (i = 1; i < 5; ++i)
+    {
+        /* 找出谐波位置 */
+        Fx_Index[i] = Max_Float_WithinRange(
+            Am_Data,
+            Fx_Index[0] * (i + 1) - (FFT_To_Am_IndexErrorRange >> 1),
+            Fx_Index[0] * (i + 1) + (FFT_To_Am_IndexErrorRange >> 1)); // 优化过的算法 更加准确
+
+        /* 计算归一化幅值 */
+        NormAm[i - 1] = floor(Am_Data[Fx_Index[i]] / Am_Data[Fx_Index[0]] * 100.0f) / 100.0f; // 向下取整floor() 误差更小
+
+        /* THDx部分计算 */
+        Square_Sum += Am_Data[Fx_Index[i]] * Am_Data[Fx_Index[i]]; // 平方和
+    }
+    *THD = ceil(sqrtf(Square_Sum) / Am_Data[Fx_Index[0]] * 10000) / 100.0f; // 向上取整ceil()
+
+    log_Fn_NAm_THD_data(Fx_Index, NormAm, *THD);
+}
+
+/* 将归一化幅值转化为波形数据 */
+void Transform_NormalizedAm_To_WaveformData(float *NormAm, u16 *WaveformData)
+{
+    log_debug("Transforming Normalized Am To Waveform Data...\r\n");
+
+    Signal_Synthesizer(WaveformData, OLED_X_MAX, 256, // 这个256是随便定的，目的是把小数转换为整数；OLED显示函数会进一步处理范围
+                       NormAm, 5);
+
+    log_debug("Transforming Completed!\r\n");
 }
