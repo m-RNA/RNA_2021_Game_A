@@ -1,8 +1,8 @@
 /****************************************************/
-//MSP432P401R
-//ADC采集 + DMA传输
-//Bilibili：m-RNA
-//E-mail:m-RNA@qq.com
+// MSP432P401R
+// ADC采集 + DMA传输
+// Bilibili：m-RNA
+// E-mail:m-RNA@qq.com
 //创建日期:2021/11/12
 /****************************************************/
 
@@ -23,8 +23,6 @@ __attribute__((aligned(1024)))
 __align(1024)
 #endif
 static DMA_ControlTable MSP_EXP432P401RLP_DMAControlTable[32];
-
-volatile bool recv_done_flag = 0;
 
 // DMA初始化函数
 void adc_dma_init(u16 *Data, uint16_t Length)
@@ -52,24 +50,6 @@ void adc_dma_init(u16 *Data, uint16_t Length)
  *
  *****************   说明结束   *****************/
 
-void DMA_INT1_IRQHandler(void)
-{
-  ADC14_clearInterruptFlag(ADC_INT0);
-  DMA_clearInterruptFlag(7);
-
-  Timer_A_stopTimer(TIMER_A0_BASE);
-  Timer_A_clearTimerInterrupt(TIMER_A0_BASE);
-  ADC14_clearInterruptFlag(ADC_INT0);
-
-  recv_done_flag = 1;
-
-  // DMA_disableChannel(7);	// dma will auto disable channel if complete
-
-  /* Disable the interrupt to allow execution */
-  // Interrupt_disableInterrupt(INT_DMA_INT1);
-  // DMA_disableInterrupt(INT_DMA_INT1);
-}
-
 // ADC初始化函数
 void ADC_Config(void)
 {
@@ -85,8 +65,8 @@ void ADC_Config(void)
   MAP_REF_A_setReferenceVoltage(REF_A_VREF2_5V); // 使用内部2.5V电压参考
   MAP_REF_A_enableReferenceVoltage();            // 使能内部2.5V电压参考
 
-  MAP_ADC14_setSampleHoldTrigger(ADC_TRIGGER_TA0_C1, false);  // 使用定时器A通道1作为触发源
-    
+  MAP_ADC14_setSampleHoldTrigger(ADC_TRIGGER_TA0_C1, false); // 使用定时器A通道1作为触发源
+
   MAP_ADC14_enableConversion(); // 使能开始转换(触发后 自动ADC上电)
   delay_ms(1000);               // 等待稳定
 }

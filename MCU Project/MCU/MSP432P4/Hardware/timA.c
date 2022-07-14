@@ -42,7 +42,7 @@ void TimA0_Int_Init(uint16_t ccr0, uint16_t psc)
 /*****************************************************************************************************************/
 /******************************************     CAP TIMA2          ***********************************************/
 
-void TimA2_Cap_Init(void)
+void TimA2_Cap_Init(uint16_t psc)
 {
     // 1.复用输出
     MAP_GPIO_setAsPeripheralModuleFunctionInputPin(CAP_PORT_PIN, GPIO_PRIMARY_MODULE_FUNCTION);
@@ -50,7 +50,7 @@ void TimA2_Cap_Init(void)
     /* 定时器配置参数 分辨力 0.33us*/
     Timer_A_ContinuousModeConfig continuousModeConfig = {
         TIMER_A_CLOCKSOURCE_SMCLK,      // SMCLK Clock Source
-        TIMER_A_CLOCKSOURCE_DIVIDER_16, // SMCLK/16 = 3MHz
+        psc,                            // SMCLK/psc = ?MHz
         TIMER_A_TAIE_INTERRUPT_DISABLE, // 开启定时器溢出中断
         TIMER_A_DO_CLEAR                // Clear Counter
     };

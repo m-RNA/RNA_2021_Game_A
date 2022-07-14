@@ -18,11 +18,6 @@
 #define ADC_TRIGGER_TA2_C2 ADC_TRIGGER_SOURCE6
 #define ADC_TRIGGER_TA3_C1 ADC_TRIGGER_SOURCE7
 
-//总时间 ADC_SAMPLING_NUMBER * MM * 25 / 48 (us)
-
-
-extern volatile bool recv_done_flag;
-
 void ADC_Config(void);
 void adc_dma_init(u16 *Data, uint16_t Length);
 
