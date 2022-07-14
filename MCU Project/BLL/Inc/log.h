@@ -37,7 +37,7 @@
 void log_Fs_data(u32 F0_CCR, u32 Fs_CCR, u8 Flag);
 void log_Fn_NAm_THD_data(u16 *Fx_Index, float *NormAm, float THD);
 void log_Internal_data(u16 *Signal_ADC_Data, float *Amplitude_Data,
-                       u16 *WaveformData_Restored, float *NormalizedAm,
+                       u16 *WaveformData_Restored, float *NormalizedAm, float *Phase,
                        float THDx, u32 Signal_Captured_Value);
 
 #endif

@@ -62,10 +62,6 @@
 #define SignalSampleFreq_Multiple 16u // 采样频率设定为信号基波频率的几倍（Fs = ？F0）
 #define SignalSamplePeriod_MIN (TimerSourerFreq / SignalSampleFreq_MAX)
 
-#if (ADC_SAMPLING_NUM != 1024u)
-#warning ADC_SAMPLING_NUM should be 1024
-#endif
-
 #if (TimerSourerFreq >= 0xFFFF * 1000)
 //#warning In this version, it is better for TimerSourerFreq to be Lower than 65535000. 
 #endif

@@ -4,10 +4,30 @@
 #include "oled_interface.h"
 #include "log.h"
 
+#if (ADC_SAMPLING_NUM == 16u)
+#define ARM_FFT_USING_STRUCTURE arm_cfft_sR_f32_len16
+#elif (ADC_SAMPLING_NUM == 32u)
+#define ARM_FFT_USING_STRUCTURE arm_cfft_sR_f32_len32
+#elif (ADC_SAMPLING_NUM == 64u)
+#define ARM_FFT_USING_STRUCTURE arm_cfft_sR_f32_len64
+#elif (ADC_SAMPLING_NUM == 128u)
+#define ARM_FFT_USING_STRUCTURE arm_cfft_sR_f32_len128
+#elif (ADC_SAMPLING_NUM == 256u)
+#define ARM_FFT_USING_STRUCTURE arm_cfft_sR_f32_len256
+#elif (ADC_SAMPLING_NUM == 512u)
+#define ARM_FFT_USING_STRUCTURE arm_cfft_sR_f32_len512
+#elif (ADC_SAMPLING_NUM == 1024u)
+#define ARM_FFT_USING_STRUCTURE arm_cfft_sR_f32_len1024
+#elif (ADC_SAMPLING_NUM == 2048u)
+#define ARM_FFT_USING_STRUCTURE arm_cfft_sR_f32_len2048
+#elif (ADC_SAMPLING_NUM == 4096u)
+#define ARM_FFT_USING_STRUCTURE arm_cfft_sR_f32_len4096
+#endif
+
 #define FFT_To_Am_IndexErrorRange 4
 
-static float WaveDateBuf[Signal_Synthesizer_Wave_Length_MAX];
-static float fft_inputbuf[ADC_SAMPLING_NUM * 2];
+static float Synthetic_WaveBuf[Signal_Synthesizer_Wave_Length_MAX];
+static float FFT_Input_Buf[ADC_SAMPLING_NUM * 2];
 
 /*
  * 提示：同时找出最大值和最小值
@@ -66,85 +86,88 @@ u16 Max_Float_WithinRange(float Data[], u16 Left, u16 Right)
  * @param[out] Output        波形数据输出指针
  * @param[in]  Magnification 放大倍率
  * @param[in]  NormAm        归一化幅值
+ * @param[in]  Phase         相位
  * @param[in]  Precision     最高几次谐波分量
  */
-void Signal_Synthesizer(u16 *Output, u16 Length, u16 Magnification, float *NormAm, u8 Precision)
+void Signal_Synthesizer(u16 *Output, u16 Length, u16 Magnification, float *NormAm, float *Phase, u8 Precision)
 {
     u16 i, j;
     u16 MinIndex;
 
     for (i = 0; i < Length; ++i)
     {
-        WaveDateBuf[i] = arm_sin_f32(PI * i / ((float)(Length >> 1)));
+        Synthetic_WaveBuf[i] = arm_sin_f32(PI * i / ((float)(Length >> 1)) + Phase[0]);
         for (j = 0; j < Precision - 1; ++j) // 各次谐波叠加
         {
             if (NormAm[j] == 0.0f)
                 continue;
-            WaveDateBuf[i] += arm_sin_f32(PI * i * (j + 2) / ((float)(Length >> 1))) * NormAm[j];
+            Synthetic_WaveBuf[i] += arm_sin_f32(PI * i * (j + 2) / ((float)(Length >> 1)) + Phase[j]) * NormAm[j];
         }
     }
 
     // 找出最小的小数的位置
-    MinIndex = Min_Float(WaveDateBuf, Length);
+    MinIndex = Min_Float(Synthetic_WaveBuf, Length);
     for (i = 0; i < Length; ++i)
     {
         // 将小数全转为以0为起点的正数，再乘以 Magnification 变为整数
-        Output[i] = Magnification * (WaveDateBuf[i] - WaveDateBuf[MinIndex]);
+        Output[i] = Magnification * (Synthetic_WaveBuf[i] - Synthetic_WaveBuf[MinIndex]);
     }
 }
 
 /* 通过FFT 计算各个频率分量幅值 */
-void CalculateAmplitude_By_FFT(float *Am_Data, u16 *SampleData)
+void CalculateAmplitude_By_FFT(float *Am_Pointer, u16 *SampleData_Pointer)
 {
     u16 i;
     log_debug("Calculating Amplitude...\r\n");
 
     for (i = 0; i < ADC_SAMPLING_NUM; ++i)
     {
-        fft_inputbuf[0 + (i << 1)] = SampleData[i]; // 实部为数据
-        fft_inputbuf[1 + (i << 1)] = 0;             // 虚部为0
+        FFT_Input_Buf[0 + (i << 1)] = SampleData_Pointer[i]; // 实部为数据
+        FFT_Input_Buf[1 + (i << 1)] = 0;                     // 虚部为0
     }
-    arm_cfft_f32(&arm_cfft_sR_f32_len1024, fft_inputbuf, 0, 1); // FFT计算
-    arm_cmplx_mag_f32(fft_inputbuf, Am_Data, ADC_SAMPLING_NUM); //把运算结果复数求模得幅值
+    arm_cfft_f32(&ARM_FFT_USING_STRUCTURE, FFT_Input_Buf, 0, 1);  // FFT计算
+    arm_cmplx_mag_f32(FFT_Input_Buf, Am_Pointer, ADC_SAMPLING_NUM); //把运算结果复数求模得幅值
 
     log_debug("Calculating Amplitude Completed!\r\n");
 }
 
 /*  计算各个频率分量幅值 */
-void NormalizedAm_And_CalculateTHD(float *NormAm, float *THD, float *Am_Data)
+void NormalizedAm_And_CalculateTHD(float *Phase_Pointer, float *NormAm_Pointer, float *THD_Pointer, float *Am_Data_Pointer)
 {
     u16 i;
     u16 Fx_Index[5] = {0};
     float Square_Sum = 0.0f;
 
     /* 找出基波位置 */
-    Fx_Index[0] = Max_Float_WithinRange(Am_Data, 1 + (FFT_To_Am_IndexErrorRange >> 1), (ADC_SAMPLING_NUM >> 1));
+    Fx_Index[0] = Max_Float_WithinRange(Am_Data_Pointer, 1 + (FFT_To_Am_IndexErrorRange >> 1), (ADC_SAMPLING_NUM >> 1));
+    Phase_Pointer[0] = atan2((FFT_Input_Buf[Fx_Index[0] << 1] + 1), (FFT_Input_Buf[Fx_Index[0] << 1] + 0));
     for (i = 1; i < 5; ++i)
     {
         /* 找出谐波位置 */
         Fx_Index[i] = Max_Float_WithinRange(
-            Am_Data,
+            Am_Data_Pointer,
             Fx_Index[0] * (i + 1) - (FFT_To_Am_IndexErrorRange >> 1),
             Fx_Index[0] * (i + 1) + (FFT_To_Am_IndexErrorRange >> 1)); // 优化过的算法 更加准确
 
-        /* 计算归一化幅值 */
-        NormAm[i - 1] = floor(Am_Data[Fx_Index[i]] / Am_Data[Fx_Index[0]] * 100.0f) / 100.0f; // 向下取整floor() 误差更小
-
+        /* 相位计算 */
+        Phase_Pointer[i] = atan2f((FFT_Input_Buf[Fx_Index[i] << 1] + 1), (FFT_Input_Buf[Fx_Index[i] << 1] + 0));
+        /* 归一化幅值计算 */
+        NormAm_Pointer[i - 1] = floor(Am_Data_Pointer[Fx_Index[i]] / Am_Data_Pointer[Fx_Index[0]] * 100.0f) / 100.0f; // 向下取整floor() 误差更小
         /* THDx部分计算 */
-        Square_Sum += Am_Data[Fx_Index[i]] * Am_Data[Fx_Index[i]]; // 平方和
+        Square_Sum += Am_Data_Pointer[Fx_Index[i]] * Am_Data_Pointer[Fx_Index[i]]; // 平方和
     }
-    *THD = ceil(sqrtf(Square_Sum) / Am_Data[Fx_Index[0]] * 10000) / 100.0f; // 向上取整ceil()
+    *THD_Pointer = ceil(sqrtf(Square_Sum) / Am_Data_Pointer[Fx_Index[0]] * 10000) / 100.0f; // 向上取整ceil()
 
-    log_Fn_NAm_THD_data(Fx_Index, NormAm, *THD);
+    log_Fn_NAm_THD_data(Fx_Index, NormAm_Pointer, *THD_Pointer);
 }
 
-/* 将归一化幅值转化为波形数据 */
-void Transform_NormalizedAm_To_WaveformData(float *NormAm, u16 *WaveformData)
+/* 用归一化幅值+各分量相位 还原波形 */
+void Restore_Waveform(u16 *RestoreWaveform_Pointer, float *NormAm_Pointer, float *Phase_Pointer)
 {
     log_debug("Transforming Normalized Am To Waveform Data...\r\n");
 
-    Signal_Synthesizer(WaveformData, OLED_X_MAX, 256, // 这个256是随便定的，目的是把小数转换为整数；OLED显示函数会进一步处理范围
-                       NormAm, 5);
+    Signal_Synthesizer(RestoreWaveform_Pointer, OLED_X_MAX, 256, // 这个256是随便定的，目的是把小数转换为整数；OLED显示函数会进一步处理范围
+                       NormAm_Pointer, (void*)0, 5);
 
     log_debug("Transforming Completed!\r\n");
 }

@@ -1,5 +1,6 @@
 #include "log.h"
 #include "oled_interface.h"
+#include "arm_math.h"
 
 #if Simulation
 #define Signal_Captured_Period Simulation_CCR
@@ -35,7 +36,7 @@ void log_Fn_NAm_THD_data(u16 *Fx_Index, float *NormAm, float THD)
 }
 
 void log_Internal_data(u16 *Signal_ADC_Data, float *Amplitude_Data,
-                       u16 *WaveformData_Restored, float *NormalizedAm,
+                       u16 *WaveformData_Restored, float *NormalizedAm, float *Phase,
                        float THDx, u32 Signal_Captured_Value)
 {
     u16 i;
@@ -56,6 +57,12 @@ void log_Internal_data(u16 *Signal_ADC_Data, float *Amplitude_Data,
     for (i = 0; i < OLED_X_MAX; ++i)
         log_indata("%u\r\n", WaveformData_Restored[i]);
     log_indata("\r\n*********************\r\n");
+    
+    log_indata("Phase Data:\r\n");
+    for (i = 0; i < 5; ++i)
+        log_indata("%0.3f\r\n", (Phase[i] * 180 / PI));
+    log_indata("\r\n*********************\r\n");
+    
 
     log_indata("Normalized Am Data:\r\n"); // 归一化幅值
     log_indata("1.000\r\n");
