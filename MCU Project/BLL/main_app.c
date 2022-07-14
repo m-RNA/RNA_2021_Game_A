@@ -69,8 +69,10 @@ int main(void)
 }
 #else
         if (++Simulation_Times_Index >= Simulation_Times)
-            Simulation_Times_Index = 0;
-        log_debug("Simulate Loop!\r\n");
+        {
+                Simulation_Times_Index = 0;
+            log_debug("Simulate Loop!\r\n");
+        }
     }
 }
 #endif
