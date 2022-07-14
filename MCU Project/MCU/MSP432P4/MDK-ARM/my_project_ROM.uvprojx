@@ -404,11 +404,6 @@
           <GroupName>Library</GroupName>
           <Files>
             <File>
-              <FileName>arm_cortexM4lf_math.a</FileName>
-              <FileType>4</FileType>
-              <FilePath>..\..\..\DSP_Lib\CMSIS\DSP_Lib\lib\keil\m4f\arm_cortexM4lf_math.a</FilePath>
-            </File>
-            <File>
               <FileName>msp432p4xx_driverlib.lib</FileName>
               <FileType>4</FileType>
               <FilePath>E:\RNA_2021_Game_A\MCU Project\MCU\MSP432P4\Drivers\ti\devices\msp432p4xx\driverlib\keil\msp432p4xx_driverlib.lib</FilePath>
@@ -471,6 +466,16 @@
           </Files>
         </Group>
         <Group>
+          <GroupName>DSP_Lib</GroupName>
+          <Files>
+            <File>
+              <FileName>arm_cortexM4lf_math.a</FileName>
+              <FileType>4</FileType>
+              <FilePath>..\..\..\DSP_Lib\CMSIS\DSP_Lib\lib\keil\m4f\arm_cortexM4lf_math.a</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
           <GroupName>OLED LIB</GroupName>
           <Files>
             <File>
@@ -521,6 +526,26 @@
           </Files>
         </Group>
         <Group>
+          <GroupName>BSP</GroupName>
+          <Files>
+            <File>
+              <FileName>bsp_init.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\BSP\bsp_init.c</FilePath>
+            </File>
+            <File>
+              <FileName>bsp_it.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\BSP\bsp_it.c</FilePath>
+            </File>
+            <File>
+              <FileName>bsp_operation.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\BSP\bsp_operation.c</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
           <GroupName>BLL</GroupName>
           <Files>
             <File>
@@ -547,16 +572,6 @@
               <FileName>my_math.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\BLL\my_math.c</FilePath>
-            </File>
-          </Files>
-        </Group>
-        <Group>
-          <GroupName>BSP</GroupName>
-          <Files>
-            <File>
-              <FileName>bsp.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\BSP\bsp.c</FilePath>
             </File>
           </Files>
         </Group>

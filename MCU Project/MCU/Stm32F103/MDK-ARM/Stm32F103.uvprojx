@@ -648,46 +648,6 @@
           </Files>
         </Group>
         <Group>
-          <GroupName>BSP</GroupName>
-          <Files>
-            <File>
-              <FileName>bsp.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\BSP\bsp.c</FilePath>
-            </File>
-          </Files>
-        </Group>
-        <Group>
-          <GroupName>BLL</GroupName>
-          <Files>
-            <File>
-              <FileName>log.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\BLL\log.c</FilePath>
-            </File>
-            <File>
-              <FileName>bll.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\BLL\bll.c</FilePath>
-            </File>
-            <File>
-              <FileName>my_math.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\BLL\my_math.c</FilePath>
-            </File>
-            <File>
-              <FileName>oled_interface.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\BLL\oled_interface.c</FilePath>
-            </File>
-            <File>
-              <FileName>simulation.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\BLL\simulation.c</FilePath>
-            </File>
-          </Files>
-        </Group>
-        <Group>
           <GroupName>DSP_Lib</GroupName>
           <Files>
             <File>
@@ -739,6 +699,56 @@
               <FileName>oled_font.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\OLED_Lib\oled_font.c</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>BSP</GroupName>
+          <Files>
+            <File>
+              <FileName>bsp_init.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\BSP\bsp_init.c</FilePath>
+            </File>
+            <File>
+              <FileName>bsp_it.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\BSP\bsp_it.c</FilePath>
+            </File>
+            <File>
+              <FileName>bsp_operation.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\BSP\bsp_operation.c</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>BLL</GroupName>
+          <Files>
+            <File>
+              <FileName>log.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\BLL\log.c</FilePath>
+            </File>
+            <File>
+              <FileName>bll.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\BLL\bll.c</FilePath>
+            </File>
+            <File>
+              <FileName>my_math.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\BLL\my_math.c</FilePath>
+            </File>
+            <File>
+              <FileName>oled_interface.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\BLL\oled_interface.c</FilePath>
+            </File>
+            <File>
+              <FileName>simulation.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\BLL\simulation.c</FilePath>
             </File>
           </Files>
         </Group>

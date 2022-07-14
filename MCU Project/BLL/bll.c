@@ -1,6 +1,6 @@
 #include "config.h"
+#include "bsp_operation.h"
 #include "bll.h"
-#include "bsp.h"
 #include "log.h"
 
 u8 OverSamplingFlag = 0;

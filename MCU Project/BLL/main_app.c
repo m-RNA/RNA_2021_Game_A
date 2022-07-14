@@ -1,12 +1,12 @@
 /*******************************************
-// 2021?? 电赛A??
+// 2021?? 电赛A题
 // Bilibili：m-RNA
 // E-mail:m-RNA@qq.com
 // 创建日期:2021/11/11
 *******************************************/
 
 #include "config.h"
-#include "bsp.h"
+#include "bsp_init.h"
 #include "bll.h"
 #include "log.h"
 #include "my_math.h"
