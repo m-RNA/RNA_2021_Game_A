@@ -37,7 +37,7 @@ u32 Simulation_CCR_Data[Simulation_Times] = {
     TimerSourerFreq / 50000,  // 电赛测试信号2
     TimerSourerFreq / 100000, // 电赛测试信号3
 
-    Simulation_CCR_MAX,       // 最小采样率
+    0xFFFF,                   // 最小采样率
     SignalSamplePeriod_MIN,   // 最大采样率
     TimerSourerFreq / 300000, // 自定义
     TimerSourerFreq / 600000,
