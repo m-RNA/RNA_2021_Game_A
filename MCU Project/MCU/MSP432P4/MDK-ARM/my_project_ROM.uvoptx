@@ -242,7 +242,7 @@
 
   <Group>
     <GroupName>Library</GroupName>
-    <tvExp>0</tvExp>
+    <tvExp>1</tvExp>
     <tvExpOptDlg>0</tvExpOptDlg>
     <cbSel>0</cbSel>
     <RteFlg>0</RteFlg>
@@ -253,7 +253,7 @@
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
-      <PathWithFileName>E:\RNA_2021_Game_A\MCU Project\MCU\MSP432P4\Drivers\ti\devices\msp432p4xx\driverlib\keil\msp432p4xx_driverlib.lib</PathWithFileName>
+      <PathWithFileName>..\Drivers\ti\devices\msp432p4xx\driverlib\keil\msp432p4xx_driverlib.lib</PathWithFileName>
       <FilenameWithoutPath>msp432p4xx_driverlib.lib</FilenameWithoutPath>
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
@@ -514,7 +514,7 @@
 
   <Group>
     <GroupName>OLED LIB</GroupName>
-    <tvExp>0</tvExp>
+    <tvExp>1</tvExp>
     <tvExpOptDlg>0</tvExpOptDlg>
     <cbSel>0</cbSel>
     <RteFlg>0</RteFlg>

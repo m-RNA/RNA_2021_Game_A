@@ -406,7 +406,7 @@
             <File>
               <FileName>msp432p4xx_driverlib.lib</FileName>
               <FileType>4</FileType>
-              <FilePath>E:\RNA_2021_Game_A\MCU Project\MCU\MSP432P4\Drivers\ti\devices\msp432p4xx\driverlib\keil\msp432p4xx_driverlib.lib</FilePath>
+              <FilePath>..\Drivers\ti\devices\msp432p4xx\driverlib\keil\msp432p4xx_driverlib.lib</FilePath>
             </File>
             <File>
               <FileName>adc14.c</FileName>
