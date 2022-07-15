@@ -4,6 +4,11 @@
 #include "oled_config.h"
 #include "oled_basic.h"
 
+// 通过调整0R电阻,屏可以0x78和0x7A两个地址 
+// 默认0x78  0x3C = 0x78 >> 1
+#define OLED_UP_ADDRESS 0x78 
+#define OLED_DOWN_ADDRESS 0x7A
+
 #if (TRANSFER_METHOD == HW_IIC)
 
 #if (USE_HW_IIC == IIC_0) // 已验证
