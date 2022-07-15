@@ -86,3 +86,5 @@ MCU Project/MCU/Stm32F103/Temp/
 Doc/~$Simulation.xlsx
 *.dep
 MCU Project/MCU/Stm32F103/MDK-ARM/Stm32F103.uvguix.LCP.bak
+MCU Project/MCU/Stm32F103/MDK-ARM/Stm32F103/
+
