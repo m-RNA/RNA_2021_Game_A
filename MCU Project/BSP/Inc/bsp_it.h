@@ -2,7 +2,7 @@
 #define __BSP_IT_H__
 #include "config.h"
 
-extern vu8 DMA_Transmit_Completed_Flag;       // DMA°áÔËÍê³É±êÖ¾
-extern vu16 BSP_Signal_Capture_Value;              // ²¶»ñÖµ
+extern vu8 DMA_Transmit_Completed_Flag; // DMAæ¬è¿å®Œæˆæ ‡å¿—
+extern vu16 BSP_Signal_Capture_Value;   // æ•è·å€¼
 
 #endif

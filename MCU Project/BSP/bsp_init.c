@@ -4,7 +4,7 @@
 #include "log.h"
 
 /********************************************************************************************/
-/******************************   ³õÊ¼»¯Ààº¯Êı  *********************************************/
+/******************************   åˆå§‹åŒ–ç±»å‡½æ•°  *********************************************/
 
 void BSP_GPIO_Init(void)
 {
@@ -24,9 +24,9 @@ void BSP_OLEDInterface_Init(void)
 void BSP_Uart_PC_Init(void)
 {
 #ifdef __MSP432P401R__
-    uart_init(1382400); // µÚ7½² ´®¿ÚÅäÖÃ£¨µ÷ÊÔ£©
+    uart_init(1382400); // ç¬¬7è®² ä¸²å£é…ç½®ï¼ˆè°ƒè¯•ï¼‰
 #else
-    MX_USART1_UART_Init(); // µÚ7½² ´®¿ÚÅäÖÃ£¨µ÷ÊÔ£©
+    MX_USART1_UART_Init(); // ç¬¬7è®² ä¸²å£é…ç½®ï¼ˆè°ƒè¯•ï¼‰
 #endif
     log_debug("Uart PC Init Completed!\r\n");
 }
@@ -45,11 +45,11 @@ void BSP_Sample_Timer_Init(void)
 {
     log_debug("Sample Timer Init...\r\n");
 #ifdef __MSP432P401R__
-    TimA2_Cap_Init(TIMER_A_CLOCKSOURCE_DIVIDER_1);                            // µÚ8½² ¶¨Ê±Æ÷²¶»ñ £¨¹ıÁã±È½ÏÆ÷²ÉÆµÂÊ£©
-    TimA0_Base_Init(TimerSourerFreq / 500000, TIMER_A_CLOCKSOURCE_DIVIDER_1); // µÚ8½² ¶¨Ê±Æ÷ÅäÖÃ £¨ADC´¥·¢Ê±ÖÓÔ´ fs£©
+    TimA2_Cap_Init(TIMER_A_CLOCKSOURCE_DIVIDER_1);                            // ç¬¬8è®² å®šæ—¶å™¨æ•è· ï¼ˆè¿‡é›¶æ¯”è¾ƒå™¨é‡‡é¢‘ç‡ï¼‰
+    TimA0_Base_Init(TimerSourerFreq / 500000, TIMER_A_CLOCKSOURCE_DIVIDER_1); // ç¬¬8è®² å®šæ—¶å™¨é…ç½® ï¼ˆADCè§¦å‘æ—¶é’Ÿæº fsï¼‰
 #else
-    MX_TIM2_Init(); // µÚ8½² ¶¨Ê±Æ÷²¶»ñ £¨¹ıÁã±È½ÏÆ÷²ÉÆµÂÊ£©
-    MX_TIM3_Init(); // µÚ8½² ¶¨Ê±Æ÷ÅäÖÃ £¨ADC´¥·¢Ê±ÖÓÔ´ fs£©
+    MX_TIM2_Init(); // ç¬¬8è®² å®šæ—¶å™¨æ•è· ï¼ˆè¿‡é›¶æ¯”è¾ƒå™¨é‡‡é¢‘ç‡ï¼‰
+    MX_TIM3_Init(); // ç¬¬8è®² å®šæ—¶å™¨é…ç½® ï¼ˆADCè§¦å‘æ—¶é’Ÿæº fsï¼‰
 #endif
     BSP_Timer_Start(Signal_Capture_Timer);
     BSP_Timer_Start(Signal_Sample_Timer);
@@ -59,8 +59,8 @@ void BSP_Sample_ADC_with_DMA_Init(u16 *Addr, u16 Length)
 {
     log_debug("Sample ADC And DMA Init...\r\n");
 #ifdef __MSP432P401R__
-    adc_dma_init(Addr, Length); // µÚ12½² DMA
-    ADC_Config();               // µÚ11½² ADC
+    adc_dma_init(Addr, Length); // ç¬¬12è®² DMA
+    ADC_Config();               // ç¬¬11è®² ADC
 #else
     extern void DMA_ADC_Transmit_Complete_Callback(DMA_HandleTypeDef * _hdma);
 

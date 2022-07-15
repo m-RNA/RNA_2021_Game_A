@@ -84,3 +84,4 @@ Stm32F401
 MCU Project/MCU/MSP432P4/BSP0/
 MCU Project/MCU/Stm32F103/Temp/
 Doc/~$Simulation.xlsx
+*.dep

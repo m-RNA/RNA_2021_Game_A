@@ -2,26 +2,26 @@
 #include "bsp_operation.h"
 
 #define Cap_Times 4
-static vu32 Internal_Cap_Register = 0; // ²¶»ñÖµ
-static vu8 CapTimer_SyncState = 0;     // ²¶»ñĞÅºÅÍ¬²½×´Ì¬
+static vu32 Internal_Cap_Register = 0; // æ•è·å€¼
+static vu8 CapTimer_SyncState = 0;     // æ•è·ä¿¡å·åŒæ­¥çŠ¶æ€
 
 /********************************************************************************************/
-/***********************************   ÖĞ¶Ïº¯Êı  ********************************************/
+/***********************************   ä¸­æ–­å‡½æ•°  ********************************************/
 
-vu8 DMA_Transmit_Completed_Flag = 0; // DMA°áÔËÍê³É±êÖ¾
-vu16 BSP_Signal_Capture_Value = 240; // Æ½¾ù²¶»ñÖµ
+vu8 DMA_Transmit_Completed_Flag = 0; // DMAæ¬è¿å®Œæˆæ ‡å¿—
+vu16 BSP_Signal_Capture_Value = 240; // å¹³å‡æ•è·å€¼
 
 #ifdef __MSP432P401R__
 void TA2_N_IRQHandler(void)
 {
-    // Çå³ı CCR1 ¸üĞÂÖĞ¶Ï±êÖ¾Î»
+    // æ¸…é™¤ CCR1 æ›´æ–°ä¸­æ–­æ ‡å¿—ä½
     MAP_Timer_A_clearCaptureCompareInterrupt(SIGNAL_CAPTURE_TIMER, SIGNAL_CAPTURE_TIMER_REGISTER);
 
     CapTimer_SyncState++;
-    if (CapTimer_SyncState == 1) // µÚÒ»´Î²¶»ñÖµÎ»ÓÚĞÅºÅÍ¬²½ ²»Ê¹ÓÃ¸ÃÊı¾İ
+    if (CapTimer_SyncState == 1) // ç¬¬ä¸€æ¬¡æ•è·å€¼ä½äºä¿¡å·åŒæ­¥ ä¸ä½¿ç”¨è¯¥æ•°æ®
     {
-        MAP_Timer_A_getCaptureCompareCount(SIGNAL_CAPTURE_TIMER, SIGNAL_CAPTURE_TIMER_REGISTER); // ½«¸ÃÖµ¶Á×ß
-        MAP_Timer_A_clearTimer(SIGNAL_CAPTURE_TIMER);                                            //Çå¿Õ¶¨Ê±Æ÷ ÖØĞÂ´Ó0¼ÆÊı
+        MAP_Timer_A_getCaptureCompareCount(SIGNAL_CAPTURE_TIMER, SIGNAL_CAPTURE_TIMER_REGISTER); // å°†è¯¥å€¼è¯»èµ°
+        MAP_Timer_A_clearTimer(SIGNAL_CAPTURE_TIMER);                                            //æ¸…ç©ºå®šæ—¶å™¨ é‡æ–°ä»0è®¡æ•°
         Internal_Cap_Register = 0;
         return;
     }
@@ -54,21 +54,21 @@ void HAL_TIM_IC_CaptureCallback(TIM_HandleTypeDef *htim)
         if (htim->Channel == SIGNAL_CAPTURE_TIMER_ACTIVE_CHANNEL)
         {
             CapTimer_SyncState++;
-            if (CapTimer_SyncState == 1) // µÚÒ»´Î²¶»ñÖµÎ»ÓÚĞÅºÅÍ¬²½ ²»Ê¹ÓÃ¸ÃÊı¾İ
+            if (CapTimer_SyncState == 1) // ç¬¬ä¸€æ¬¡æ•è·å€¼ä½äºä¿¡å·åŒæ­¥ ä¸ä½¿ç”¨è¯¥æ•°æ®
             {
-                HAL_TIM_ReadCapturedValue(htim, SIGNAL_CAPTURE_TIMER_CHANNEL); // ½«¸ÃÖµ¶Á×ß
+                HAL_TIM_ReadCapturedValue(htim, SIGNAL_CAPTURE_TIMER_CHANNEL); // å°†è¯¥å€¼è¯»èµ°
                 Internal_Cap_Register = 0;
                 return;
             }
             if (CapTimer_SyncState <= Cap_Times) //
             {
-                Internal_Cap_Register += HAL_TIM_ReadCapturedValue(htim, SIGNAL_CAPTURE_TIMER_CHANNEL) + 1; //¡ùÊÇTIM_CHANNEL_1 Òª¼ÇµÃ¼Ó1
+                Internal_Cap_Register += HAL_TIM_ReadCapturedValue(htim, SIGNAL_CAPTURE_TIMER_CHANNEL) + 1; //â€»æ˜¯TIM_CHANNEL_1 è¦è®°å¾—åŠ 1
                 return;
             }
-            Internal_Cap_Register += HAL_TIM_ReadCapturedValue(htim, SIGNAL_CAPTURE_TIMER_CHANNEL) + 1; //¡ùÊÇTIM_CHANNEL_1 Òª¼ÇµÃ¼Ó1
+            Internal_Cap_Register += HAL_TIM_ReadCapturedValue(htim, SIGNAL_CAPTURE_TIMER_CHANNEL) + 1; //â€»æ˜¯TIM_CHANNEL_1 è¦è®°å¾—åŠ 1
             BSP_Timer_Stop(Signal_Capture_Timer);
 
-            BSP_Signal_Capture_Value = Internal_Cap_Register / Cap_Times; //¡ùÊÇTIM_CHANNEL_1 Òª¼ÇµÃ¼Ó1
+            BSP_Signal_Capture_Value = Internal_Cap_Register / Cap_Times; //â€»æ˜¯TIM_CHANNEL_1 è¦è®°å¾—åŠ 1
         }
     }
 }

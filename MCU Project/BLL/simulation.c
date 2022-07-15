@@ -8,13 +8,13 @@
 #define Add_Noise (rand() % Simulate_Sample_ADC_Noise)
 u8 Simulation_Times_Index = 0;
 
-#define Synthesize_Precision 13 // ¾«¶È - µ½¼¸´ÎĞ³²¨
+#define Synthesize_Precision 13 // ç²¾åº¦ - åˆ°å‡ æ¬¡è°æ³¢
 float Simulation_NormAm[Simulation_Times][Synthesize_Precision - 1] = {
-    {0.00f, 0.20f, 0.00f, 0.15f}, // µçÈü²âÊÔĞÅºÅ1
-    {0.00f, 0.08f, 0.15f, 0.00f}, // µçÈü²âÊÔĞÅºÅ2
-    {0.00f, 0.00f, 0.00f, 0.10f}, // µçÈü²âÊÔĞÅºÅ3
+    {0.00f, 0.20f, 0.00f, 0.15f}, // ç”µèµ›æµ‹è¯•ä¿¡å·1
+    {0.00f, 0.08f, 0.15f, 0.00f}, // ç”µèµ›æµ‹è¯•ä¿¡å·2
+    {0.00f, 0.00f, 0.00f, 0.10f}, // ç”µèµ›æµ‹è¯•ä¿¡å·3
 
-    /* ÕıÏÒ²¨ Èı½Ç²¨ ·½²¨ ¾â³İ²¨ */
+    /* æ­£å¼¦æ³¢ ä¸‰è§’æ³¢ æ–¹æ³¢ é”¯é½¿æ³¢ */
     {0.0f, 0.0f, 0.0f, 0.0f},
     {0.00f, -0.1111111111f, 0.00f, 0.04f, 0.0f, -0.0204081633f, 0.0f, 0.0123456790f, 0.0f, -0.0082644628f, 0.0f, 0.0059171598f},
     {0.00f, 0.3333333333f, 0.0f, 0.2f, 0.0f, 0.1428571429f, 0.0f, 0.1111111111f, 0.0f, 0.0909090909f, 0.0f, 0.0769230769f},
@@ -22,33 +22,33 @@ float Simulation_NormAm[Simulation_Times][Synthesize_Precision - 1] = {
 };
 
 u16 Simulation_F0_Vpp_Data[Simulation_Times] = {
-    400, // µçÈü²âÊÔĞÅºÅ1
-    200, // µçÈü²âÊÔĞÅºÅ2
-    30,  // µçÈü²âÊÔĞÅºÅ3
+    400, // ç”µèµ›æµ‹è¯•ä¿¡å·1
+    200, // ç”µèµ›æµ‹è¯•ä¿¡å·2
+    30,  // ç”µèµ›æµ‹è¯•ä¿¡å·3
 
-    100, // ×Ô¶¨Òå
+    100, // è‡ªå®šä¹‰
     83,
     65,
     48,
 };
 
 u32 Simulation_CCR_Data[Simulation_Times] = {
-    TimerSourerFreq / 1000,   // µçÈü²âÊÔĞÅºÅ1
-    TimerSourerFreq / 50000,  // µçÈü²âÊÔĞÅºÅ2
-    TimerSourerFreq / 100000, // µçÈü²âÊÔĞÅºÅ3
+    TimerSourerFreq / 1000,   // ç”µèµ›æµ‹è¯•ä¿¡å·1
+    TimerSourerFreq / 50000,  // ç”µèµ›æµ‹è¯•ä¿¡å·2
+    TimerSourerFreq / 100000, // ç”µèµ›æµ‹è¯•ä¿¡å·3
 
-    Simulation_CCR_MAX,       // ×îĞ¡²ÉÑùÂÊ
-    SignalSamplePeriod_MIN,   // ×î´ó²ÉÑùÂÊ
-    TimerSourerFreq / 300000, // ×Ô¶¨Òå
+    Simulation_CCR_MAX,       // æœ€å°é‡‡æ ·ç‡
+    SignalSamplePeriod_MIN,   // æœ€å¤§é‡‡æ ·ç‡
+    TimerSourerFreq / 300000, // è‡ªå®šä¹‰
     TimerSourerFreq / 600000,
 };
 
 float Simulation_Phase_Data[Simulation_Times] = {
-    0.00f, // µçÈü²âÊÔĞÅºÅ1
-    0.00f, // µçÈü²âÊÔĞÅºÅ2
-    0.00f, // µçÈü²âÊÔĞÅºÅ3
+    0.00f, // ç”µèµ›æµ‹è¯•ä¿¡å·1
+    0.00f, // ç”µèµ›æµ‹è¯•ä¿¡å·2
+    0.00f, // ç”µèµ›æµ‹è¯•ä¿¡å·3
 
-    0.00f, // ×Ô¶¨Òå
+    0.00f, // è‡ªå®šä¹‰
     0.00f,
     0.00f,
     0.00f,
@@ -76,14 +76,14 @@ void Simulate_Signal_Synthesizer(u16 *SimulateWaveData, u16 Length)
     }
     if (Freq_Multiple >= Signal_Synthesizer_Wave_Length_MAX)
         log_assert("Simulated ERROR: Freq_Multiple is too Big! MayBe:\r\n\
-    ¢Ù ADC_SAMPLING_NUM    is Too Large.\r\n\
-    ¢Ú Simulation_CCR_MAX  is Too Small.\r\n\
-    ¢Û Simulation_CCR_Data is Too Large(Setting Frequency is too Low).\r\n");
+    1. ADC_SAMPLING_NUM    is Too Large.\r\n\
+    2. Simulation_CCR_MAX  is Too Small.\r\n\
+    3. Simulation_CCR_Data is Too Large(Setting Frequency is too Low).\r\n");
 
     Signal_Synthesizer(SimulateWaveData, Freq_Multiple, (Simulation_F0_Vpp_Data[Simulation_Times_Index] * 4096 / 3300) >> 1,
                        Simulation_NormAm[Simulation_Times_Index], (void *)0, Synthesize_Precision);
 
-    // ¸´ÖÆÊı¾İ
+    // å¤åˆ¶æ•°æ®
     for (i = 1; i <= Length / Freq_Multiple; ++i)
     {
         for (j = 0; j < Freq_Multiple; ++j)
@@ -115,7 +115,7 @@ static void SquareWaveOut(void)
     }
 }
 
-// Èı½Ç²¨
+// ä¸‰è§’æ³¢
 static void TriangularWaveOut(void)
 {
     u16 i, j;
@@ -130,7 +130,7 @@ static void TriangularWaveOut(void)
     }
 }
 
-// ¾â³İ²¨
+// é”¯é½¿æ³¢
 static void SawtoothWaveOut(void)
 {
     u16 i;
@@ -169,7 +169,7 @@ void Simulate_Signal_WaveformData(u16 *SimulateWaveData)
         log_debug("It is same Simulate_WaveformDate!!!");
         break;
     }
-    for (u16 i = 0; i < ADC_SAMPLING_NUM / Simulate_WaveformDate_Period_Length; ++i) // ¸´ÖÆÊı¾İ
+    for (u16 i = 0; i < ADC_SAMPLING_NUM / Simulate_WaveformDate_Period_Length; ++i) // å¤åˆ¶æ•°æ®
     {
         for (u16 j = 0; j < Simulate_WaveformDate_Period_Length; ++j)
         {

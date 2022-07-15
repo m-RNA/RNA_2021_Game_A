@@ -1,29 +1,31 @@
 /*******************************************
-// 2021 µçÈüAÌâ
-// Bilibili£ºm-RNA
+// 2021 ç”µèµ›Aé¢˜
+// Bilibiliï¼šm-RNA
 // E-mail:m-RNA@qq.com
-// ´´½¨ÈÕÆÚ:2022/07/11
+// åˆ›å»ºæ—¥æœŸ:2022/07/11
 *******************************************/
 
 /******************************************
- * Ê¹ÓÃ¹¤³ÌÌáÊ¾£ºStm32¹¤³ÌÖ§³ÖKeil·ÂÕæ
+ * ä½¿ç”¨å·¥ç¨‹æç¤ºï¼šStm32å·¥ç¨‹æ”¯æŒKeilä»¿çœŸ
  *
- * ADC²ÉÑùµãÊı¡¢²ÉÑùÆµÂÊ±¶Êı¡¢·ÂÕæĞÅºÅÊäÈëµÈµÈ
- * ¿ÉÈ¥"config.h"Í·ÎÄ¼şÅäÖÃ
- *
- * *****************************************
- *
- * Ä¬ÈÏ×Ô´ø·ÂÕæÊäÈëĞÅºÅ
- * ¸ü¶à·ÂÕæÊäÈëĞÅºÅÅäÖÃ
- * ¿ÉÈ¥"simulation.h"Í·ÎÄ¼şÅäÖÃ
+ * ADCé‡‡æ ·ç‚¹æ•°ã€é‡‡æ ·é¢‘ç‡å€æ•°ã€ä»¿çœŸä¿¡å·è¾“å…¥ç­‰ç­‰
+ * å¯å»"config.h"å¤´æ–‡ä»¶é…ç½®
  *
  * *****************************************
  *
- * Ä¬ÈÏµ÷ÊÔÆ÷´®¿Ú»á´òÓ¡´óÁ¿ĞÅÏ¢
- * ĞÅÏ¢µÄ²é¿´¿ÉÒÔ¸´ÖÆºó£¬Õ³Ìùµ½
+ * é»˜è®¤è‡ªå¸¦ä»¿çœŸè¾“å…¥ä¿¡å·
+ * å³ æ— éœ€ ADCå‰ç«¯ç”µè·¯ ä¿¡å·å‘ç”Ÿå™¨è¾“å…¥ä¿¡å· 
+ * ä¹Ÿå¯æµ‹è¯•ç®—æ³•
+ * æ›´å¤šä»¿çœŸè¾“å…¥ä¿¡å·é…ç½®
+ * å¯å»"simulation.h"å¤´æ–‡ä»¶é…ç½®
+ *
+ * *****************************************
+ *
+ * é»˜è®¤è°ƒè¯•å™¨ä¸²å£ä¼šæ‰“å°å¤§é‡ä¿¡æ¯
+ * ä¿¡æ¯çš„æŸ¥çœ‹å¯ä»¥å¤åˆ¶åï¼Œç²˜è´´åˆ°
  * \RNA_2021_Game_A\Doc\
- * ÀïµÄSimulation.xlsx±í¸ñÀï
- * ÓĞ¶à¸ö·Ö±í£¬ADC²ÉÑùµãÊı²»Í¬ÇëÕ³Ìùµ½¶ÔÓ¦Î»ÖÃ
+ * é‡Œçš„Simulation.xlsxè¡¨æ ¼é‡Œ
+ * æœ‰å¤šä¸ªåˆ†è¡¨ï¼ŒADCé‡‡æ ·ç‚¹æ•°ä¸åŒè¯·ç²˜è´´åˆ°å¯¹åº”ä½ç½®
  *
  * ******************************************/
 
@@ -34,62 +36,62 @@
 #include "my_math.h"
 #include "oled_interface.h"
 
-u32 Signal_Captured_Value;                   // ÖÍ»Ø±È½ÏÆ÷ ¶¨Ê±Æ÷²¶»ñÖµ
-u16 Signal_ADC_Data[ADC_SAMPLING_NUM];       // ĞÅºÅ²ÉÑùADCÊı¾İ
-u16 WaveformData_Restored[OLED_X_MAX] = {0}; // »¹Ô­Æ½»¬²¨ĞÎÊı¾İ
+u32 Signal_Captured_Value;                   // æ»å›æ¯”è¾ƒå™¨ å®šæ—¶å™¨æ•è·å€¼
+u16 Signal_ADC_Data[ADC_SAMPLING_NUM];       // ä¿¡å·é‡‡æ ·ADCæ•°æ®
+u16 WaveformData_Restored[OLED_X_MAX] = {0}; // è¿˜åŸå¹³æ»‘æ³¢å½¢æ•°æ®
 
-float THDx = 0.0f;                      // Ê§Õæ¶È²âÁ¿Öµ
-float NormalizedAm[4] = {0};            // ¹éÒ»»¯·ùÖµ£º2-5´ÎĞ³²¨
-float Phase[5] = {0};                   // ¸÷·ÖÁ¿ÏàÎ»£¨Õ¼Î»£¬»¹Ã»ÓÃÉÏ£©
-float Amplitude_Data[ADC_SAMPLING_NUM]; // ¸÷¸öÆµÂÊ·ÖÁ¿·ùÖµ(FFTºó)
+float THDx = 0.0f;                      // å¤±çœŸåº¦æµ‹é‡å€¼
+float NormalizedAm[4] = {0};            // å½’ä¸€åŒ–å¹…å€¼ï¼š2-5æ¬¡è°æ³¢
+float Phase[5] = {0};                   // å„åˆ†é‡ç›¸ä½ï¼ˆå ä½ï¼Œè¿˜æ²¡ç”¨ä¸Šï¼‰
+float Amplitude_Data[ADC_SAMPLING_NUM]; // å„ä¸ªé¢‘ç‡åˆ†é‡å¹…å€¼(FFTå)
 
 int main(void)
 {
-    /***  ¡ü¡ü¡ü Ê¹ÓÃ¹¤³ÌÌáÊ¾ÔÚÉÏÃæ ¡ü¡ü¡ü  ***/
-    /***  ¡ü¡ü¡ü     Çë×ĞÏ¸ÔÄ¶Á    ¡ü¡ü¡ü  ***/
-    /***  ¡ü¡ü¡ü Ê¹ÓÃ¹¤³ÌÌáÊ¾ÔÚÉÏÃæ ¡ü¡ü¡ü  ***/
+    /***  â†‘â†‘â†‘ ä½¿ç”¨å·¥ç¨‹æç¤ºåœ¨ä¸Šé¢ â†‘â†‘â†‘  ***/
+    /***  â†‘â†‘â†‘     è¯·ä»”ç»†é˜…è¯»     â†‘â†‘â†‘  ***/
+    /***  â†‘â†‘â†‘ ä½¿ç”¨å·¥ç¨‹æç¤ºåœ¨ä¸Šé¢ â†‘â†‘â†‘  ***/
     u16 i = 1;
     HAL_Init();
     SystemClock_Config();
 
-    BSP_GPIO_Init();    // µÚ2½² GPIOÅäÖÃ
-    BSP_Uart_PC_Init(); // µÚ7½² ´®¿ÚÅäÖÃ£¨µ÷ÊÔ£©
+    BSP_GPIO_Init();    // ç¬¬2è®² GPIOé…ç½®
+    BSP_Uart_PC_Init(); // ç¬¬7è®² ä¸²å£é…ç½®ï¼ˆè°ƒè¯•ï¼‰
 
-    BSP_OLEDInterface_Init();            // µÚ10½² OLEDÏÔÊ¾
-    OLEDInterface_Display_TiGame_Logo(); // ÏÔÊ¾ TiºÍµçÈü Logo
+    BSP_OLEDInterface_Init();            // ç¬¬10è®² OLEDæ˜¾ç¤º
+    OLEDInterface_Display_TiGame_Logo(); // æ˜¾ç¤º Tiå’Œç”µèµ› Logo
 
-    BSP_Uart_Bluetooth_Init(); // µÚ7½² ´®¿ÚÅäÖÃ £¨À¶ÑÀ£©
+    BSP_Uart_Bluetooth_Init(); // ç¬¬7è®² ä¸²å£é…ç½® ï¼ˆè“ç‰™ï¼‰
 
-    BSP_Sample_ADC_with_DMA_Init(Signal_ADC_Data, ADC_SAMPLING_NUM); // µÚ11½² ADC µÚ12½² DMA
-    BSP_Sample_Timer_Init();                                         // µÚ8½² ¶¨Ê±Æ÷ÅäÖÃ £¨ADC´¥·¢Ê±ÖÓÔ´ fs£©£¨¹ıÁã±È½ÏÆ÷²ÉÆµÂÊ£©
+    BSP_Sample_ADC_with_DMA_Init(Signal_ADC_Data, ADC_SAMPLING_NUM); // ç¬¬11è®² ADC ç¬¬12è®² DMA
+    BSP_Sample_Timer_Init();                                         // ç¬¬8è®² å®šæ—¶å™¨é…ç½® ï¼ˆADCè§¦å‘æ—¶é’Ÿæº fsï¼‰ï¼ˆè¿‡é›¶æ¯”è¾ƒå™¨é‡‡é¢‘ç‡ï¼‰
 
-    /* ³õÊ¼»¯Íê±Ï ¿ÉÒÔ²âÁ¿ */
+    /* åˆå§‹åŒ–å®Œæ¯• å¯ä»¥æµ‹é‡ */
     log_debug("All Init Completed!\r\n");
     log_debug("\r\n\r\n***********************  000  ****************************\r\n\r\n");
 
     while (1)
     {
-        Signal_F0_Measure(&Signal_Captured_Value); // ²âÁ¿f »ÆµÆ
-        Signal_Fs_Adjust(Signal_Captured_Value);   // µ÷Õûfs(ÅĞ¶ÏÊÇ·ñĞèÒªµÈĞ§²ÉÑù) ºìµÆ
-        SignalSample_Start(Signal_ADC_Data);       // ¿ªÆôADC²É¼¯DMA´«Êä ¹ØµÆ
+        Signal_F0_Measure(&Signal_Captured_Value); // æµ‹é‡f é»„ç¯
+        Signal_Fs_Adjust(Signal_Captured_Value);   // è°ƒæ•´fs(åˆ¤æ–­æ˜¯å¦éœ€è¦ç­‰æ•ˆé‡‡æ ·) çº¢ç¯
+        SignalSample_Start(Signal_ADC_Data);       // å¼€å¯ADCé‡‡é›†DMAä¼ è¾“ å…³ç¯
 
-        CalculateAmplitude_By_FFT(Amplitude_Data, Signal_ADC_Data);                // Í¨¹ıFFT ¼ÆËã¸÷¸öÆµÂÊ·ÖÁ¿·ùÖµ °×µÆ
-        NormalizedAm_And_CalculateTHD(Phase, NormalizedAm, &THDx, Amplitude_Data); // ¹éÒ»»¯·ùÖµ ¼ÆËã¸÷·ÖÁ¿ÏàÎ» ¼ÆËãTHDx ÂÌÉ«
-        Restore_Waveform(WaveformData_Restored, NormalizedAm, Phase);              // ÓÃ¹éÒ»»¯·ùÖµ+¸÷·ÖÁ¿ÏàÎ» »¹Ô­²¨ĞÎ£¨³¤¶ÈÄÚ¶¨ÎªOLEDµÄX·Ö±æÂÊ128£© Æ·ºì
+        CalculateAmplitude_By_FFT(Amplitude_Data, Signal_ADC_Data);                // é€šè¿‡FFT è®¡ç®—å„ä¸ªé¢‘ç‡åˆ†é‡å¹…å€¼ ç™½ç¯
+        NormalizedAm_And_CalculateTHD(Phase, NormalizedAm, &THDx, Amplitude_Data); // å½’ä¸€åŒ–å¹…å€¼ è®¡ç®—å„åˆ†é‡ç›¸ä½ è®¡ç®—THDx ç»¿è‰²
+        Restore_Waveform(WaveformData_Restored, NormalizedAm, Phase);              // ç”¨å½’ä¸€åŒ–å¹…å€¼+å„åˆ†é‡ç›¸ä½ è¿˜åŸæ³¢å½¢ï¼ˆé•¿åº¦å†…å®šä¸ºOLEDçš„Xåˆ†è¾¨ç‡128ï¼‰ å“çº¢
 
-        OLEDInterface_Update_Data(NormalizedAm, THDx, Signal_Captured_Value); // OLEDÏÔÊ¾ĞÅÏ¢¸üĞÂ ÇàÉ«
-        OLEDInterface_Update_Waveform(WaveformData_Restored);                 // OLEDÏÔÊ¾²¨ĞÎ¸üĞÂ µ¥ºì
+        OLEDInterface_Update_Data(NormalizedAm, THDx, Signal_Captured_Value); // OLEDæ˜¾ç¤ºä¿¡æ¯æ›´æ–° é’è‰²
+        OLEDInterface_Update_Waveform(WaveformData_Restored);                 // OLEDæ˜¾ç¤ºæ³¢å½¢æ›´æ–° å•çº¢
 
-        Bluetooth_SendDate_To_Phone(NormalizedAm, THDx, WaveformData_Restored); // ½«Êı¾İÍ¨¹ıÀ¶ÑÀ·¢ÖÁÊÖ»ú À¶É«
+        Bluetooth_SendDate_To_Phone(NormalizedAm, THDx, WaveformData_Restored); // å°†æ•°æ®é€šè¿‡è“ç‰™å‘è‡³æ‰‹æœº è“è‰²
 
         log_Internal_data(Signal_ADC_Data, Amplitude_Data,
                           WaveformData_Restored, NormalizedAm, Phase,
-                          THDx, Signal_Captured_Value); // ´òÓ¡ÄÚ²¿Êı¾İ
+                          THDx, Signal_Captured_Value); // æ‰“å°å†…éƒ¨æ•°æ®
 
         log_debug("\r\n\r\n***********************  0%u0  ****************************\r\n\r\n", i++);
 
 #if !Simulation
-        delay_ms(100); //ÑÓÊ±100ms
+        delay_ms(100); //å»¶æ—¶100ms
     }
 }
 #else

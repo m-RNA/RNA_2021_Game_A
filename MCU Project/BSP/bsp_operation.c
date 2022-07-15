@@ -4,11 +4,11 @@
 #include "stdlib.h"
 
 /********************************************************************************************/
-/*********************************   ²Ù×÷Ààº¯Êı  ********************************************/
+/*********************************   æ“ä½œç±»å‡½æ•°  ********************************************/
 void BSP_ADC_DMA_Start(u16 *Data, u16 Num)
 {
 #if Simulation
-#if 1 // Á½ÖÖ·ÂÕæÊäÈëĞÅºÅÉú³É·½Ê½Ñ¡Ôñ£¨Ñ¡Ò»¸ö¾ÍºÃ£©
+#if 1 // ä¸¤ç§ä»¿çœŸè¾“å…¥ä¿¡å·ç”Ÿæˆæ–¹å¼é€‰æ‹©ï¼ˆé€‰ä¸€ä¸ªå°±å¥½ï¼‰
     Simulate_Signal_Synthesizer(Data, Num);
 #else
     Simulate_Signal_WaveformData(Data);
@@ -16,16 +16,16 @@ void BSP_ADC_DMA_Start(u16 *Data, u16 Num)
 #else
 #ifdef __MSP432P401R__
     MAP_DMA_setChannelTransfer(DMA_CH7_ADC14 | UDMA_PRI_SELECT, UDMA_MODE_BASIC, (void *)&ADC14->MEM[0], (void *)Data, Num);
-    MAP_DMA_enableChannel(7); // Ê¹ÄÜ7Í¨µÀ£¨ADC£©
+    MAP_DMA_enableChannel(7); // ä½¿èƒ½7é€šé“ï¼ˆADCï¼‰
 
-    DMA_Transmit_Completed_Flag = 0;      // ´«ÊäÍê³É±êÖ¾Î»ÇåÁã
-    BSP_Timer_Start(Signal_Sample_Timer); // ¿ªÊ¼¼ÆÊı ´¥·¢ADC¶¨Ê±²ÉÑù
-    while (!DMA_Transmit_Completed_Flag)  // µÈ´ı´«ÊäÍê³É
+    DMA_Transmit_Completed_Flag = 0;      // ä¼ è¾“å®Œæˆæ ‡å¿—ä½æ¸…é›¶
+    BSP_Timer_Start(Signal_Sample_Timer); // å¼€å§‹è®¡æ•° è§¦å‘ADCå®šæ—¶é‡‡æ ·
+    while (!DMA_Transmit_Completed_Flag)  // ç­‰å¾…ä¼ è¾“å®Œæˆ
         ;
 #else
-    DMA_Transmit_Completed_Flag = 0;      // ´«ÊäÍê³É±êÖ¾Î»ÇåÁã
-    BSP_Timer_Start(Signal_Sample_Timer); // ¿ªÊ¼¼ÆÊı ´¥·¢ADC¶¨Ê±²ÉÑù
-    while (!DMA_Transmit_Completed_Flag)  // µÈ´ı´«ÊäÍê³É
+    DMA_Transmit_Completed_Flag = 0;      // ä¼ è¾“å®Œæˆæ ‡å¿—ä½æ¸…é›¶
+    BSP_Timer_Start(Signal_Sample_Timer); // å¼€å§‹è®¡æ•° è§¦å‘ADCå®šæ—¶é‡‡æ ·
+    while (!DMA_Transmit_Completed_Flag)  // ç­‰å¾…ä¼ è¾“å®Œæˆ
         ;
 #endif
 #endif
@@ -38,7 +38,7 @@ u32 BSP_Get_Signal_CCR(void)
         log_debug("Warning: Simulation_CCR Spilling!!!\r\n");
     return Simulation_CCR;
 #else
-    delay_ms(19); // ĞÅºÅ²¶»ñ×î¶àÊ±³¤Ò²¾Í 1.4ms * 6 = 8.2ms
+    delay_ms(19); // ä¿¡å·æ•è·æœ€å¤šæ—¶é•¿ä¹Ÿå°± 1.4ms * 6 = 8.2ms
     return BSP_Signal_Capture_Value;
 #endif
 }
@@ -49,7 +49,7 @@ void BSP_Set_Fs_ARR(u32 Fs_ARR)
     Simulation_Set_Fs_ARR(Fs_ARR);
 #else
 #ifdef __MSP432P401R__
-    MAP_Timer_A_setCompareValue(TIMER_A0_BASE, TIMER_A_CAPTURECOMPARE_REGISTER_0, Fs_ARR); // µ÷Õûfs
+    MAP_Timer_A_setCompareValue(TIMER_A0_BASE, TIMER_A_CAPTURECOMPARE_REGISTER_0, Fs_ARR); // è°ƒæ•´fs
 #else
     __HAL_TIM_SET_AUTORELOAD(SIGNAL_SAMPLE_TIMER, Fs_ARR);
 #endif
@@ -59,7 +59,7 @@ void BSP_Set_Fs_ARR(u32 Fs_ARR)
 static void BSP_Fs_Timer_Start(void)
 {
 #ifdef __MSP432P401R__
-    MAP_Timer_A_startCounter(SIGNAL_SAMPLE_TIMER, TIMER_A_UP_MODE); //¿ªÆô¼ÆÊı
+    MAP_Timer_A_startCounter(SIGNAL_SAMPLE_TIMER, TIMER_A_UP_MODE); //å¼€å¯è®¡æ•°
 #else
     HAL_TIM_Base_Start(SIGNAL_SAMPLE_TIMER);
 #endif
@@ -87,9 +87,9 @@ static void BSP_Cap_Timer_Stop(void)
 {
 #ifdef __MSP432P401R__
     MAP_Timer_A_stopTimer(SIGNAL_CAPTURE_TIMER);
-    MAP_Timer_A_clearTimer(SIGNAL_CAPTURE_TIMER); //Çå¿Õ¶¨Ê±Æ÷ ÖØĞÂ´Ó0¼ÆÊı
-    // MAP_Timer_A_clearInterruptFlag(SIGNAL_CAPTURE_TIMER);//Çå³ı¶¨Ê±Æ÷Òç³öÖĞ¶Ï±êÖ¾Î»
-    MAP_Timer_A_clearCaptureCompareInterrupt(SIGNAL_CAPTURE_TIMER, SIGNAL_CAPTURE_TIMER_REGISTER); //Çå³ı CCR1 ¸üĞÂÖĞ¶Ï±êÖ¾Î»
+    MAP_Timer_A_clearTimer(SIGNAL_CAPTURE_TIMER); //æ¸…ç©ºå®šæ—¶å™¨ é‡æ–°ä»0è®¡æ•°
+    // MAP_Timer_A_clearInterruptFlag(SIGNAL_CAPTURE_TIMER);//æ¸…é™¤å®šæ—¶å™¨æº¢å‡ºä¸­æ–­æ ‡å¿—ä½
+    MAP_Timer_A_clearCaptureCompareInterrupt(SIGNAL_CAPTURE_TIMER, SIGNAL_CAPTURE_TIMER_REGISTER); //æ¸…é™¤ CCR1 æ›´æ–°ä¸­æ–­æ ‡å¿—ä½
 #else
     HAL_TIM_IC_Stop_IT(SIGNAL_CAPTURE_TIMER, SIGNAL_CAPTURE_TIMER_CHANNEL);
 #endif

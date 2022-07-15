@@ -6,7 +6,7 @@
 #define DEBUG (1u)                     // 打印调试信息
 #define DEBUG_PRINT_INTERNAL_DATA (1u) // 打印内部数据
 
-#define ADC_SAMPLING_NUM 512u         // ADC采样点数
+#define ADC_SAMPLING_NUM 1024u         // ADC采样点数
 #define SignalSampleFreq_Multiple 16u // 采样频率设定为信号基波频率的几倍（Fs = ? F0）
 #define SignalSamplePeriod_MIN (TimerSourerFreq / SignalSampleFreq_MAX)
 
