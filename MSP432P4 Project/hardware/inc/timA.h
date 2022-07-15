@@ -1,19 +1,19 @@
 /****************************************************/
 // MSP432P401R
-// ¶¨Ê±Æ÷A
-// Bilibili£ºm-RNA
+// å®šæ—¶å™¨A
+// Bilibiliï¼šm-RNA
 // E-mail:m-RNA@qq.com
-// ´´½¨ÈÕÆÚ:2021/8/26
+// åˆ›å»ºæ—¥æœŸ:2021/8/26
 /****************************************************/
 
 #ifndef __RNA_TIMA_H
 #define __RNA_TIMA_H
 #include "sysinit.h"
 
-#define CAP_TIMA_SELECTION TIMER_A2_BASE                         //ÔÚÕâÀï¸Ä¶¨Ê±Æ÷
-#define CAP_REGISTER_SELECTION TIMER_A_CAPTURECOMPARE_REGISTER_2 //ÔÚÕâÀï¸Ä¶¨Ê±Æ÷Í¨µÀ
-#define CAP_CCR_NUM 2                                            //ÔÚÕâÀï¸Ä¶¨Ê±Æ÷Í¨µÀ
-#define CAP_PORT_PIN GPIO_PORT_P5, GPIO_PIN7                     //ÔÚÕâÀï¸Ä¸´ÓÃÒý½Å
+#define CAP_TIMA_SELECTION TIMER_A2_BASE                         //åœ¨è¿™é‡Œæ”¹å®šæ—¶å™¨
+#define CAP_REGISTER_SELECTION TIMER_A_CAPTURECOMPARE_REGISTER_2 //åœ¨è¿™é‡Œæ”¹å®šæ—¶å™¨é€šé“
+#define CAP_CCR_NUM 2                                            //åœ¨è¿™é‡Œæ”¹å®šæ—¶å™¨é€šé“
+#define CAP_PORT_PIN GPIO_PORT_P5, GPIO_PIN7                     //åœ¨è¿™é‡Œæ”¹å¤ç”¨å¼•è„š
 
 extern uint8_t TIMA2_CAP_STA;
 extern uint16_t true_T;

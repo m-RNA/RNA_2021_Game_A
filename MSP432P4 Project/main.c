@@ -1,9 +1,9 @@
 /*******************************************
 // MSP432P401R
-// 2021Äê µçÈüAÌâ
-// Bilibili£ºm-RNA
+// 2021å¹´ ç”µèµ›Aé¢˜
+// Bilibiliï¼šm-RNA
 // E-mail:m-RNA@qq.com
-// ´´½¨ÈÕÆÚ:2021/11/11
+// åˆ›å»ºæ—¥æœŸ:2021/11/11
 *******************************************/
 
 #include "sysinit.h"
@@ -18,135 +18,135 @@
 #include "usart3.h"
 #include "gameA.h"
 
-// ÊÇ·ñµ÷ÊÔ ÊÇÔò¶¨Òå DEBUG
+// æ˜¯å¦è°ƒè¯• æ˜¯åˆ™å®šä¹‰ DEBUG
 #define DEBUG
 
-float fft_outputbuf[ADC_SAMPLING_NUMBER * MM];           // FFTÊä³öÊı×é
-static float fft_inputbuf[ADC_SAMPLING_NUMBER * 2 * MM]; // FFTÊäÈëÊı×é
+float fft_outputbuf[ADC_SAMPLING_NUMBER * MM];           // FFTè¾“å‡ºæ•°ç»„
+static float fft_inputbuf[ADC_SAMPLING_NUMBER * 2 * MM]; // FFTè¾“å…¥æ•°ç»„
 
 int main(void)
 {
     uint16_t i;
     uint16_t j;
-    uint8_t key_val; // °´¼ü¼üÖµ
-    char strBuf[9];  // OLED_printfÔİ´æ
+    uint8_t key_val; // æŒ‰é”®é”®å€¼
+    char strBuf[9];  // OLED_printfæš‚å­˜
 
     float THDx;                  // THDx
-    float gyh[4] = {0, 0, 0, 0}; //¹éÒ»»¯·ùÖµ
+    float gyh[4] = {0, 0, 0, 0}; //å½’ä¸€åŒ–å¹…å€¼
 
-    /***   Èı´ó³õÊ¼»¯º¯Êı   ***/
-    SysInit();       // µÚ3½² Ê±ÖÓÅäÖÃ£¨48M£©
-    delay_init();    // µÚ4½² µÎ´ğÑÓÊ±
-    BaseBoardInit(); // µÚ2½² GPIO (KEY LED BEEP OLED)
+    /***   ä¸‰å¤§åˆå§‹åŒ–å‡½æ•°   ***/
+    SysInit();       // ç¬¬3è®² æ—¶é’Ÿé…ç½®ï¼ˆ48Mï¼‰
+    delay_init();    // ç¬¬4è®² æ»´ç­”å»¶æ—¶
+    BaseBoardInit(); // ç¬¬2è®² GPIO (KEY LED BEEP OLED)
 
-    BEEP = 0; // ´ò¿ª·äÃùÆ÷
+    BEEP = 0; // æ‰“å¼€èœ‚é¸£å™¨
 
-    /**  ÏÔÊ¾ TiºÍµçÈü Logo  **/
+    /**  æ˜¾ç¤º Tiå’Œç”µèµ› Logo  **/
     DrawBitmap(0, 0, TiLOGO, 128, 64);   // Ti logo
-    UpdateScreen();                      // ¸üĞÂÆÁÄ»
-    SelectDownOLED();                    // Ñ¡ÓÃÏÂÆÁ
-    ClearScreen();                       // ÇåÆÁ
-    DrawBitmap(0, 0, GameLOGO, 128, 64); // µçÈü logo
-    UpdateScreen();                      // ¸üĞÂÆÁÄ»
+    UpdateScreen();                      // æ›´æ–°å±å¹•
+    SelectDownOLED();                    // é€‰ç”¨ä¸‹å±
+    ClearScreen();                       // æ¸…å±
+    DrawBitmap(0, 0, GameLOGO, 128, 64); // ç”µèµ› logo
+    UpdateScreen();                      // æ›´æ–°å±å¹•
 
-    uart_init(1382400);    // µÚ7½² ´®¿ÚÅäÖÃ £¨µ÷ÊÔ£©
-    usart3_init(9600);     // µÚ7½² ´®¿ÚÅäÖÃ £¨À¶ÑÀ£©
-    TimA0_Int_Init(60, 1); // µÚ8½² ¶¨Ê±Æ÷ÅäÖÃ £¨ADC´¥·¢Ê±ÖÓÔ´ fs£©
-    TimA2_Cap_Init();      // µÚ8½² ¶¨Ê±Æ÷²¶»ñ £¨¹ıÁã±È½ÏÆ÷²ÉÆµÂÊ£©
-    adc_dma_init(1024);    // µÚ12½² DMA
-    BEEP = 1;              // ¹Ø±Õ ·äÃùÆ÷
-    ADC_Config();          // µÚ11½² ADC
+    uart_init(1382400);    // ç¬¬7è®² ä¸²å£é…ç½® ï¼ˆè°ƒè¯•ï¼‰
+    usart3_init(9600);     // ç¬¬7è®² ä¸²å£é…ç½® ï¼ˆè“ç‰™ï¼‰
+    TimA0_Int_Init(60, 1); // ç¬¬8è®² å®šæ—¶å™¨é…ç½® ï¼ˆADCè§¦å‘æ—¶é’Ÿæº fsï¼‰
+    TimA2_Cap_Init();      // ç¬¬8è®² å®šæ—¶å™¨æ•è· ï¼ˆè¿‡é›¶æ¯”è¾ƒå™¨é‡‡é¢‘ç‡ï¼‰
+    adc_dma_init(1024);    // ç¬¬12è®² DMA
+    BEEP = 1;              // å…³é—­ èœ‚é¸£å™¨
+    ADC_Config();          // ç¬¬11è®² ADC
 
-    /* ³õÊ¼»¯Íê±Ï ÌáÊ¾¿ÉÒÔ²âÁ¿ */
+    /* åˆå§‹åŒ–å®Œæ¯• æç¤ºå¯ä»¥æµ‹é‡ */
     printf("Hello,MSP432!\r\n");
     DrawString(0, 0, "OK");
     UpdateScreen();
 
-    MAP_Interrupt_enableMaster(); // ¿ªÆô×ÜÖĞ¶Ï
+    MAP_Interrupt_enableMaster(); // å¼€å¯æ€»ä¸­æ–­
     while (1)
     {
-        key_val = KEY_Scan(0); //É¨Ãè¼üÖµ
+        key_val = KEY_Scan(0); //æ‰«æé”®å€¼
 
         switch (key_val)
         {
-        case KEY1_OnBoard_PRES: // KEY1 °´ÏÂ£¬ ¿ªÊ¼Ò»¼ü²âÁ¿
+        case KEY1_OnBoard_PRES: // KEY1 æŒ‰ä¸‹ï¼Œ å¼€å§‹ä¸€é”®æµ‹é‡
 
-            /*****************************   ²âÁ¿f¡¢µ÷Õûfs   ******************************/
+            /*****************************   æµ‹é‡fã€è°ƒæ•´fs   ******************************/
 
-            LED_B = 0;         // ¹ØÀ¶µÆ
-            LED_G = 1;         // ¿ªÂÌµÆ
-            TIMA2_CAP_STA = 0; // ²¶»ñÍê³É±êÖ¾Î»ÇåÁã
+            LED_B = 0;         // å…³è“ç¯
+            LED_G = 1;         // å¼€ç»¿ç¯
+            TIMA2_CAP_STA = 0; // æ•è·å®Œæˆæ ‡å¿—ä½æ¸…é›¶
 
-            MAP_Timer_A_clearTimer(CAP_TIMA_SELECTION);                            // ²¶»ñ¶¨Ê±Æ÷ÇåÁã
-            MAP_Timer_A_startCounter(CAP_TIMA_SELECTION, TIMER_A_CONTINUOUS_MODE); // ¿ªÊ¼²âÁ¿f
+            MAP_Timer_A_clearTimer(CAP_TIMA_SELECTION);                            // æ•è·å®šæ—¶å™¨æ¸…é›¶
+            MAP_Timer_A_startCounter(CAP_TIMA_SELECTION, TIMER_A_CONTINUOUS_MODE); // å¼€å§‹æµ‹é‡f
 
-            delay_ms(200); // µÈ´ıf²âÁ¿Íê³É
+            delay_ms(200); // ç­‰å¾…fæµ‹é‡å®Œæˆ
 
-            MAP_Timer_A_setCompareValue(TIMER_A0_BASE, TIMER_A_CAPTURECOMPARE_REGISTER_0, true_T); // µ÷Õûfs
+            MAP_Timer_A_setCompareValue(TIMER_A0_BASE, TIMER_A_CAPTURECOMPARE_REGISTER_0, true_T); // è°ƒæ•´fs
 
-            WaitingAnimat(1); // µÈ´ı¶¯»­£¨µÈ´ı¶¨Ê±Æ÷AÎÈ¶¨£©(...)
+            WaitingAnimat(1); // ç­‰å¾…åŠ¨ç”»ï¼ˆç­‰å¾…å®šæ—¶å™¨Aç¨³å®šï¼‰(...)
 
-            LED_G = 0; //¹ØÂÌµÆ
+            LED_G = 0; //å…³ç»¿ç¯
 
-            /********************************   ¿ªÆôDMA´«Êä   ********************************/
+            /********************************   å¼€å¯DMAä¼ è¾“   ********************************/
 
             MAP_DMA_setChannelTransfer(DMA_CH7_ADC14 | UDMA_PRI_SELECT, UDMA_MODE_BASIC, (void *)&ADC14->MEM[0], (void *)adc_inputbuf, 1024);
-            MAP_DMA_enableChannel(7); // Ê¹ÄÜ7Í¨µÀ£¨ADC£©
+            MAP_DMA_enableChannel(7); // ä½¿èƒ½7é€šé“ï¼ˆADCï¼‰
 
-            MAP_Timer_A_startCounter(TIMER_A0_BASE, TIMER_A_UP_MODE); // ¿ªÊ¼¼ÆÊı ´¥·¢ADC¶¨Ê±²ÉÑù
+            MAP_Timer_A_startCounter(TIMER_A0_BASE, TIMER_A_UP_MODE); // å¼€å§‹è®¡æ•° è§¦å‘ADCå®šæ—¶é‡‡æ ·
 
-            recv_done_flag = 0;     // ´«ÊäÍê³É±êÖ¾Î»ÇåÁã
-            while (!recv_done_flag) // µÈ´ı´«ÊäÍê³É
+            recv_done_flag = 0;     // ä¼ è¾“å®Œæˆæ ‡å¿—ä½æ¸…é›¶
+            while (!recv_done_flag) // ç­‰å¾…ä¼ è¾“å®Œæˆ
                 ;
 
-            /**********************************   FFT ¼ÆËã   **********************************/
-            LED_RED = 1; // ¿ªºìµÆ
+            /**********************************   FFT è®¡ç®—   **********************************/
+            LED_RED = 1; // å¼€çº¢ç¯
 
-            /**  ½«Êı¾İ×ª»»Îª¸´Êı  **/
+            /**  å°†æ•°æ®è½¬æ¢ä¸ºå¤æ•°  **/
             for (j = 0; j < MM; ++j)
             {
                 for (i = 0; i < ADC_SAMPLING_NUMBER; ++i)
                 {
-                    fft_inputbuf[2 * i] = adc_inputbuf[j][i]; // Êµ²¿ÎªADC
-                    fft_inputbuf[2 * i + 1] = 0;              // Ğé²¿Îª0
+                    fft_inputbuf[2 * i] = adc_inputbuf[j][i]; // å®éƒ¨ä¸ºADC
+                    fft_inputbuf[2 * i + 1] = 0;              // è™šéƒ¨ä¸º0
                 }
             }
 
-            arm_cfft_f32(&arm_cfft_sR_f32_len1024, fft_inputbuf, 0, 1);               // FFT¼ÆËã
-            arm_cmplx_mag_f32(fft_inputbuf, fft_outputbuf, ADC_SAMPLING_NUMBER * MM); //°ÑÔËËã½á¹û¸´ÊıÇóÄ£µÃ·ùÖµ
+            arm_cfft_f32(&arm_cfft_sR_f32_len1024, fft_inputbuf, 0, 1);               // FFTè®¡ç®—
+            arm_cmplx_mag_f32(fft_inputbuf, fft_outputbuf, ADC_SAMPLING_NUMBER * MM); //æŠŠè¿ç®—ç»“æœå¤æ•°æ±‚æ¨¡å¾—å¹…å€¼
 
-            LED_RED = 0; // ¹ØºìµÆ
+            LED_RED = 0; // å…³çº¢ç¯
 
-            /********************      ÕÒ³ö»ù²¨Ğ³²¨Î»ÖÃ ¼ÆËã¹éÒ»»¯·ùÖµ      *******************/
+            /********************      æ‰¾å‡ºåŸºæ³¢è°æ³¢ä½ç½® è®¡ç®—å½’ä¸€åŒ–å¹…å€¼      *******************/
 
-            /* ÕÒ³ö»ù²¨Î»ÖÃ */
+            /* æ‰¾å‡ºåŸºæ³¢ä½ç½® */
             f0 = FloatMax(fft_outputbuf);
 
             for (i = 0; i < 4; ++i)
             {
-                /**   ÕÒ³öĞ³²¨Î»ÖÃ   **/
-                fx[i] = FloatMax_WithWindow(fft_outputbuf, f0 * (i + 2) - (FDBS / 2), f0 * (i + 2) + (FDBS / 2)); // ÓÅ»¯¹ıµÄËã·¨ ¸ü¼Ó×¼È·
+                /**   æ‰¾å‡ºè°æ³¢ä½ç½®   **/
+                fx[i] = FloatMax_WithWindow(fft_outputbuf, f0 * (i + 2) - (FDBS / 2), f0 * (i + 2) + (FDBS / 2)); // ä¼˜åŒ–è¿‡çš„ç®—æ³• æ›´åŠ å‡†ç¡®
 
-                /**  ¼ÆËã¹éÒ»»¯·ùÖµ  **/
-                gyh[i] = floor(fft_outputbuf[fx[i]] / fft_outputbuf[f0] * 100.0f) / 100.0f; // ÏòÏÂÈ¡Õû Îó²î¸üĞ¡
+                /**  è®¡ç®—å½’ä¸€åŒ–å¹…å€¼  **/
+                gyh[i] = floor(fft_outputbuf[fx[i]] / fft_outputbuf[f0] * 100.0f) / 100.0f; // å‘ä¸‹å–æ•´ è¯¯å·®æ›´å°
             }
 
-            /****************************   THD¼ÆËãÓëÏÔÊ¾µ½OLED   ****************************/
+            /****************************   THDè®¡ç®—ä¸æ˜¾ç¤ºåˆ°OLED   ****************************/
 
-            THDx = THDx_calculate(); // ¼ÆËãTHDx
-            UpdateGYH(gyh, THDx);    // ¸üĞÂµ½ÆÁÄ»
+            THDx = THDx_calculate(); // è®¡ç®—THDx
+            UpdateGYH(gyh, THDx);    // æ›´æ–°åˆ°å±å¹•
 
-            /*********************   ¼ÆËã²¨ĞÎºóÏÔÊ¾µ½OLEDÓë·¢ËÍÖÁÊÖ»ú   *********************/
+            /*********************   è®¡ç®—æ³¢å½¢åæ˜¾ç¤ºåˆ°OLEDä¸å‘é€è‡³æ‰‹æœº   *********************/
 
-            ShowWave_AndTran(gyh); //¼ÆËã¡¢×ª»»²¢ÏÔÊ¾²¨ĞÎ
+            ShowWave_AndTran(gyh); //è®¡ç®—ã€è½¬æ¢å¹¶æ˜¾ç¤ºæ³¢å½¢
 
-            BEEP = 0;                               // ¿ªÊ¼Ãù½Ğ
-            BluetoothSendDate(gyh, THDx, waveTran); // ·¢ËÍÊı¾İ¸øÊÖ»ú
-            BEEP = 1;                               // Í£Ö¹Ãù½Ğ
+            BEEP = 0;                               // å¼€å§‹é¸£å«
+            BluetoothSendDate(gyh, THDx, waveTran); // å‘é€æ•°æ®ç»™æ‰‹æœº
+            BEEP = 1;                               // åœæ­¢é¸£å«
 
-// ¶¨ÒåDEBUG Ôò¿ªÆô´òÓ¡ÄÚ²¿ĞÅÏ¢
+// å®šä¹‰DEBUG åˆ™å¼€å¯æ‰“å°å†…éƒ¨ä¿¡æ¯
 #ifdef DEBUG
-            printf("\r\nADC²ÉÑùÊı¾İ:\r\n");
+            printf("\r\nADCé‡‡æ ·æ•°æ®:\r\n");
             for (j = 0; j < MM; ++j)
             {
                 for (i = 0; i < ADC_SAMPLING_NUMBER; ++i)
@@ -155,23 +155,23 @@ int main(void)
                 }
             }
 
-            printf("\r\nFFTºóÇó·ùÖµÊı¾İ:\r\n");
+            printf("\r\nFFTåæ±‚å¹…å€¼æ•°æ®:\r\n");
             for (i = 0; i < ADC_SAMPLING_NUMBER; ++i)
             {
                 printf("[%d]:%.3f\r\n", i, fft_outputbuf[i]);
             }
 
-            printf("\r\n»ù²¨ÖÜÆÚ£º%.2fus\r\n", true_T / 3.0f);
-            printf("»ù²¨Î»ÖÃ£º%d\r\n", f0);
+            printf("\r\nåŸºæ³¢å‘¨æœŸï¼š%.2fus\r\n", true_T / 3.0f);
+            printf("åŸºæ³¢ä½ç½®ï¼š%d\r\n", f0);
             for (i = 0; i < 4; ++i)
             {
-                printf("%dĞ³Î»ÖÃ£º%d\r\n", i + 2, f0);
+                printf("%dè°ä½ç½®ï¼š%d\r\n", i + 2, f0);
             }
 
-            printf("\r\nTHD£º%2.2f\r\n", THDx);
+            printf("\r\nTHDï¼š%2.2f\r\n", THDx);
 
-            printf("¹éÒ»»¯·ùÖµ£º\r\n");
-            printf("»ù:1.00\r\n");
+            printf("å½’ä¸€åŒ–å¹…å€¼ï¼š\r\n");
+            printf("åŸº:1.00\r\n");
             for (i = 0; i < 4; ++i)
             {
                 printf("%d:%1.2f\r\n", i + 2, gyh[i]);
@@ -179,28 +179,28 @@ int main(void)
 #endif
             break;
 
-        case KEY2_PRES:   // ²âÊÔµ¥Æ¬»úÊÇ·ñ¿¨ËÀ
-            LED_RED ^= 1; // ·­×ªºìµÆµçÆ½
+        case KEY2_PRES:   // æµ‹è¯•å•ç‰‡æœºæ˜¯å¦å¡æ­»
+            LED_RED ^= 1; // ç¿»è½¬çº¢ç¯ç”µå¹³
             break;
 
-        case KEY3_PRES:   // ²âÊÔ¹ıÁã±È½ÏÆ÷ÊÇ·ñÕı³£¹¤×÷
-            LED_RED ^= 1; // ·­×ªºìµÆµçÆ½
+        case KEY3_PRES:   // æµ‹è¯•è¿‡é›¶æ¯”è¾ƒå™¨æ˜¯å¦æ­£å¸¸å·¥ä½œ
+            LED_RED ^= 1; // ç¿»è½¬çº¢ç¯ç”µå¹³
             TIMA2_CAP_STA = 0;
             MAP_Timer_A_clearTimer(CAP_TIMA_SELECTION);
             MAP_Timer_A_startCounter(CAP_TIMA_SELECTION, TIMER_A_CONTINUOUS_MODE);
-            snprintf(strBuf, 9, "T:%4dus", true_T / 3); // ²âÁ¿ÖÜÆÚ
+            snprintf(strBuf, 9, "T:%4dus", true_T / 3); // æµ‹é‡å‘¨æœŸ
             DrawString(80, 0, strBuf);
             UpdateScreen();
 
             break;
 
-        case KEY4_PRES:   // ²âÊÔÀ¶ÑÀÊÇ·ñÕıÈ·Á¬½Ó
-            LED_RED ^= 1; // ·­×ªºìµÆµçÆ½
+        case KEY4_PRES:   // æµ‹è¯•è“ç‰™æ˜¯å¦æ­£ç¡®è¿æ¥
+            LED_RED ^= 1; // ç¿»è½¬çº¢ç¯ç”µå¹³
             MAP_UART_transmitData(HC_05_USART_BASE, 1920);
             break;
         }
 
-        key_val = NOT_PRES; //ÇåÁã¼üÖµ
-        delay_ms(10);       //ÑÓÊ±10ms
+        key_val = NOT_PRES; //æ¸…é›¶é”®å€¼
+        delay_ms(10);       //å»¶æ—¶10ms
     }
 }

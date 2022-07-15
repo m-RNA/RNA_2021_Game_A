@@ -1,44 +1,44 @@
 /*******************************************
 // MSP432P401R
-// 2021Äê µçÈüAÌâ
-// Bilibili£ºm-RNA
+// 2021å¹´ ç”µèµ›Aé¢˜
+// Bilibiliï¼šm-RNA
 // E-mail:m-RNA@qq.com
-// ´´½¨ÈÕÆÚ:2021/11/11
+// åˆ›å»ºæ—¥æœŸ:2021/11/11
 *******************************************/
 
 #ifndef __RNA_2021_GAME_A_H
 #define __RNA_2021_GAME_A_H
 #include "sysinit.h"
 
-// xx±¶Êı... ¶ÓÓÑµÄÀíÂÛ
+// xxå€æ•°... é˜Ÿå‹çš„ç†è®º
 #define FDBS 4
 
-extern uint16_t f0;            // »ù²¨
-extern uint16_t fx[4];         // Ğ³²¨
-extern uint16_t waveTran[128]; // ×ª»»ÏÔÊ¾²¨
+extern uint16_t f0;            // åŸºæ³¢
+extern uint16_t fx[4];         // è°æ³¢
+extern uint16_t waveTran[128]; // è½¬æ¢æ˜¾ç¤ºæ³¢
 
-/* ÕÒ³ö»ù²¨µÄËùÔÚÎ»ÖÃ */
+/* æ‰¾å‡ºåŸºæ³¢çš„æ‰€åœ¨ä½ç½® */
 uint16_t FloatMax(float Mag[]);
 
-/* ÕÒ³ö×î´óÖµÎ»ÖÃ(´ø´°¿Ú) */
+/* æ‰¾å‡ºæœ€å¤§å€¼ä½ç½®(å¸¦çª—å£) */
 uint16_t FloatMax_WithWindow(float Mag[], uint16_t l, uint16_t r);
 
-/* THDx¼ÆËã */
+/* THDxè®¡ç®— */
 float THDx_calculate(void);
 
-/* ÏÔÊ¾¹éÒ»»¯×ø±êÖá */
+/* æ˜¾ç¤ºå½’ä¸€åŒ–åæ ‡è½´ */
 void ShowGYH_XY(void);
 
-/* ¸üĞÂ¹éÒ»»¯·ùÖµ¡¢THD */
+/* æ›´æ–°å½’ä¸€åŒ–å¹…å€¼ã€THD */
 void UpdateGYH(float *gyh, float thd);
 
-/* ¼ÆËã¡¢×ª»»²¢ÏÔÊ¾²¨ĞÎ */
+/* è®¡ç®—ã€è½¬æ¢å¹¶æ˜¾ç¤ºæ³¢å½¢ */
 void ShowWave_AndTran(float *gyh);
 
-/* µÈ´ı¶¯»­ */
+/* ç­‰å¾…åŠ¨ç”» */
 void WaitingAnimat(uint16_t a);
 
-/* ²¨ĞÎÍ¼±³¾°×ø±ê·½¸ñÏÔÊ¾ */
+/* æ³¢å½¢å›¾èƒŒæ™¯åæ ‡æ–¹æ ¼æ˜¾ç¤º */
 void WaveBox(void);
 
 #endif

@@ -1,9 +1,9 @@
 /******************************************************************************
 //MSP432P401R
-//GPIOÅäÖÃ (LED KEY BEEP OLED)
-//Bilibili£ºm-RNA
+//GPIOé…ç½® (LED KEY BEEP OLED)
+//Bilibiliï¼šm-RNA
 //E-mail:m-RNA@qq.com
-//´´½¨ÈÕÆÚ:2021/8/12
+//åˆ›å»ºæ—¥æœŸ:2021/8/12
 *******************************************************************************/
 
 #ifndef __BASEBOARD_H
@@ -12,13 +12,13 @@
 #include "draw_api.h"
 #include "led.h"
 
-#define KEY1_OnBoard BITBAND_PERI(P1IN, 1) //¶ÁÈ¡°´¼ü1
-#define KEY2_OnBoard BITBAND_PERI(P1IN, 4) //¶ÁÈ¡°´¼ü2
+#define KEY1_OnBoard BITBAND_PERI(P1IN, 1) //è¯»å–æŒ‰é”®1
+#define KEY2_OnBoard BITBAND_PERI(P1IN, 4) //è¯»å–æŒ‰é”®2
 
-#define KEY1 BITBAND_PERI(P5IN, 5) //¶ÁÈ¡°´¼ü1
-#define KEY2 BITBAND_PERI(P5IN, 1) //¶ÁÈ¡°´¼ü2
-#define KEY3 BITBAND_PERI(P5IN, 2) //¶ÁÈ¡°´¼ü3
-#define KEY4 BITBAND_PERI(P5IN, 4) //¶ÁÈ¡°´¼ü4
+#define KEY1 BITBAND_PERI(P5IN, 5) //è¯»å–æŒ‰é”®1
+#define KEY2 BITBAND_PERI(P5IN, 1) //è¯»å–æŒ‰é”®2
+#define KEY3 BITBAND_PERI(P5IN, 2) //è¯»å–æŒ‰é”®3
+#define KEY4 BITBAND_PERI(P5IN, 4) //è¯»å–æŒ‰é”®4
 
 #define BEEP BITBAND_PERI(P5OUT,0) 
 
@@ -36,6 +36,6 @@ enum KEY_PRES
 void KEY_Init(void);
 uint8_t KEY_Scan(bool mode);
 
-void BaseBoardInit(void);    //IO³õÊ¼»¯
+void BaseBoardInit(void);    //IOåˆå§‹åŒ–
 
 #endif

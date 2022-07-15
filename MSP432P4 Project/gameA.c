@@ -1,9 +1,9 @@
 /*******************************************
 // MSP432P401R
-// 2021Äê µçÈüAÌâ
-// Bilibili£ºm-RNA
+// 2021å¹´ ç”µèµ›Aé¢˜
+// Bilibiliï¼šm-RNA
 // E-mail:m-RNA@qq.com
-// ´´½¨ÈÕÆÚ:2021/11/11
+// åˆ›å»ºæ—¥æœŸ:2021/11/11
 *******************************************/
 
 #include "gameA.h"
@@ -15,15 +15,15 @@
 #include "stdio.h"
 #include "delay.h"
 
-uint16_t f0;            // »ù²¨
-uint16_t fx[4];         // Ğ³²¨
-uint16_t waveTran[128]; // ×ª»»ÏÔÊ¾²¨
+uint16_t f0;            // åŸºæ³¢
+uint16_t fx[4];         // è°æ³¢
+uint16_t waveTran[128]; // è½¬æ¢æ˜¾ç¤ºæ³¢
 
-extern float fft_outputbuf[ADC_SAMPLING_NUMBER * MM]; // FFTÊä³öÊı×é
+extern float fft_outputbuf[ADC_SAMPLING_NUMBER * MM]; // FFTè¾“å‡ºæ•°ç»„
 
-/************************************** Ïà¹ØËã·¨ ***************************************/
+/************************************** ç›¸å…³ç®—æ³• ***************************************/
 
-// ÕÒ³ö×î´óÖµÎ»ÖÃ
+// æ‰¾å‡ºæœ€å¤§å€¼ä½ç½®
 uint16_t Compare_Max(float Mag[], uint16_t len)
 {
     uint16_t i, Fn_Num;
@@ -41,7 +41,7 @@ uint16_t Compare_Max(float Mag[], uint16_t len)
     return Fn_Num;
 }
 
-// ÕÒ³ö×îĞ¡ÖµÎ»ÖÃ
+// æ‰¾å‡ºæœ€å°å€¼ä½ç½®
 uint16_t Compare_Min(float Mag[], uint16_t len)
 {
     uint16_t i, Num;
@@ -59,7 +59,7 @@ uint16_t Compare_Min(float Mag[], uint16_t len)
     return Num;
 }
 
-/* ÕÒ³ö»ù²¨µÄËùÔÚÎ»ÖÃ */
+/* æ‰¾å‡ºåŸºæ³¢çš„æ‰€åœ¨ä½ç½® */
 uint16_t FloatMax(float Mag[])
 {
     uint16_t i, Fn_Num;
@@ -77,7 +77,7 @@ uint16_t FloatMax(float Mag[])
     return Fn_Num;
 }
 
-/* ÕÒ³ö×î´óÖµÎ»ÖÃ(´ø´°¿Ú) */
+/* æ‰¾å‡ºæœ€å¤§å€¼ä½ç½®(å¸¦çª—å£) */
 uint16_t FloatMax_WithWindow(float Mag[], uint16_t l, uint16_t r)
 {
     uint16_t i, Fn_Num;
@@ -95,7 +95,7 @@ uint16_t FloatMax_WithWindow(float Mag[], uint16_t l, uint16_t r)
     return Fn_Num;
 }
 
-/* THDx¼ÆËã */
+/* THDxè®¡ç®— */
 float THDx_calculate(void)
 {
     float ans = 0.0f;
@@ -105,7 +105,7 @@ float THDx_calculate(void)
         sum += fft_outputbuf[fx[i]] * fft_outputbuf[fx[i]];
     ans = ceil(sqrt(sum) / fft_outputbuf[f0] * 10000) / 100.0f;
     
-    /* AÌâTHDÏŞÖÆ */
+    /* Aé¢˜THDé™åˆ¶ */
     if (ans > 50.0f)
         ans = 50.0f;
     else if (ans < 5.0f)
@@ -113,39 +113,39 @@ float THDx_calculate(void)
     return ans;
 }
 
-/************************************** OLEDÏÔÊ¾ ***************************************/
+/************************************** OLEDæ˜¾ç¤º ***************************************/
 
-/* ÏÔÊ¾¹éÒ»»¯×ø±êÖá */
+/* æ˜¾ç¤ºå½’ä¸€åŒ–åæ ‡è½´ */
 void ShowGYH_XY(void)
 {
     uint8_t i;
     SelectDownOLED();
-    ClearScreen(); //ÇåÆÁ
+    ClearScreen(); //æ¸…å±
     DrawString(0, 0, "THDx:00.00%");// THD
-    for (i = 1; i < 5; ++i)         // ¹éÒ»»¯·ùÖµ
+    for (i = 1; i < 5; ++i)         // å½’ä¸€åŒ–å¹…å€¼
     {
         DrawString(0, 10 + 9 * i, "0.00");
     }
 
     DrawNum(32, 56, 0, 1);              // 0
-    DrawLine(30, 52, 120, 52);          // xÖá
-    DrawLine(40, 12, 40, 62);           // yÖá
-    DrawLine(120 - 2, 52 - 2, 120, 52); // xÖá¼ıÍ·
-    DrawLine(120 - 2, 52 + 2, 120, 52); // xÖá¼ıÍ·
-    DrawLine(40 + 2, 12 + 2, 40, 12);   // yÖá¼ıÍ·
-    DrawLine(40 - 2, 12 + 2, 40, 12);   // yÖá¼ıÍ·
+    DrawLine(30, 52, 120, 52);          // xè½´
+    DrawLine(40, 12, 40, 62);           // yè½´
+    DrawLine(120 - 2, 52 - 2, 120, 52); // xè½´ç®­å¤´
+    DrawLine(120 - 2, 52 + 2, 120, 52); // xè½´ç®­å¤´
+    DrawLine(40 + 2, 12 + 2, 40, 12);   // yè½´ç®­å¤´
+    DrawLine(40 - 2, 12 + 2, 40, 12);   // yè½´ç®­å¤´
     for (i = 1; i < 6; ++i)
     {
         DrawNum(40 - 3 + 13 * i, 56, i, 1); //1 2 3 4 5
     }
-    DrawLine(40 + 13, 22, 40 + 13, 52);         // ÊúÏß »ù²¨ 1
-    DrawLine(40 - 2, 22, 40 + 2, 22);           // ºáÏß »ù²¨ 1
-    DrawLine(40 + 13 - 1, 22, 40 + 13 + 1, 22); // ºáÏß Ğ³²¨
+    DrawLine(40 + 13, 22, 40 + 13, 52);         // ç«–çº¿ åŸºæ³¢ 1
+    DrawLine(40 - 2, 22, 40 + 2, 22);           // æ¨ªçº¿ åŸºæ³¢ 1
+    DrawLine(40 + 13 - 1, 22, 40 + 13 + 1, 22); // æ¨ªçº¿ è°æ³¢
 
     DrawNum(32, 20, 1, 1); // 1
 }
 
-/* ¸üĞÂ¹éÒ»»¯·ùÖµ¡¢THD */
+/* æ›´æ–°å½’ä¸€åŒ–å¹…å€¼ã€THD */
 void UpdateGYH(float *gyh, float thd)
 {
     uint8_t i;
@@ -155,15 +155,15 @@ void UpdateGYH(float *gyh, float thd)
     ShowGYH_XY();
     for (i = 2; i < 6; ++i)
     {
-        snprintf(strBuf, 5, "%1.2f", gyh[i - 2]); //¹éÒ»»¯·ùÖµ Ğ¡ÊıÏÔÊ¾
+        snprintf(strBuf, 5, "%1.2f", gyh[i - 2]); //å½’ä¸€åŒ–å¹…å€¼ å°æ•°æ˜¾ç¤º
         DrawString(0, 10 + 9 * (i - 1), strBuf);
 
-        DrawLine(40 + 13 * i, 52 - 30 * gyh[i - 2], 40 + 13 * i, 52);                           // ÊúÏß Ğ³²¨
-        DrawLine(40 + 13 * i - 1, 52 - 30 * gyh[i - 2], 40 + 13 * i + 1, 52 - 30 * gyh[i - 2]); // ºáÏß Ğ³²¨
+        DrawLine(40 + 13 * i, 52 - 30 * gyh[i - 2], 40 + 13 * i, 52);                           // ç«–çº¿ è°æ³¢
+        DrawLine(40 + 13 * i - 1, 52 - 30 * gyh[i - 2], 40 + 13 * i + 1, 52 - 30 * gyh[i - 2]); // æ¨ªçº¿ è°æ³¢
     }
-    snprintf(strBuf, 6, "%2.2f", thd); //THDx Ğ¡ÊıÏÔÊ¾
+    snprintf(strBuf, 6, "%2.2f", thd); //THDx å°æ•°æ˜¾ç¤º
     DrawString(30, 0, strBuf);
-    snprintf(strBuf, 9, "T:%4dus", true_T / 3); // ²âÁ¿ÖÜÆÚ
+    snprintf(strBuf, 9, "T:%4dus", true_T / 3); // æµ‹é‡å‘¨æœŸ
     DrawString(80, 0, strBuf);
     UpdateScreen();
 }
@@ -174,7 +174,7 @@ void UpdateGYH(float *gyh, float thd)
 #define Y_UPMOVE 64
 #define Y_FW 62
 
-/* ¼ÆËã¡¢×ª»»²¢ÏÔÊ¾²¨ĞÎ */
+/* è®¡ç®—ã€è½¬æ¢å¹¶æ˜¾ç¤ºæ³¢å½¢ */
 void ShowWave_AndTran(float *gyh)
 {
     uint16_t i;
@@ -211,31 +211,31 @@ void ShowWave_AndTran(float *gyh)
         //printf("%d,", waveTran[i]);
         DrawLine(i, temp_last, i + 1, temp);
         //printf("%d\r\n", temp);
-        // ¼Ó´Ö
+        // åŠ ç²—
         DrawPixel(i + 1, temp);
         temp_last = temp;
     }
     UpdateScreen();
 }
 
-/* OLED_LIB ¿ªÔ´´úÂë */
+/* OLED_LIB å¼€æºä»£ç  */
 void RoundClock(int hours, int minute, int sec)
 {
     unsigned char i = 0;
     TypeXY hourspoint, minutepoint, secpoint, tmp1, tmp2;
-    //Ê±Õë
+    //æ—¶é’ˆ
     SetRotateValue(63, 31, hours * 30 + (minute * 30) / 60, 1);
     hourspoint = GetRotateXY(63 - 14, 31);
     DrawLine(63, 31, hourspoint.x, hourspoint.y);
-    //·ÖÕë
+    //åˆ†é’ˆ
     SetRotateValue(63, 31, minute * 6 + (sec * 6) / 60, 1);
     minutepoint = GetRotateXY(63 - 21, 31);
     DrawLine(63, 31, minutepoint.x, minutepoint.y);
-    //ÃëÕë
+    //ç§’é’ˆ
     SetRotateValue(63, 31, sec * 6, 1);
     secpoint = GetRotateXY(63 - 28, 31);
     DrawLine(63, 31, secpoint.x, secpoint.y);
-    //±íÅÌ
+    //è¡¨ç›˜
     for (i = 0; i < 12; i++)
     {
         SetRotateValue(63, 31, i * 30, 1);
@@ -249,13 +249,13 @@ void RoundClock(int hours, int minute, int sec)
     ClearScreen();
 }
 
-/* µÈ´ı¶¯»­ */
+/* ç­‰å¾…åŠ¨ç”» */
 void WaitingAnimat(uint16_t a)
 {
     uint16_t j, z;
     SelectUpOLED();
     ClearScreen();
-    DrawBitmap(0, 0, Measuring, 128, 64); // ÏÔÊ¾²âÁ¿ÖĞ
+    DrawBitmap(0, 0, Measuring, 128, 64); // æ˜¾ç¤ºæµ‹é‡ä¸­
     UpdateScreen();
     SelectDownOLED();
     ClearScreen();
@@ -267,13 +267,13 @@ void WaitingAnimat(uint16_t a)
         }
 }
 
-/* MinDSO-ProÊ¾²¨Æ÷¿ªÔ´´úÂë */
+/* MinDSO-Proç¤ºæ³¢å™¨å¼€æºä»£ç  */
 #define CHART_H_MAX 127
 #define CHART_H_MIN 0
 #define CHART_V_MAX 59
 #define CHART_V_MIN 4
 
-/* ²¨ĞÎÍ¼±³¾°×ø±ê·½¸ñ */
+/* æ³¢å½¢å›¾èƒŒæ™¯åæ ‡æ–¹æ ¼ */
 void WaveBox(void)
 {
     uint16_t i;

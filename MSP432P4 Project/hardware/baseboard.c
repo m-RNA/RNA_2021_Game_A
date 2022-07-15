@@ -1,16 +1,16 @@
 /******************************************************************************
 //MSP432P401R
-//GPIOÅäÖÃ (LED KEY BEEP OLED)
-//Bilibili£ºm-RNA
+//GPIOé…ç½® (LED KEY BEEP OLED)
+//Bilibiliï¼šm-RNA
 //E-mail:m-RNA@qq.com
-//´´½¨ÈÕÆÚ:2021/8/12
+//åˆ›å»ºæ—¥æœŸ:2021/8/12
 *******************************************************************************/
 
 #include "baseboard.h"
 #include "delay.h"
 #include "usart.h"
 
-//º¯Êı¹¦ÄÜ£ºÑÓÊ±
+//å‡½æ•°åŠŸèƒ½ï¼šå»¶æ—¶
 static void key_delay(uint16_t t)
 {
     volatile uint16_t x;
@@ -21,12 +21,12 @@ static void key_delay(uint16_t t)
 
 uint8_t KEY_Scan(bool mode)
 {
-    static bool key_up = true; //°´¼ü°´ËÉ¿ª±êÖ¾
+    static bool key_up = true; //æŒ‰é”®æŒ‰æ¾å¼€æ ‡å¿—
     if (mode)
-        key_up = true; //Ö§³ÖÁ¬°´
+        key_up = true; //æ”¯æŒè¿æŒ‰
     if (key_up && (KEY1_OnBoard == 0 || KEY2_OnBoard == 0 || KEY1 == 0 || KEY2 == 0 || KEY3 == 0 || KEY4 == 0))
     {
-        key_delay(25); //È¥¶¶¶¯
+        key_delay(25); //å»æŠ–åŠ¨
         key_up = false;
         if (KEY1_OnBoard == 0)
             return KEY1_OnBoard_PRES;
@@ -43,10 +43,10 @@ uint8_t KEY_Scan(bool mode)
     }
     else if (KEY1_OnBoard == 1 && KEY2_OnBoard == 1 && KEY1 == 1 && KEY2 == 1 && KEY3 == 1 && KEY4 == 1)
         key_up = true;
-    return 0; // ÎŞ°´¼ü°´ÏÂ
+    return 0; // æ— æŒ‰é”®æŒ‰ä¸‹
 }
 
-/************************  °´¼ü³õÊ¼»¯º¯Êı  ***************************/
+/************************  æŒ‰é”®åˆå§‹åŒ–å‡½æ•°  ***************************/
 
 void BaseBoardInit(void)
 {

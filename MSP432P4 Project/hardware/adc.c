@@ -1,9 +1,9 @@
 /****************************************************/
 //MSP432P401R
-//ADC²É¼¯ + DMA´«Êä
-//Bilibili£ºm-RNA
+//ADCé‡‡é›† + DMAä¼ è¾“
+//Bilibiliï¼šm-RNA
 //E-mail:m-RNA@qq.com
-//´´½¨ÈÕÆÚ:2021/11/12
+//åˆ›å»ºæ—¥æœŸ:2021/11/12
 /****************************************************/
 
 #include "adc.h"
@@ -25,9 +25,9 @@ __align(1024)
 static DMA_ControlTable MSP_EXP432P401RLP_DMAControlTable[32];
 
 volatile bool recv_done_flag = 0;
-uint16_t adc_inputbuf[MM][ADC_SAMPLING_NUMBER]; //FFTÊäÈëÊı×é
+uint16_t adc_inputbuf[MM][ADC_SAMPLING_NUMBER]; //FFTè¾“å…¥æ•°ç»„
 
-// DMA³õÊ¼»¯º¯Êı
+// DMAåˆå§‹åŒ–å‡½æ•°
 void adc_dma_init(uint16_t len)
 {
   /* Configuring DMA module */
@@ -44,16 +44,16 @@ void adc_dma_init(uint16_t len)
   MAP_DMA_enableChannel(7);
 }
 
-/*****************   ÅäÖÃËµÃ÷   *****************
+/*****************   é…ç½®è¯´æ˜   *****************
  *
- * ÒÔÉÏDMAµÄÅäÖÃ´úÂë£¬
- * Ô´ÂëÎªBiliBiliÆ½Ì¨UPÖ÷ ¡°CloudBoyStudio¡± ±àĞ´
- * ±¾ÈËRNA£¬²»ÊÇ×÷Õß
- * ÔÚ´ËÒ²±í¸ĞĞ»
+ * ä»¥ä¸ŠDMAçš„é…ç½®ä»£ç ï¼Œ
+ * æºç ä¸ºBiliBiliå¹³å°UPä¸» â€œCloudBoyStudioâ€ ç¼–å†™
+ * æœ¬äººRNAï¼Œä¸æ˜¯ä½œè€…
+ * åœ¨æ­¤ä¹Ÿè¡¨æ„Ÿè°¢
  *
- *****************   ËµÃ÷½áÊø   *****************/
+ *****************   è¯´æ˜ç»“æŸ   *****************/
 
-// ÕâÀïÊ±³¢ÊÔ²»¿ªÆ¹ÅÒÄ£Ê½ ²É¼¯¸ü¶àµÄµãÊı µ«ÊÇÊ±¼äÀ´²»¼°ÁË ÓÚÊÇ×öÒ»°ë
+// è¿™é‡Œæ—¶å°è¯•ä¸å¼€ä¹’ä¹“æ¨¡å¼ é‡‡é›†æ›´å¤šçš„ç‚¹æ•° ä½†æ˜¯æ—¶é—´æ¥ä¸åŠäº† äºæ˜¯åšä¸€åŠ
 void DMA_INT1_IRQHandler(void)
 {
   static uint8_t i = 0;
@@ -65,7 +65,7 @@ void DMA_INT1_IRQHandler(void)
   {
     DMA_setChannelTransfer(DMA_CH7_ADC14 | UDMA_PRI_SELECT, UDMA_MODE_BASIC, (void *)&ADC14->MEM[0], (void *)&adc_inputbuf[i][0], 1024);
     DMA_enableChannel(7);
-    MAP_Timer_A_startCounter(TIMER_A0_BASE, TIMER_A_UP_MODE); //¿ªÆô¼ÆÊı
+    MAP_Timer_A_startCounter(TIMER_A0_BASE, TIMER_A_UP_MODE); //å¼€å¯è®¡æ•°
     return;
   }
   else
@@ -85,23 +85,23 @@ void DMA_INT1_IRQHandler(void)
   // DMA_disableInterrupt(INT_DMA_INT1);
 }
 
-// ADC³õÊ¼»¯º¯Êı
+// ADCåˆå§‹åŒ–å‡½æ•°
 void ADC_Config(void)
 {
   /* Initializing ADC (MCLK/1/1) */
-  MAP_ADC14_enableModule();                                                                 // Ê¹ÄÜADC14Ä£¿é
-  MAP_ADC14_initModule(ADC_CLOCKSOURCE_MCLK, ADC_PREDIVIDER_1, ADC_DIVIDER_1, ADC_NOROUTE); // ³õÊ¼»¯ADCÊ±ÖÓ ³¬ÆµÖÁ48MHz
+  MAP_ADC14_enableModule();                                                                 // ä½¿èƒ½ADC14æ¨¡å—
+  MAP_ADC14_initModule(ADC_CLOCKSOURCE_MCLK, ADC_PREDIVIDER_1, ADC_DIVIDER_1, ADC_NOROUTE); // åˆå§‹åŒ–ADCæ—¶é’Ÿ è¶…é¢‘è‡³48MHz
 
-  MAP_GPIO_setAsPeripheralModuleFunctionInputPin(GPIO_PORT_P4, GPIO_PIN6, GPIO_TERTIARY_MODULE_FUNCTION); // Ä£ÄâÊäÈë
-  MAP_ADC14_configureSingleSampleMode(ADC_MEM0, true);                                                    // µ¥Í¨µÀÅäÖÃ ¶à´Î×ª»¯true
-  MAP_ADC14_configureConversionMemory(ADC_MEM0, ADC_VREFPOS_INTBUF_VREFNEG_VSS, ADC_INPUT_A7, false);     // Ê¹ÓÃÄÚ²¿2.5VµçÑ¹²Î¿¼ ·Ç²î·ÖÊäÈëfalse
-  MAP_ADC14_enableInterrupt(ADC_INT0);                                                                    // ADCÍ¨µÀ0µÄÖĞ¶Ï
+  MAP_GPIO_setAsPeripheralModuleFunctionInputPin(GPIO_PORT_P4, GPIO_PIN6, GPIO_TERTIARY_MODULE_FUNCTION); // æ¨¡æ‹Ÿè¾“å…¥
+  MAP_ADC14_configureSingleSampleMode(ADC_MEM0, true);                                                    // å•é€šé“é…ç½® å¤šæ¬¡è½¬åŒ–true
+  MAP_ADC14_configureConversionMemory(ADC_MEM0, ADC_VREFPOS_INTBUF_VREFNEG_VSS, ADC_INPUT_A7, false);     // ä½¿ç”¨å†…éƒ¨2.5Vç”µå‹å‚è€ƒ éå·®åˆ†è¾“å…¥false
+  MAP_ADC14_enableInterrupt(ADC_INT0);                                                                    // ADCé€šé“0çš„ä¸­æ–­
 
-  MAP_REF_A_setReferenceVoltage(REF_A_VREF2_5V); // Ê¹ÓÃÄÚ²¿2.5VµçÑ¹²Î¿¼
-  MAP_REF_A_enableReferenceVoltage();            // Ê¹ÄÜÄÚ²¿2.5VµçÑ¹²Î¿¼
+  MAP_REF_A_setReferenceVoltage(REF_A_VREF2_5V); // ä½¿ç”¨å†…éƒ¨2.5Vç”µå‹å‚è€ƒ
+  MAP_REF_A_enableReferenceVoltage();            // ä½¿èƒ½å†…éƒ¨2.5Vç”µå‹å‚è€ƒ
 
-  MAP_ADC14_setSampleHoldTrigger(ADC_TRIGGER_TA0_C1, false);  // Ê¹ÓÃ¶¨Ê±Æ÷AÍ¨µÀ1×÷Îª´¥·¢Ô´
+  MAP_ADC14_setSampleHoldTrigger(ADC_TRIGGER_TA0_C1, false);  // ä½¿ç”¨å®šæ—¶å™¨Aé€šé“1ä½œä¸ºè§¦å‘æº
     
-  MAP_ADC14_enableConversion(); // Ê¹ÄÜ¿ªÊ¼×ª»»(´¥·¢ºó ×Ô¶¯ADCÉÏµç)
-  delay_ms(1000);               // µÈ´ıÎÈ¶¨
+  MAP_ADC14_enableConversion(); // ä½¿èƒ½å¼€å§‹è½¬æ¢(è§¦å‘å è‡ªåŠ¨ADCä¸Šç”µ)
+  delay_ms(1000);               // ç­‰å¾…ç¨³å®š
 }

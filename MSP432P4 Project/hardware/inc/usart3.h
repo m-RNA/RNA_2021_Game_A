@@ -2,28 +2,28 @@
 #define __USART3_H
 #include "sysinit.h"
 //////////////////////////////////////////////////////////////////////////////////
-//±¾³ÌĞòÖ»¹©Ñ§Ï°Ê¹ÓÃ£¬Î´¾­×÷ÕßĞí¿É£¬²»µÃÓÃÓÚÆäËüÈÎºÎÓÃÍ¾
-//ALIENTEK STM32¿ª·¢°å
-//´®¿Ú3Çı¶¯´úÂë
-//ÕıµãÔ­×Ó@ALIENTEK
-//¼¼ÊõÂÛÌ³:www.openedv.com
-//ĞŞ¸ÄÈÕÆÚ:2014/3/29
-//°æ±¾£ºV1.0
-//°æÈ¨ËùÓĞ£¬µÁ°æ±Ø¾¿¡£
-//Copyright(C) ¹ãÖİÊĞĞÇÒíµç×Ó¿Æ¼¼ÓĞÏŞ¹«Ë¾ 2009-2019
+//æœ¬ç¨‹åºåªä¾›å­¦ä¹ ä½¿ç”¨ï¼Œæœªç»ä½œè€…è®¸å¯ï¼Œä¸å¾—ç”¨äºå…¶å®ƒä»»ä½•ç”¨é€”
+//ALIENTEK STM32å¼€å‘æ¿
+//ä¸²å£3é©±åŠ¨ä»£ç 
+//æ­£ç‚¹åŸå­@ALIENTEK
+//æŠ€æœ¯è®ºå›:www.openedv.com
+//ä¿®æ”¹æ—¥æœŸ:2014/3/29
+//ç‰ˆæœ¬ï¼šV1.0
+//ç‰ˆæƒæ‰€æœ‰ï¼Œç›—ç‰ˆå¿…ç©¶ã€‚
+//Copyright(C) å¹¿å·å¸‚æ˜Ÿç¿¼ç”µå­ç§‘æŠ€æœ‰é™å…¬å¸ 2009-2019
 //All rights reserved
 //////////////////////////////////////////////////////////////////////////////////
 
 #define HC_05_USART_BASE EUSCI_A2_BASE
 #define HC_05_USART_PORT_PIN GPIO_PORT_P3, GPIO_PIN2 | GPIO_PIN3
 
-#define USART3_MAX_SEND_LEN 600 //×î´ó·¢ËÍ»º´æ×Ö½ÚÊı
-#define USART3_RX_EN 1          //0,²»½ÓÊÕ;1,½ÓÊÕ.
+#define USART3_MAX_SEND_LEN 600 //æœ€å¤§å‘é€ç¼“å­˜å­—èŠ‚æ•°
+#define USART3_RX_EN 1          //0,ä¸æ¥æ”¶;1,æ¥æ”¶.
 
-extern uint8_t USART3_TX_BUF[USART3_MAX_SEND_LEN]; //·¢ËÍ»º³å,×î´óUSART3_MAX_SEND_LEN×Ö½Ú
-extern volatile uint16_t USART3_RX_STA;            //½ÓÊÕÊı¾İ×´Ì¬
+extern uint8_t USART3_TX_BUF[USART3_MAX_SEND_LEN]; //å‘é€ç¼“å†²,æœ€å¤§USART3_MAX_SEND_LENå­—èŠ‚
+extern volatile uint16_t USART3_RX_STA;            //æ¥æ”¶æ•°æ®çŠ¶æ€
 
-void usart3_init(uint32_t baudRate); //´®¿Ú2³õÊ¼»¯
+void usart3_init(uint32_t baudRate); //ä¸²å£2åˆå§‹åŒ–
 void u3_printf(char *fmt, ...);
 void BluetoothSendDate(float *gyh, float THDx, uint16_t *waveBin);
 
