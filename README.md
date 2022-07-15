@@ -5,7 +5,7 @@
 -  默认自带仿真输入信号，即 **无需** ADC前端电路、信号发生器输入信号，也可测试算法。更多仿真输入信号配置，可去"simulation.h"头文件配置。
 -  默认调试器串口会打印大量信息，可去"config.h"修改宏定义DEBUG_PRINT_INTERNAL_DATA为0，来关闭打印大量内部信息，信息的查看可以复制后，粘贴到\RNA_2021_Game_A\Doc\里的Simulation.xlsx表格里，有多个分表，ADC采样点数不同请粘贴到对应位置。
 
-下面是旧版工程文档（MSP32P4 Project）：
+旧版工程在 MSP32P4 Project 文件夹里。
 ***
 
 ## 1.前言
