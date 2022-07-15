@@ -38,7 +38,7 @@ u32 BSP_Get_Signal_CCR(void)
         log_debug("Warning: Simulation_CCR Spilling!!!\r\n");
     return Simulation_CCR;
 #else
-    delay_ms(19); // 信号捕获最多时长也就 1.4ms * 6 = 8.2ms
+    delay_ms(5 * Cap_Times); // 信号捕获最多时长也就 1.4ms * 4 = 8.2ms 
     return BSP_Signal_Capture_Value;
 #endif
 }

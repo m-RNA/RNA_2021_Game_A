@@ -1,7 +1,6 @@
 #include "bsp_it.h"
 #include "bsp_operation.h"
 
-#define Cap_Times 4
 static vu32 Internal_Cap_Register = 0; // 捕获值
 static vu8 CapTimer_SyncState = 0;     // 捕获信号同步状态
 
