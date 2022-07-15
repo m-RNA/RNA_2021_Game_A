@@ -93,7 +93,9 @@ static void BSP_Cap_Timer_Stop(void)
 {
 #ifdef __MSP432P401R__
     MAP_Timer_A_stopTimer(SIGNAL_CAPTURE_TIMER);
-    MAP_Timer_A_clearInterruptFlag(SIGNAL_CAPTURE_TIMER);//清除定时器溢出中断标志位
+    MAP_Timer_A_clearTimer(SIGNAL_CAPTURE_TIMER); //清空定时器 重新从0计数
+    // MAP_Timer_A_clearInterruptFlag(SIGNAL_CAPTURE_TIMER);//清除定时器溢出中断标志位
+    MAP_Timer_A_clearCaptureCompareInterrupt(SIGNAL_CAPTURE_TIMER, SIGNAL_CAPTURE_TIMER_REGISTER);//清除 CCR1 更新中断标志位
 #else
     HAL_TIM_IC_Stop_IT(SIGNAL_CAPTURE_TIMER, SIGNAL_CAPTURE_TIMER_CHANNEL);
 #endif

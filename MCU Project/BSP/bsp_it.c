@@ -17,6 +17,7 @@ void TA2_N_IRQHandler(void)
     {
         Synchronization_CaptureTimerState = 1;
         MAP_Timer_A_getCaptureCompareCount(SIGNAL_CAPTURE_TIMER, SIGNAL_CAPTURE_TIMER_REGISTER);
+        MAP_Timer_A_clearTimer(SIGNAL_CAPTURE_TIMER); //清空定时器 重新从0计数
         return;
     }
     BSP_Signal_Capture_Value = MAP_Timer_A_getCaptureCompareCount(SIGNAL_CAPTURE_TIMER, SIGNAL_CAPTURE_TIMER_REGISTER);
