@@ -18,9 +18,9 @@ void BSP_ADC_DMA_Start(u16 *Data, u16 Num)
     MAP_DMA_setChannelTransfer(DMA_CH7_ADC14 | UDMA_PRI_SELECT, UDMA_MODE_BASIC, (void *)&ADC14->MEM[0], (void *)Data, Num);
     MAP_DMA_enableChannel(7); // 使能7通道（ADC）
 
-    DMA_Transmit_Completed_Flag = 0;                          // 传输完成标志位清零
-    MAP_Timer_A_startCounter(TIMER_A0_BASE, TIMER_A_UP_MODE); // 开始计数 触发ADC定时采样
-    while (!DMA_Transmit_Completed_Flag)                      // 等待传输完成
+    DMA_Transmit_Completed_Flag = 0;      // 传输完成标志位清零
+    BSP_Timer_Start(Signal_Sample_Timer); // 开始计数 触发ADC定时采样
+    while (!DMA_Transmit_Completed_Flag)  // 等待传输完成
         ;
 #else
     HAL_ADC_Start_DMA(SIGNAL_SAMPLE_ADC, (u32 *)Data, Num);
