@@ -24,7 +24,7 @@
 #define ARM_FFT_USING_STRUCTURE arm_cfft_sR_f32_len4096
 #endif
 
-#define FFT_To_Am_IndexErrorRange 4
+#define FFT_To_Am_IndexErrorRange 2
 
 static float Synthetic_WaveBuf[Signal_Synthesizer_Wave_Length_MAX];
 static float FFT_Input_Buf[ADC_SAMPLING_NUM * 2];
@@ -83,13 +83,13 @@ u16 Max_Float_WithinRange(float Data[], u16 Left, u16 Right)
 
 /**
  * @brief  信号合成器
- * @param[out] Output        波形数据输出指针
- * @param[in]  Magnification 放大倍率
- * @param[in]  NormAm        归一化幅值
- * @param[in]  Phase         相位
- * @param[in]  Precision     最高几次谐波分量
+ * @param[out] Output    波形数据输出指针
+ * @param[in]  F0_Vpp    基波幅值(mv)
+ * @param[in]  NormAm    归一化幅值
+ * @param[in]  Phase     相位
+ * @param[in]  Precision 最高几次谐波分量
  */
-void Signal_Synthesizer(u16 *Output, u16 Length, u16 Magnification, float *NormAm, float *Phase, u8 Precision)
+void Signal_Synthesizer(u16 *Output, u16 Length, u16 F0_Vpp, float *NormAm, float *Phase, u8 Precision)
 {
     u16 i, j;
     u16 MinIndex;
@@ -109,8 +109,8 @@ void Signal_Synthesizer(u16 *Output, u16 Length, u16 Magnification, float *NormA
     MinIndex = Min_Float(Synthetic_WaveBuf, Length);
     for (i = 0; i < Length; ++i)
     {
-        // 将小数全转为以0为起点的正数，再乘以 Magnification 变为整数
-        Output[i] = Magnification * (Synthetic_WaveBuf[i] - Synthetic_WaveBuf[MinIndex]);
+        // 将小数全转为以0为起点的正数 再乘以 F0_Vpp 变为整数
+        Output[i] = F0_Vpp * (Synthetic_WaveBuf[i] - Synthetic_WaveBuf[MinIndex]);
     }
 }
 
@@ -125,7 +125,7 @@ void CalculateAmplitude_By_FFT(float *Am_Pointer, u16 *SampleData_Pointer)
         FFT_Input_Buf[0 + (i << 1)] = SampleData_Pointer[i]; // 实部为数据
         FFT_Input_Buf[1 + (i << 1)] = 0;                     // 虚部为0
     }
-    arm_cfft_f32(&ARM_FFT_USING_STRUCTURE, FFT_Input_Buf, 0, 1);  // FFT计算
+    arm_cfft_f32(&ARM_FFT_USING_STRUCTURE, FFT_Input_Buf, 0, 1);    // FFT计算
     arm_cmplx_mag_f32(FFT_Input_Buf, Am_Pointer, ADC_SAMPLING_NUM); //把运算结果复数求模得幅值
 
     log_debug("Calculating Amplitude Completed!\r\n");
@@ -152,11 +152,12 @@ void NormalizedAm_And_CalculateTHD(float *Phase_Pointer, float *NormAm_Pointer, 
         /* 相位计算 */
         Phase_Pointer[i] = atan2f((FFT_Input_Buf[Fx_Index[i] << 1] + 1), (FFT_Input_Buf[Fx_Index[i] << 1] + 0));
         /* 归一化幅值计算 */
-        NormAm_Pointer[i - 1] = floor(Am_Data_Pointer[Fx_Index[i]] / Am_Data_Pointer[Fx_Index[0]] * 100.0f) / 100.0f; // 向下取整floor() 误差更小
+        NormAm_Pointer[i - 1] = Am_Data_Pointer[Fx_Index[i]] / Am_Data_Pointer[Fx_Index[0]]; // 向下取整floor() 误差更小
         /* THDx部分计算 */
         Square_Sum += Am_Data_Pointer[Fx_Index[i]] * Am_Data_Pointer[Fx_Index[i]]; // 平方和
     }
-    *THD_Pointer = ceil(sqrtf(Square_Sum) / Am_Data_Pointer[Fx_Index[0]] * 10000) / 100.0f; // 向上取整ceil()
+    arm_sqrt_f32(Square_Sum, THD_Pointer);
+    *THD_Pointer = *THD_Pointer * 100 / Am_Data_Pointer[Fx_Index[0]];
 
     log_Fn_NAm_THD_data(Fx_Index, NormAm_Pointer, *THD_Pointer);
 }
@@ -167,7 +168,7 @@ void Restore_Waveform(u16 *RestoreWaveform_Pointer, float *NormAm_Pointer, float
     log_debug("Transforming Normalized Am To Waveform Data...\r\n");
 
     Signal_Synthesizer(RestoreWaveform_Pointer, OLED_X_MAX, 256, // 这个256是随便定的，目的是把小数转换为整数；OLED显示函数会进一步处理范围
-                       NormAm_Pointer, (void*)0, 5);
+                       NormAm_Pointer, (void *)0, 5);
 
     log_debug("Transforming Completed!\r\n");
 }

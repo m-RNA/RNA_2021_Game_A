@@ -71,7 +71,7 @@ void log_Internal_data(u16 *Signal_ADC_Data, float *Amplitude_Data,
     log_indata("\r\n*********************\r\n");
 
     log_indata("THDx:\r\n"); // THDx
-    log_indata("%f\r\n", THDx);
+    log_indata("%0.3f\r\n", THDx);
     log_indata("\r\n*********************\r\n");
 
     log_indata("Period:(us)\r\n"); // 信号周期

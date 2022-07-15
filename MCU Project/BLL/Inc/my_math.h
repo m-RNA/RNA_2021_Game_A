@@ -38,12 +38,12 @@ void Restore_Waveform(u16 *RestoreWaveform_Pointer, float *NormAm_Pointer, float
 
 /**
  * @brief  信号合成器
- * @param[out] Output        波形数据输出指针
- * @param[in]  Magnification 放大倍率
- * @param[in]  NormAm        归一化幅值
- * @param[in]  Phase         相位
- * @param[in]  Precision     最高几次谐波分量
+ * @param[out] Output    波形数据输出指针
+ * @param[in]  F0_Vpp    基波幅值(mv)
+ * @param[in]  NormAm    归一化幅值
+ * @param[in]  Phase     相位
+ * @param[in]  Precision 最高几次谐波分量
  */
-void Signal_Synthesizer(u16 *Output, u16 Length, u16 Magnification, float *NormAm, float *Phase, u8 Precision);
+void Signal_Synthesizer(u16 *Output, u16 Length, u16 F0_Vpp, float *NormAm, float *Phase, u8 Precision);
 
 #endif
