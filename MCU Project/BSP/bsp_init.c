@@ -49,7 +49,7 @@ void BSP_Sample_Timer_Init(void)
     MX_TIM2_Init(); // 第8讲 定时器捕获 （过零比较器采频率）
     MX_TIM3_Init(); // 第8讲 定时器配置 （ADC触发时钟源 fs）
 
-    HAL_TIM_IC_Start_IT(SIGNAL_SAMPLE_TIMER, SIGNAL_SAMPLE_TIMER_CHANNEL);
+    HAL_TIM_IC_Start_IT(SIGNAL_CAPTURE_TIMER, SIGNAL_CAPTURE_TIMER_CHANNEL);
     HAL_TIM_Base_Start(SIGNAL_SAMPLE_TIMER);
 #endif
 }

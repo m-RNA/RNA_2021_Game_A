@@ -38,17 +38,17 @@ void DMA_INT1_IRQHandler(void)
 #else
 void HAL_TIM_IC_CaptureCallback(TIM_HandleTypeDef *htim)
 {
-    if (htim->Instance == *SIGNAL_SAMPLE_TIMER.Instance)
+    if (htim->Instance == *SIGNAL_CAPTURE_TIMER.Instance)
     {
-        if (htim->Channel == SIGNAL_SAMPLE_TIMER_ACTIVE_CHANNEL)
+        if (htim->Channel == SIGNAL_CAPTURE_TIMER_ACTIVE_CHANNEL)
         {
             if (!Synchronization_CaptureTimerState) // 第一次捕获值位于信号同步 不使用该数据
             {
                 Synchronization_CaptureTimerState = 1;
-                HAL_TIM_ReadCapturedValue(htim, SIGNAL_SAMPLE_TIMER_CHANNEL);
+                HAL_TIM_ReadCapturedValue(htim, SIGNAL_CAPTURE_TIMER_CHANNEL);
                 return;
             }
-            BSP_Signal_Capture_Value = HAL_TIM_ReadCapturedValue(htim, SIGNAL_SAMPLE_TIMER_CHANNEL) + 1; //※是TIM_CHANNEL_1 要记得加1
+            BSP_Signal_Capture_Value = HAL_TIM_ReadCapturedValue(htim, SIGNAL_CAPTURE_TIMER_CHANNEL) + 1; //※是TIM_CHANNEL_1 要记得加1
         }
     }
 }
