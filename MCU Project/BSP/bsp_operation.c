@@ -85,6 +85,25 @@ static void BSP_Cap_Timer_Start(void)
 #endif
 }
 
+static void BSP_Fs_Timer_Stop(void)
+{
+#ifdef __MSP432P401R__
+    MAP_Timer_A_stopTimer(SIGNAL_SAMPLE_TIMER);
+#else
+    HAL_TIM_Base_Stop(SIGNAL_SAMPLE_TIMER);
+#endif
+}
+
+static void BSP_Cap_Timer_Stop(void)
+{
+#ifdef __MSP432P401R__
+    MAP_Timer_A_stopTimer(SIGNAL_CAPTURE_TIMER);
+    MAP_Timer_A_clearInterruptFlag(SIGNAL_CAPTURE_TIMER);
+#else
+    HAL_TIM_IC_Stop_IT(SIGNAL_CAPTURE_TIMER, SIGNAL_CAPTURE_TIMER_CHANNEL);
+#endif
+}
+
 void BSP_Timer_Start(BSP_Timer Timer)
 {
     if (Timer == Signal_Sample_Timer)
@@ -94,6 +113,18 @@ void BSP_Timer_Start(BSP_Timer Timer)
     else if (Timer == Signal_Capture_Timer)
     {
         BSP_Cap_Timer_Start();
+    }
+}
+
+void BSP_Timer_Stop(BSP_Timer Timer)
+{
+    if (Timer == Signal_Sample_Timer)
+    {
+        BSP_Fs_Timer_Stop();
+    }
+    else if (Timer == Signal_Capture_Timer)
+    {
+        BSP_Cap_Timer_Stop();
     }
 }
 
