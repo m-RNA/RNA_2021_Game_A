@@ -75,7 +75,8 @@ void Simulate_Signal_Synthesizer(u16 *SimulateWaveData, u16 Length)
         Freq_Multiple = (SignalSampleFreq_Multiple + 1) * Simulation_CCR_Data[Simulation_Times_Index] / Simulate_Fs_ARR;
     }
     if (Freq_Multiple >= Signal_Synthesizer_Wave_Length_MAX)
-        log_assert("Simulated ERROR: Freq_Multiple is too Big! MayBe:\r\n\
+        log_assert("\r\n\
+    Simulated ERROR: Freq_Multiple is too Big! MayBe:\r\n\
     1. ADC_SAMPLING_NUM    is Too Large.\r\n\
     2. Simulation_CCR_MAX  is Too Small.\r\n\
     3. Simulation_CCR_Data is Too Large(Setting Frequency is too Low).\r\n");
