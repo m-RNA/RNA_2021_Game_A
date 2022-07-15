@@ -1,3 +1,12 @@
+## 0.新版工程提示（MCU Project）
+- 新版支持MSP432和STM32(其中Stm32工程支持Keil仿真)。
+- ADC采样点数、采样频率倍数、仿真信号输入等等,可去"config.h"头文件配置。
+-  默认自带仿真输入信号，即 **无需** ADC前端电路、信号发生器输入信号，也可测试算法。更多仿真输入信号配置，可去"simulation.h"头文件配置。
+-  默认调试器串口会打印大量信息，可去"config.h"修改宏定义DEBUG_PRINT_INTERNAL_DATA为0，来关闭打印大量内部信息，信息的查看可以复制后，粘贴到\RNA_2021_Game_A\Doc\里的Simulation.xlsx表格里，有多个分表，ADC采样点数不同请粘贴到对应位置。
+
+下面是旧版工程文档（MSP32P4 Project）：
+***
+
 ## 1.前言
 2021/11/11  作者：[@BILIBILI：m-RNA](https://space.bilibili.com/41224928  "@BILIBILI：m-RNA 个人主页")    E-mail：m-RNA@qq.com      
 
@@ -129,6 +138,7 @@ hxdm给我个**Star**⭐吧！别白嫖了😆！！秋梨膏！！！
 	  	<td>P3.3(RXD)</td>
 	</tr>
 </table>
+
 **1.串口使用**
 
 - 使用串口0打印调试信息至电脑，调试助手的波特率是1382400；
