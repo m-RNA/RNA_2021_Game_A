@@ -27,8 +27,8 @@ void DMA_INT1_IRQHandler(void)
 {
     MAP_DMA_clearInterruptFlag(7);
 
-    MAP_Timer_A_stopTimer(TIMER_A0_BASE);
-    MAP_Timer_A_clearInterruptFlag(TIMER_A0_BASE);
+    MAP_Timer_A_stopTimer(SIGNAL_SAMPLE_TIMER);
+    MAP_Timer_A_clearInterruptFlag(SIGNAL_SAMPLE_TIMER);
     MAP_ADC14_clearInterruptFlag(ADC_INT0);
 
     DMA_Transmit_Completed_Flag = 1;
