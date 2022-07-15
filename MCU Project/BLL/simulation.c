@@ -1,7 +1,6 @@
 #include "simulation.h"
 #include "arm_math.h"
 #include "my_math.h"
-#include "oled_interface.h"
 #include "log.h"
 #include "stdlib.h"
 

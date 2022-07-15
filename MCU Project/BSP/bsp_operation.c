@@ -40,16 +40,11 @@ u32 BSP_Get_Signal_CCR(void)
         log_debug("Warning: Simulation_CCR Spilling!!!\r\n");
     return Simulation_CCR;
 #else
-
-#ifdef __MSP432P401R__
-
-#else
-
-#endif
-
+    Synchronization_CaptureTimerState = 0; // 信号同步状态置0
+    
     delay_ms(19); // 信号捕获最多时长也就 1.4ms * 6 = 8.2ms
-    // while(Synchronization_CaptureTimerState == 0); // 阻塞 再次确定
-    // Synchronization_CaptureTimerState = 0;
+    
+    // while(Synchronization_CaptureTimerState == 0); // 不能通过阻塞！！
     return BSP_Signal_Capture_Value;
 #endif
 }
@@ -98,7 +93,7 @@ static void BSP_Cap_Timer_Stop(void)
 {
 #ifdef __MSP432P401R__
     MAP_Timer_A_stopTimer(SIGNAL_CAPTURE_TIMER);
-    MAP_Timer_A_clearInterruptFlag(SIGNAL_CAPTURE_TIMER);
+    MAP_Timer_A_clearInterruptFlag(SIGNAL_CAPTURE_TIMER);//清除定时器溢出中断标志位
 #else
     HAL_TIM_IC_Stop_IT(SIGNAL_CAPTURE_TIMER, SIGNAL_CAPTURE_TIMER_CHANNEL);
 #endif
