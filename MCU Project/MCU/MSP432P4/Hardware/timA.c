@@ -30,7 +30,7 @@ void TimA0_Base_Init(uint16_t ccr0, uint16_t psc)
     MAP_Timer_A_configureUpMode(SIGNAL_SAMPLE_TIMER, &upConfig); //选择定时器A1 TIMER_A0
     MAP_Timer_A_initCompare(SIGNAL_SAMPLE_TIMER, &compareConfig);
 
-    MAP_Timer_A_startCounter(SIGNAL_SAMPLE_TIMER, TIMER_A_UP_MODE); //开启计数
+    // MAP_Timer_A_startCounter(SIGNAL_SAMPLE_TIMER, TIMER_A_UP_MODE); //开启计数
 }
 
 /*****************************************************************************************************************/
@@ -64,7 +64,7 @@ void TimA2_Cap_Init(uint16_t psc)
     MAP_Timer_A_initCapture(SIGNAL_CAPTURE_TIMER, &captureModeConfig_TA2);
 
     // 6.选择连续模式计数开始计数
-    MAP_Timer_A_startCounter(SIGNAL_CAPTURE_TIMER, TIMER_A_CONTINUOUS_MODE);
+    // MAP_Timer_A_startCounter(SIGNAL_CAPTURE_TIMER, TIMER_A_CONTINUOUS_MODE);
 
     // 7.清除中断标志位
     // MAP_Timer_A_clearInterruptFlag(SIGNAL_CAPTURE_TIMER);                                   //清除定时器溢出中断标志位

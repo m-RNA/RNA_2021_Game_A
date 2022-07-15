@@ -67,23 +67,34 @@ void BSP_Set_Fs_ARR(u32 Fs_ARR)
 #endif
 }
 
-void BSP_Fs_Timer_Start(BSP_Timer Timer)
+static void BSP_Fs_Timer_Start(void)
 {
 #ifdef __MSP432P401R__
-    if (Timer == Signal_Sample_Timer)
-    {
-    }
-    else if (Timer == Signal_Capture_Timer)
-    {
-    }
+    MAP_Timer_A_startCounter(SIGNAL_SAMPLE_TIMER, TIMER_A_UP_MODE); //¿ªÆô¼ÆÊý
 #else
+    HAL_TIM_Base_Start(SIGNAL_SAMPLE_TIMER);
+#endif
+}
+
+static void BSP_Cap_Timer_Start(void)
+{
+#ifdef __MSP432P401R__
+    MAP_Timer_A_startCounter(SIGNAL_CAPTURE_TIMER, TIMER_A_CONTINUOUS_MODE);
+#else
+    HAL_TIM_IC_Start_IT(SIGNAL_CAPTURE_TIMER, SIGNAL_CAPTURE_TIMER_CHANNEL);
+#endif
+}
+
+void BSP_Timer_Start(BSP_Timer Timer)
+{
     if (Timer == Signal_Sample_Timer)
     {
+        BSP_Fs_Timer_Start();
     }
     else if (Timer == Signal_Capture_Timer)
     {
+        BSP_Cap_Timer_Start();
     }
-#endif
 }
 
 void BSP_Bluetooth_SendByte(u8 Data)

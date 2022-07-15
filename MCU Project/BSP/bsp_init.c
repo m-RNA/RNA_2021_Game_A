@@ -1,4 +1,5 @@
 #include "bsp_init.h"
+#include "bsp_operation.h"
 #include "log.h"
 
 /********************************************************************************************/
@@ -48,10 +49,9 @@ void BSP_Sample_Timer_Init(void)
 #else
     MX_TIM2_Init(); // 第8讲 定时器捕获 （过零比较器采频率）
     MX_TIM3_Init(); // 第8讲 定时器配置 （ADC触发时钟源 fs）
-
-    HAL_TIM_IC_Start_IT(SIGNAL_CAPTURE_TIMER, SIGNAL_CAPTURE_TIMER_CHANNEL);
-    HAL_TIM_Base_Start(SIGNAL_SAMPLE_TIMER);
 #endif
+    BSP_Timer_Start(Signal_Capture_Timer);
+    BSP_Timer_Start(Signal_Sample_Timer);
 }
 
 void BSP_Sample_ADC_with_DMA_Init(u16 *Addr, u16 Length)
