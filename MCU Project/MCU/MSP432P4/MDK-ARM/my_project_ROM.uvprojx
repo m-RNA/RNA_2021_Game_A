@@ -336,7 +336,7 @@
             <v6WtE>0</v6WtE>
             <v6Rtti>0</v6Rtti>
             <VariousControls>
-              <MiscControls></MiscControls>
+              <MiscControls>--diag_suppress=1296</MiscControls>
               <Define>__MSP432P401R__,__TARGET_FPU_VFP,__FPU_PRESENT,ARM_MATH_CM4,__CC_ARM,ARM_MATH_MATRIX_CHECK,ARM_MATH_ROUNDING</Define>
               <Undefine></Undefine>
               <IncludePath>..\Hardware\Inc;..\SYS\Inc;..\Drivers;..\..\..\DSP_Lib\CMSIS\Include;..\..\..\OLED_Lib;..\..\..\BLL\Inc;..\..\..\BSP\Inc;..\..\MSP432P4</IncludePath>
@@ -407,6 +407,51 @@
               <FileName>msp432p4xx_driverlib.lib</FileName>
               <FileType>4</FileType>
               <FilePath>E:\RNA_2021_Game_A\MCU Project\MCU\MSP432P4\Drivers\ti\devices\msp432p4xx\driverlib\keil\msp432p4xx_driverlib.lib</FilePath>
+            </File>
+            <File>
+              <FileName>adc14.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Drivers\ti\devices\msp432p4xx\driverlib\adc14.c</FilePath>
+            </File>
+            <File>
+              <FileName>dma.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Drivers\ti\devices\msp432p4xx\driverlib\dma.c</FilePath>
+            </File>
+            <File>
+              <FileName>flash.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Drivers\ti\devices\msp432p4xx\driverlib\flash.c</FilePath>
+            </File>
+            <File>
+              <FileName>fpu.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Drivers\ti\devices\msp432p4xx\driverlib\fpu.c</FilePath>
+            </File>
+            <File>
+              <FileName>gpio.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Drivers\ti\devices\msp432p4xx\driverlib\gpio.c</FilePath>
+            </File>
+            <File>
+              <FileName>i2c.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Drivers\ti\devices\msp432p4xx\driverlib\i2c.c</FilePath>
+            </File>
+            <File>
+              <FileName>systick.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Drivers\ti\devices\msp432p4xx\driverlib\systick.c</FilePath>
+            </File>
+            <File>
+              <FileName>timer_a.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Drivers\ti\devices\msp432p4xx\driverlib\timer_a.c</FilePath>
+            </File>
+            <File>
+              <FileName>uart.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Drivers\ti\devices\msp432p4xx\driverlib\uart.c</FilePath>
             </File>
           </Files>
         </Group>
