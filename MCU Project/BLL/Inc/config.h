@@ -51,14 +51,17 @@
 #include "dma.h"
 #include "gpio.h"
 #include "i2c.h"
+extern DMA_HandleTypeDef hdma_adc1;
+
 #define delay_ms(MS) HAL_Delay(MS)
-#define BLUETOOTH_UART &huart2
+#define DMA_ADC &hdma_adc1
+#define SIGNAL_SAMPLE_ADC &hadc1
 #define SIGNAL_SAMPLE_TIMER &htim3
 #define SIGNAL_CAPTURE_TIMER &htim2
 #define SIGNAL_CAPTURE_TIMER_CHANNEL TIM_CHANNEL_1
 #define SIGNAL_CAPTURE_TIMER_ACTIVE_CHANNEL HAL_TIM_ACTIVE_CHANNEL_1
-#define SIGNAL_SAMPLE_ADC &hadc1
 #define OLED_Internal_IIC &hi2c1
+#define BLUETOOTH_UART &huart2
 
 #else
 #endif

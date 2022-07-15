@@ -23,12 +23,10 @@ void BSP_ADC_DMA_Start(u16 *Data, u16 Num)
     while (!DMA_Transmit_Completed_Flag)  // 等待传输完成
         ;
 #else
-    HAL_ADC_Start_DMA(SIGNAL_SAMPLE_ADC, (u32 *)Data, Num);
-    // ....
-
-//    DMA_Transmit_Completed_Flag = 0;     // 传输完成标志位清零
-//    while (!DMA_Transmit_Completed_Flag) // 等待传输完成
-//        ;
+    DMA_Transmit_Completed_Flag = 0;      // 传输完成标志位清零
+    BSP_Timer_Start(Signal_Sample_Timer); // 开始计数 触发ADC定时采样
+    while (!DMA_Transmit_Completed_Flag)  // 等待传输完成
+        ;
 #endif
 #endif
 }
@@ -40,11 +38,7 @@ u32 BSP_Get_Signal_CCR(void)
         log_debug("Warning: Simulation_CCR Spilling!!!\r\n");
     return Simulation_CCR;
 #else
-    Synchronization_CaptureTimerState = 0; // 信号同步状态置0
-    
     delay_ms(19); // 信号捕获最多时长也就 1.4ms * 6 = 8.2ms
-    
-    // while(Synchronization_CaptureTimerState == 0); // 不能通过阻塞！！
     return BSP_Signal_Capture_Value;
 #endif
 }
@@ -95,7 +89,7 @@ static void BSP_Cap_Timer_Stop(void)
     MAP_Timer_A_stopTimer(SIGNAL_CAPTURE_TIMER);
     MAP_Timer_A_clearTimer(SIGNAL_CAPTURE_TIMER); //清空定时器 重新从0计数
     // MAP_Timer_A_clearInterruptFlag(SIGNAL_CAPTURE_TIMER);//清除定时器溢出中断标志位
-    MAP_Timer_A_clearCaptureCompareInterrupt(SIGNAL_CAPTURE_TIMER, SIGNAL_CAPTURE_TIMER_REGISTER);//清除 CCR1 更新中断标志位
+    MAP_Timer_A_clearCaptureCompareInterrupt(SIGNAL_CAPTURE_TIMER, SIGNAL_CAPTURE_TIMER_REGISTER); //清除 CCR1 更新中断标志位
 #else
     HAL_TIM_IC_Stop_IT(SIGNAL_CAPTURE_TIMER, SIGNAL_CAPTURE_TIMER_CHANNEL);
 #endif

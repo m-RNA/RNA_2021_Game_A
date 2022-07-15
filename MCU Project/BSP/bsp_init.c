@@ -1,5 +1,6 @@
 #include "bsp_init.h"
 #include "bsp_operation.h"
+#include "bsp_it.h"
 #include "log.h"
 
 /********************************************************************************************/
@@ -61,7 +62,11 @@ void BSP_Sample_ADC_with_DMA_Init(u16 *Addr, u16 Length)
     adc_dma_init(Addr, Length); // µÚ12½² DMA
     ADC_Config();               // µÚ11½² ADC
 #else
+    extern void DMA_ADC_Transmit_Complete_Callback(DMA_HandleTypeDef * _hdma);
+
     MX_DMA_Init();
+    HAL_DMA_RegisterCallback(DMA_ADC, HAL_DMA_XFER_CPLT_CB_ID, DMA_ADC_Transmit_Complete_Callback);
     MX_ADC1_Init();
+    HAL_ADC_Start_DMA(SIGNAL_SAMPLE_ADC, (u32 *)Addr, Length);
 #endif
 }
