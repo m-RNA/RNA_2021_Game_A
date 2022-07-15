@@ -2,10 +2,20 @@
 #define __MY_MATH
 #include "config.h"
 
-#if (ADC_SAMPLING_NUM <1024)
+#ifdef __MSP432P401R__
+#if (ADC_SAMPLING_NUM < 4096u)
 #define Signal_Synthesizer_Wave_Length_MAX ADC_SAMPLING_NUM
 #else
-#define Signal_Synthesizer_Wave_Length_MAX 170
+#define Signal_Synthesizer_Wave_Length_MAX 1024u
+#endif
+#elif defined __STM32F1xx_HAL_H
+#if (ADC_SAMPLING_NUM < 1024u)
+#define Signal_Synthesizer_Wave_Length_MAX ADC_SAMPLING_NUM
+#else
+#define Signal_Synthesizer_Wave_Length_MAX 170u
+#endif
+#else
+#warning...
 #endif
 
 /* 找出最小值位置 */

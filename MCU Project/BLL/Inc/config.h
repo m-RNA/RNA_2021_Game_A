@@ -10,10 +10,10 @@
 #define SignalSampleFreq_Multiple 16u // 采样频率设定为信号基波频率的几倍（Fs = ? F0）
 #define SignalSamplePeriod_MIN (TimerSourerFreq / SignalSampleFreq_MAX)
 
-#ifdef USE_HAL_DRIVER
-#include "main.h"
-#elif defined __MSP432P401R__
+#ifdef __MSP432P401R__
 #include "sysinit.h"
+#elif defined USE_HAL_DRIVER
+#include "main.h"
 #else
 #error Doesn't contain top-level header file
 #endif
@@ -44,6 +44,10 @@
 #define SIGNAL_CAPTURE_TIMER_REGISTER TIMER_A_CAPTURECOMPARE_REGISTER_2 //在这里改定时器通道
 #define SIGNAL_CAPTURE_TIMER_PORT_PIN GPIO_PORT_P5, GPIO_PIN7           //在这里改复用引脚
 
+#if (ADC_SAMPLING_NUM > 1024u)
+// MSP432的DMA没开启DMA乒乓模式时，DMA一次最多搬运1024个点数。
+#warning MSP32P4: If DMA ping-pong mode is not enabled, DMA can carry 1024 points at most.
+#endif
 #elif defined USE_HAL_DRIVER
 #include "tim.h"
 #include "adc.h"
