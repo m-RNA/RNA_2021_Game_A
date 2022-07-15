@@ -711,14 +711,14 @@
               <FilePath>..\..\..\BSP\bsp_init.c</FilePath>
             </File>
             <File>
-              <FileName>bsp_it.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\BSP\bsp_it.c</FilePath>
-            </File>
-            <File>
               <FileName>bsp_operation.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\BSP\bsp_operation.c</FilePath>
+            </File>
+            <File>
+              <FileName>bsp_it.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\BSP\bsp_it.c</FilePath>
             </File>
           </Files>
         </Group>
