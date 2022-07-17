@@ -23,7 +23,7 @@
 #define SignalSampleFreq_MAX 1000000u
 
 #elif defined __STM32F1xx_HAL_H
-#define TimerSourerFreq 72000000u
+#define TimerSourerFreq 48000000u
 #define SignalSampleFreq_MAX 1000000u
 
 #elif defined STM32G431xx
