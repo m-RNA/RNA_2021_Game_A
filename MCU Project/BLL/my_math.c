@@ -24,7 +24,7 @@
 #define ARM_FFT_USING_STRUCTURE arm_cfft_sR_f32_len4096
 #endif
 
-#define FFT_To_Am_IndexErrorRange 2
+#define FFT_To_Am_IndexErrorRange 4
 
 static float Synthetic_WaveBuf[Signal_Synthesizer_Wave_Length_MAX];
 static float FFT_Input_Buf[ADC_SAMPLING_NUM * 2];
