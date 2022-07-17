@@ -35,9 +35,52 @@ void log_Fn_NAm_THD_data(u16 *Fx_Index, float *NormAm, float THD)
     log_debug("THDx: %.3f%%\r\n\r\n", THD);
 }
 
+//#if DEBUG_PRINT_INTERNAL_DATA
+#define log_draw(title, fmt, ...)                        \
+    do                                                   \
+    {                                                    \
+        printf("{" #title ":" fmt "}\n", ##__VA_ARGS__); \
+    } while (0)
+
+#define log_draw_blank(title, length) \
+    i = 0;                            \
+    do                                \
+    {                                 \
+        ++i;                          \
+        printf("{" #title ":0}\n");   \
+    } while (i < length)
+
 void log_Internal_data(u16 *Signal_ADC_Data, float *Amplitude_Data,
                        u16 *WaveformData_Restored, float *NormalizedAm, float *Phase,
                        float THDx, u32 Signal_Captured_Value)
+{
+    u16 i;
+    log_draw_blank(ADC, 50);
+    for (i = 0; i < ADC_SAMPLING_NUM; ++i)
+        log_draw(ADC, "%u", Signal_ADC_Data[i]);
+    log_draw(ADC, "%u", Signal_ADC_Data[0]);
+
+    log_draw_blank(AM, 50);
+    for (i = 0; i < (ADC_SAMPLING_NUM >> 1); ++i)
+        log_draw(AM, "%.3f", Amplitude_Data[i]);
+
+    log_draw_blank(Restore Wave, 20);
+    for (i = 0; i < OLED_X_MAX; ++i)
+        log_draw(Restore Wave, "%u", WaveformData_Restored[i]);
+
+    log_draw_blank(Phase, 10);
+    for (i = 0; i < 5; ++i)
+        log_draw(Phase, "%0.3f", (Phase[i] * 180 / PI));
+
+    log_draw_blank(Norm AM, 10);
+    log_draw(Norm AM, "1.000");
+    for (i = 0; i < 4; ++i)
+        log_draw(Norm AM, "%0.3f", NormalizedAm[i]);
+}
+
+void log_Internal_data_old(u16 *Signal_ADC_Data, float *Amplitude_Data,
+                           u16 *WaveformData_Restored, float *NormalizedAm, float *Phase,
+                           float THDx, u32 Signal_Captured_Value)
 {
     u16 i;
     printf("\r\n\r\n***********************  ***  ****************************\r\n\r\n");
@@ -57,12 +100,11 @@ void log_Internal_data(u16 *Signal_ADC_Data, float *Amplitude_Data,
     for (i = 0; i < OLED_X_MAX; ++i)
         log_indata("%u\r\n", WaveformData_Restored[i]);
     log_indata("\r\n*********************\r\n");
-    
+
     log_indata("Phase Data:\r\n");
     for (i = 0; i < 5; ++i)
         log_indata("%0.3f\r\n", (Phase[i] * 180 / PI));
     log_indata("\r\n*********************\r\n");
-    
 
     log_indata("Normalized Am Data:\r\n"); // 归一化幅值
     log_indata("1.000\r\n");
