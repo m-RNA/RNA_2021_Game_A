@@ -29,58 +29,112 @@ void log_Fn_NAm_THD_data(u16 *Fx_Index, float *NormAm, float THD)
 {
     u8 i;
     log_debug("F0: %ukHz\r\n", FFT_Freq_Calculate(Fx_Index[0]) / 1000);
-    for (i = 1; i < 5; ++i)
-        log_debug("F%u: %ukHz\r\n", (i + 1), FFT_Freq_Calculate(Fx_Index[i]) / 1000);
+    //    for (i = 1; i < 5; ++i)
+    //        log_debug("F%u: %ukHz\r\n", (i + 1), FFT_Freq_Calculate(Fx_Index[i]) / 1000);
     log_debug("Normalized Am: 1.000, %0.3f, %0.3f, %0.3f, %0.3f\r\n", NormAm[0], NormAm[1], NormAm[2], NormAm[3]); // 归一化幅值
     log_debug("THDx: %.3f%%\r\n\r\n", THD);
 }
 
 //#if DEBUG_PRINT_INTERNAL_DATA
-#define log_draw(title, fmt, ...)                        \
-    do                                                   \
-    {                                                    \
-        printf("{" #title ":" fmt "}\n", ##__VA_ARGS__); \
+#define log_draw_stamp(title, timestamp, fmt, ...) \
+    do                                             \
+    {                                              \
+        printf("<"                                 \
+               "%u"                                \
+               ">"                                 \
+               "{" #title "}" fmt "\n",            \
+               timestamp, ##__VA_ARGS__);          \
     } while (0)
 
-#define log_draw_blank(title, length) \
-    i = 0;                            \
-    do                                \
-    {                                 \
-        ++i;                          \
-        printf("{" #title ":0}\n");   \
-    } while (i < length)
+#define log_draw_blank_stamp(title, timestamp, length) \
+    i = timestamp;                                     \
+    do                                                 \
+    {                                                  \
+        ++i;                                           \
+        printf("<"                                     \
+               "%u"                                    \
+               ">"                                     \
+               "{" #title "}0\n",                      \
+               timestamp);                             \
+    } while (i < length + timestamp)
 
 void log_Internal_data(u16 *Signal_ADC_Data, float *Amplitude_Data,
                        u16 *WaveformData_Restored, float *NormalizedAm, float *Phase,
                        float THDx, u32 Signal_Captured_Value)
 {
     u16 i;
-    log_draw_blank(ADC, 50);
     for (i = 0; i < ADC_SAMPLING_NUM; ++i)
-        log_draw(ADC, "%u", Signal_ADC_Data[i]);
-    log_draw(ADC, "%u", Signal_ADC_Data[0]);
+        log_draw_stamp(ADC, i, "%u", Signal_ADC_Data[i]);
+    log_draw_stamp(ADC, i, "%u", Signal_ADC_Data[0]);
 
-    log_draw_blank(AM, 50);
     for (i = 0; i < (ADC_SAMPLING_NUM >> 1); ++i)
-        log_draw(AM, "%.3f", Amplitude_Data[i]);
+        log_draw_stamp(AM, i, "%.3f", Amplitude_Data[i]);
 
-    log_draw_blank(Restore Wave, 20);
     for (i = 0; i < OLED_X_MAX; ++i)
-        log_draw(Restore Wave, "%u", WaveformData_Restored[i]);
+        log_draw_stamp(RestoreWave, i, "%u", WaveformData_Restored[i]);
 
-    log_draw_blank(Phase, 10);
-    for (i = 0; i < 5; ++i)
-        log_draw(Phase, "%0.3f", (Phase[i] * 180 / PI));
+    // log_draw_ascii_blank(Phase, 10);
+    // for (i = 0; i < 5; ++i)
+    //     log_draw_ascii(Phase, "%0.3f", (Phase[i] * 180 / PI));
 
-    log_draw_blank(Norm AM, 10);
-    log_draw(Norm AM, "1.000");
-    for (i = 0; i < 4; ++i)
-        log_draw(Norm AM, "%0.3f", NormalizedAm[i]);
+    // log_draw_ascii_blank(Norm AM, 10);
+    // log_draw_ascii(Norm AM, "1.000");
+    // for (i = 0; i < 4; ++i)
+    //     log_draw_ascii(Norm AM, "%0.3f", NormalizedAm[i]);
 }
 
-void log_Internal_data_old(u16 *Signal_ADC_Data, float *Amplitude_Data,
-                           u16 *WaveformData_Restored, float *NormalizedAm, float *Phase,
-                           float THDx, u32 Signal_Captured_Value)
+//#if DEBUG_PRINT_INTERNAL_DATA
+#define log_draw_ascii(title, fmt, ...)                  \
+    do                                                   \
+    {                                                    \
+        printf("{" #title ":" fmt "}\n", ##__VA_ARGS__); \
+    } while (0)
+
+#define log_draw_ascii_blank(title, length, fmt, ...)    \
+    log_times_temp = 0;                                  \
+    do                                                   \
+    {                                                    \
+        ++log_times_temp;                                \
+        printf("{" #title ":" fmt "}\n", ##__VA_ARGS__); \
+    } while (log_times_temp < length)
+
+void log_Internal_data_ascii(u16 *Signal_ADC_Data, float *Amplitude_Data,
+                             u16 *WaveformData_Restored, float *NormalizedAm, float *Phase,
+                             float THDx, u32 Signal_Captured_Value)
+{
+    u16 i;
+    u16 log_times_temp;
+    log_draw_ascii_blank(ADC, 50, "%u", Signal_ADC_Data[0]);
+    for (i = 0; i < ADC_SAMPLING_NUM; ++i)
+        log_draw_ascii(ADC, "%u", Signal_ADC_Data[i]);
+    log_draw_ascii(ADC, "%u", Signal_ADC_Data[0]);
+
+    log_draw_ascii_blank(AM, 50, "0");
+    for (i = 0; i < (ADC_SAMPLING_NUM >> 1); ++i)
+        log_draw_ascii(AM, "%.3f", Amplitude_Data[i]);
+
+    log_draw_ascii_blank(RestoreWave, 25, "%u", WaveformData_Restored[0]);
+    for (i = 0; i < OLED_X_MAX; ++i)
+        log_draw_ascii(RestoreWave, "%u", WaveformData_Restored[i]);
+
+    for (i = 0; i < 5; ++i)
+    {
+        log_draw_ascii(Phase, "%0.3f", (Phase[i] * 180 / PI));
+        log_draw_ascii_blank(Phase, 9, "0");
+    }
+
+    log_draw_ascii(NormAM, "1.000");
+    for (i = 0; i < 4; ++i)
+    {
+        log_draw_ascii_blank(NormAM, 9, "0");
+        log_draw_ascii(NormAM, "%.3f", NormalizedAm[i]);
+    }
+    log_draw_ascii_blank(NormAM, 9, "0");
+}
+
+void log_Internal_data(u16 *Signal_ADC_Data, float *Amplitude_Data,
+                       u16 *WaveformData_Restored, float *NormalizedAm, float *Phase,
+                       float THDx, u32 Signal_Captured_Value)
 {
     u16 i;
     printf("\r\n\r\n***********************  ***  ****************************\r\n\r\n");

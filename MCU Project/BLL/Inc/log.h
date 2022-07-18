@@ -40,4 +40,9 @@ void log_Internal_data(u16 *Signal_ADC_Data, float *Amplitude_Data,
                        u16 *WaveformData_Restored, float *NormalizedAm, float *Phase,
                        float THDx, u32 Signal_Captured_Value);
 
+void log_Internal_data_ascii(u16 *Signal_ADC_Data, float *Amplitude_Data,
+               u16 *WaveformData_Restored, float *NormalizedAm, float *Phase,
+               float THDx, u32 Signal_Captured_Value);
+                 
+                       
 #endif
