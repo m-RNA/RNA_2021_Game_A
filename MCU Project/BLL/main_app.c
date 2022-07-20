@@ -85,10 +85,11 @@ int main(void)
 
         CalculateAmplitude_By_FFT(Amplitude_Data, Signal_ADC_Data);                        // 通过FFT 计算各个频率分量幅值 白灯
         NormalizedAm_And_CalculateTHD(Phase, NormalizedAm, Fx_Vpp, &THDx, Amplitude_Data); // 归一化幅值 计算各分量相位 计算THDx 绿色
-        Restore_Waveform_By_Vpp(WaveformData_Restored, Fx_Vpp, Phase);                     // 用归一化幅值+各分量相位 还原波形（长度内定为OLED的X分辨率128） 品红
+        // Restore_Waveform_By_Vpp(WaveformData_Restored, Fx_Vpp, Phase);                     // 用幅值+各分量相位 还原波形（长度内定为OLED的X分辨率128） 品红
+        Restore_Waveform(WaveformData_Restored, NormalizedAm, Phase);                     // 用归一化幅值+各分量相位 还原波形（长度内定为OLED的X分辨率128） 品红
 
         OLEDInterface_Update_Data(NormalizedAm, THDx, Signal_Captured_Value); // OLED显示信息更新 青色
-        // OLEDInterface_Update_Waveform(WaveformData_Restored);                 // OLED显示波形更新 单红
+        OLEDInterface_Update_Waveform(WaveformData_Restored);                 // OLED显示波形更新 单红
 
         Bluetooth_SendDate_To_Phone(NormalizedAm, THDx, WaveformData_Restored); // 将数据通过蓝牙发至手机 蓝色
 
