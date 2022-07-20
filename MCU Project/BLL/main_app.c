@@ -26,9 +26,11 @@
  * DEBUG_PRINT_INTERNAL_DATA
  * 为0，来关闭打印大量内部信息
  *
- * 信息的查看可以复制后，粘贴到
- * /RNA_2021_Game_A/Doc/
- * 里的Simulation.xlsx表格里
+ * 信息的查看可以使用纸飞机串口调试助手
+ * ascii协议通过log_data_to_draw_ascii
+ * stamp协议通过log_data_to_draw_stamp
+ * 或者可以使用断点调试，将信息复制后，粘贴到
+ * /RNA_2021_Game_A/Doc/AnalyzeData 表格里
  * 有多个分表，ADC采样点数不同请粘贴到对应位置
  *
  * ******************************************/
