@@ -84,34 +84,33 @@ u16 Max_Float_WithinRange(float Data[], u16 Left, u16 Right)
 /**
  * @brief  信号合成器
  * @param[out] Output    波形数据输出指针
- * @param[in]  F0_Vpp    基波幅值(mv)
- * @param[in]  NormAm    归一化幅值
- * @param[in]  Phase     相位
+ * @param[in]  Length    波形数据输出长度
+ * @param[in]  Fx_Vpp    基波-谐波幅值(mv)
+ * @param[in]  Phase     相位(弧度)
  * @param[in]  Precision 最高几次谐波分量
  */
-void Signal_Synthesizer(u16 *Output, u16 Length, u16 F0_Vpp, float *NormAm, float *Phase, u8 Precision)
+void Signal_Synthesizer(short *Output, u16 Length, u16 *Fx_Vpp, float *Phase, u8 Precision)
 {
     u16 i, j;
     u16 MinIndex;
 
     for (i = 0; i < Length; ++i)
     {
-        Synthetic_WaveBuf[i] = arm_sin_f32(PI * i / ((float)(Length >> 1)) + Phase[0]);
-        for (j = 0; j < Precision - 1; ++j) // 各次谐波叠加
+        Output[i] = (Fx_Vpp[0] >> 1) * arm_sin_f32(PI * i / ((float)(Length >> 1)) + Phase[0]);
+        for (j = 1; j < Precision; ++j) // 各次谐波叠加
         {
-            if (NormAm[j] == 0.0f)
+            if (Fx_Vpp[j] == 0)
                 continue;
-            Synthetic_WaveBuf[i] += arm_sin_f32(PI * i * (j + 2) / ((float)(Length >> 1)) + Phase[j]) * NormAm[j];
+            Output[i] += (Fx_Vpp[j] >> 1) * arm_sin_f32(PI * i * (j + 1) / ((float)(Length >> 1)) + Phase[j]);
         }
     }
-
-    // 找出最小的小数的位置
-    MinIndex = Min_Float(Synthetic_WaveBuf, Length);
-    for (i = 0; i < Length; ++i)
-    {
-        // 将小数全转为以0为起点的正数 再乘以 F0_Vpp 变为整数
-        Output[i] = F0_Vpp * (Synthetic_WaveBuf[i] - Synthetic_WaveBuf[MinIndex]);
-    }
+    // // 找出最小的小数的位置
+    // MinIndex = Min_Float(Synthetic_WaveBuf, Length);
+    // for (i = 0; i < Length; ++i)
+    // {
+    //     // 将小数全转为以0为起点的正数 再乘以 F0_Vpp 变为整数
+    //     Output[i] = F0_Vpp * (Synthetic_WaveBuf[i] - Synthetic_WaveBuf[MinIndex]);
+    // }
 }
 
 /* 通过FFT 计算各个频率分量幅值 */
