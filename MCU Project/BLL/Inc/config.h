@@ -8,6 +8,7 @@
 #define ENABLE_LOG_DRAW (1u)   // 打印内部数据去画波形
 
 #define ADC_SAMPLING_NUM 512u         // ADC采样点数
+#define Fx_Vpp_Multiple 10            // 计算的到的幅值乘以的倍数
 #define SignalSampleFreq_Multiple 16u // 采样频率设定为信号基波频率的几倍（Fs = ? F0）
 #define SignalSamplePeriod_MIN (TimerSourerFreq / SignalSampleFreq_MAX)
 

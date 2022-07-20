@@ -50,7 +50,7 @@ float THDx = 0.0f;           // 失真度测量值
 float NormalizedAm[4] = {0}; // 归一化幅值：2-5次谐波
 float Phase[5] = {0};        // 各分量相位（占位，还没用上）
 
-u16 Fx_Vpp[5] = {0};
+u16 Fx_Vpp[5] = {0}; // 幅值(uV)
 float Amplitude_Data[ADC_SAMPLING_NUM]; // 各个频率分量幅值(FFT后)
 
 int main(void)
@@ -74,7 +74,7 @@ int main(void)
     BSP_Sample_Timer_Init();                                         // 第8讲 定时器配置 （ADC触发时钟源 fs）（过零比较器采频率）
 
     /* 初始化完毕 可以测量 */
-    log_debug("All Init Completed!\r\n");
+    log_detail("All Init Completed!\r\n");
     log_debug("\r\n\r\n***********************  000  ****************************\r\n\r\n");
 
     while (1)
@@ -85,8 +85,7 @@ int main(void)
 
         CalculateAmplitude_By_FFT(Amplitude_Data, Signal_ADC_Data);                        // 通过FFT 计算各个频率分量幅值 白灯
         NormalizedAm_And_CalculateTHD(Phase, NormalizedAm, Fx_Vpp, &THDx, Amplitude_Data); // 归一化幅值 计算各分量相位 计算THDx 绿色
-        // Restore_Waveform_By_Vpp(WaveformData_Restored, Fx_Vpp, Phase);                     // 用幅值+各分量相位 还原波形（长度内定为OLED的X分辨率128） 品红
-        Restore_Waveform(WaveformData_Restored, NormalizedAm, Phase);                     // 用归一化幅值+各分量相位 还原波形（长度内定为OLED的X分辨率128） 品红
+        Restore_Waveform_By_Vpp(WaveformData_Restored, Fx_Vpp, Phase);                     // 用幅值+各分量相位 还原波形（长度内定为OLED的X分辨率128） 品红
 
         OLEDInterface_Update_Data(NormalizedAm, THDx, Signal_Captured_Value); // OLED显示信息更新 青色
         OLEDInterface_Update_Waveform(WaveformData_Restored);                 // OLED显示波形更新 单红
@@ -97,7 +96,7 @@ int main(void)
                                WaveformData_Restored, NormalizedAm, Phase,
                                THDx, Signal_Captured_Value); // 打印内部数据
 
-        log_debug("\r\n\r\n***********************  0%u0  ****************************\r\n\r\n", i++);
+        log_debug("***********************  0%u0  ****************************\r\n", i++);
 
 #if !Simulation
         delay_ms(100); //延时100ms

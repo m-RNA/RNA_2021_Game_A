@@ -85,7 +85,7 @@
     } while (0)
 
 void log_Fs_data(u32 F0_CCR, u32 Fs_CCR, u8 Flag);
-void log_Fn_NAm_THD_data(u16 *Fx_Index,float * Phase, float *NormAm, float THD);
+void log_Fn_NAm_THD_data(u16 *Fx_Index,float * Phase, u16 *Fx_Vpp_Pointer, float *NormAm, float THD);
 void log_data_to_draw(u16 *Signal_ADC_Data, float *Amplitude_Data,
                       u16 *WaveformData_Restored, float *NormalizedAm, float *Phase,
                       float THDx, u32 Signal_Captured_Value);

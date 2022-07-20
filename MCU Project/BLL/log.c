@@ -25,16 +25,19 @@ void log_Fs_data(u32 F0_CCR, u32 Fs_CCR, u8 Flag)
 
 #define Fs (SignalSampleFreq_Multiple * TimerSourerFreq / Signal_Captured_Period)
 #define FFT_Freq_Calculate(Index) (Index * Fs / ADC_SAMPLING_NUM)
-void log_Fn_NAm_THD_data(u16 *Fx_Index,float * Phase, float *NormAm, float THD)
+void log_Fn_NAm_THD_data(u16 *Fx_Index, float *Phase, u16 *Fx_Vpp_Pointer, float *NormAm, float THD)
 
 {
     // u8 i;
     log_debug("F0: %ukHz\r\n", FFT_Freq_Calculate(Fx_Index[0]) / 1000);
     // for (i = 1; i < 5; ++i)
     //      log_debug("F%u: %ukHz\r\n", (i + 1), FFT_Freq_Calculate(Fx_Index[i]) / 1000);
-    log_debug("Normalized Am: 1.000, %0.3f, %0.3f, %0.3f, %0.3f\r\n", NormAm[0], NormAm[1], NormAm[2], NormAm[3]); // 归一化幅值
-    log_debug("Phase: %0.3f, %0.3f, %0.3f, %0.3f, %0.3f\r\n", (Phase[0] * 180 / PI), 
-    (Phase[1] * 180 / PI),(Phase[2] * 180 / PI),(Phase[3] * 180 / PI),(Phase[4] * 180 / PI)); // 归一化幅值
+    log_debug("Phase: %.1f, %.1f, %.1f, %.1f, %.1f\r\n", (Phase[0] * 180 / PI),
+              (Phase[1] * 180 / PI), (Phase[2] * 180 / PI), (Phase[3] * 180 / PI), (Phase[4] * 180 / PI)); // 相位
+    log_debug("Vpp: %umV, %umV, %umV, %umV, %umV\r\n", Fx_Vpp_Pointer[0] / Fx_Vpp_Multiple, Fx_Vpp_Pointer[1] / Fx_Vpp_Multiple,
+              Fx_Vpp_Pointer[2] / Fx_Vpp_Multiple, Fx_Vpp_Pointer[3] / Fx_Vpp_Multiple, Fx_Vpp_Pointer[4] / Fx_Vpp_Multiple); // 幅值
+    log_debug("GYH: 1.000, %0.3f, %0.3f, %0.3f, %0.3f\r\n", NormAm[0], NormAm[1], NormAm[2], NormAm[3]);            // 归一化幅值
+
     log_debug("THDx: %.3f%%\r\n\r\n", THD);
 }
 
@@ -68,33 +71,33 @@ void log_data_to_draw_ascii(u16 *Signal_ADC_Data, float *Amplitude_Data,
                             float THDx, u32 Signal_Captured_Value)
 {
     u16 i;
-    u16 log_times_temp;
-    log_draw_ascii_blank(ADC, 50, "%u", Signal_ADC_Data[0]);
+    // u16 log_times_temp;
+    // log_draw_ascii_blank(ADC, 50, "%u", Signal_ADC_Data[0]);
     for (i = 0; i < ADC_SAMPLING_NUM; ++i)
         log_draw_ascii(ADC, "%u", Signal_ADC_Data[i]);
     log_draw_ascii(ADC, "%u", Signal_ADC_Data[0]);
 
-    log_draw_ascii_blank(AM, 50, "0");
+    // log_draw_ascii_blank(AM, 50, "0");
     for (i = 0; i < (ADC_SAMPLING_NUM >> 1); ++i)
         log_draw_ascii(AM, "%.3f", Amplitude_Data[i]);
 
-    log_draw_ascii_blank(RSWave, 25, "%u", WaveformData_Restored[0]);
+    // log_draw_ascii_blank(RSWave, 25, "%u", WaveformData_Restored[0]);
     for (i = 0; i < OLED_X_MAX; ++i)
-        log_draw_ascii(RSWave, "%u", WaveformData_Restored[i]);
+        log_draw_ascii(RSWave, "%.1f", WaveformData_Restored[i] / (float)Fx_Vpp_Multiple);
 
-    for (i = 0; i < 5; ++i)
-    {
-        log_draw_ascii(Phase, "%0.3f", (Phase[i] * 180 / PI));
-        log_draw_ascii_blank(Phase, 9, "0");
-    }
+    // for (i = 0; i < 5; ++i)
+    // {
+    //     log_draw_ascii(Phase, "%0.3f", (Phase[i] * 180 / PI));
+    //     log_draw_ascii_blank(Phase, 9, "0");
+    // }
 
-    log_draw_ascii(NormAM, "1.000");
-    for (i = 0; i < 4; ++i)
-    {
-        log_draw_ascii_blank(NormAM, 9, "0");
-        log_draw_ascii(NormAM, "%.3f", NormalizedAm[i]);
-    }
-    log_draw_ascii_blank(NormAM, 9, "0");
+    // log_draw_ascii(NormAM, "1.000");
+    // for (i = 0; i < 4; ++i)
+    // {
+    //     log_draw_ascii_blank(NormAM, 9, "0");
+    //     log_draw_ascii(NormAM, "%.3f", NormalizedAm[i]);
+    // }
+    // log_draw_ascii_blank(NormAM, 9, "0");
 }
 
 void log_data_to_draw(u16 *Signal_ADC_Data, float *Amplitude_Data,

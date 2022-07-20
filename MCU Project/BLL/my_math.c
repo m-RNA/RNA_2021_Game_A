@@ -85,7 +85,7 @@ u16 Max_Float_WithinRange(float Data[], u16 Left, u16 Right)
  * @brief  信号合成器
  * @param[out] Output    波形数据输出指针
  * @param[in]  Length    波形数据输出长度
- * @param[in]  F0_Vpp    基波幅值(mv)
+ * @param[in]  F0_Vpp    基波幅值
  * @param[in]  NormAm    归一化幅值
  * @param[in]  Phase     相位
  * @param[in]  Precision 最高几次谐波分量
@@ -119,7 +119,7 @@ void Signal_Synthesizer(u16 *Output, u16 Length, u16 F0_Vpp, float *NormAm, floa
  * @brief  信号合成器
  * @param[out] Output    波形数据输出指针
  * @param[in]  Length    波形数据输出长度
- * @param[in]  Fx_Vpp    基波-谐波幅值(mv)
+ * @param[in]  Fx_Vpp    基波-谐波幅值
  * @param[in]  Phase     相位(弧度)
  * @param[in]  Precision 最高几次谐波分量
  */
@@ -173,7 +173,7 @@ void NormalizedAm_And_CalculateTHD(float *Phase_Pointer, float *NormAm_Pointer, 
 
     /* 找出基波位置 */
     Fx_Index[0] = Max_Float_WithinRange(Am_Data_Pointer, 1 + (FFT_To_Am_IndexErrorRange >> 1), (ADC_SAMPLING_NUM >> 1));
-    Fx_Vpp_Pointer[0] = Am_Data_Pointer[Fx_Index[0]] * 4 / ADC_SAMPLING_NUM;
+    Fx_Vpp_Pointer[0] = Am_Data_Pointer[Fx_Index[0]] * 4 * Fx_Vpp_Multiple / ADC_SAMPLING_NUM;
     Phase_Pointer[0] = atan2((FFT_Input_Buf[Fx_Index[0] << 1] + 1), (FFT_Input_Buf[Fx_Index[0] << 1] + 0));
     for (i = 1; i < 5; ++i)
     {
@@ -187,7 +187,7 @@ void NormalizedAm_And_CalculateTHD(float *Phase_Pointer, float *NormAm_Pointer, 
         Phase_Pointer[i] = atan2f((FFT_Input_Buf[Fx_Index[i] << 1] + 1), (FFT_Input_Buf[Fx_Index[i] << 1] + 0));
 
         /* 幅值计算 */
-        Fx_Vpp_Pointer[i] = Am_Data_Pointer[Fx_Index[i]] * 4 / ADC_SAMPLING_NUM;
+        Fx_Vpp_Pointer[i] = Am_Data_Pointer[Fx_Index[i]] * 4 * Fx_Vpp_Multiple / ADC_SAMPLING_NUM;
 
         /* 归一化幅值计算 */
         NormAm_Pointer[i - 1] = Am_Data_Pointer[Fx_Index[i]] / Am_Data_Pointer[Fx_Index[0]];
@@ -198,7 +198,7 @@ void NormalizedAm_And_CalculateTHD(float *Phase_Pointer, float *NormAm_Pointer, 
     arm_sqrt_f32(Square_Sum, THD_Pointer); // 开根号
     *THD_Pointer = *THD_Pointer * 100 / Am_Data_Pointer[Fx_Index[0]];
 
-    log_Fn_NAm_THD_data(Fx_Index, Phase_Pointer, NormAm_Pointer, *THD_Pointer);
+    log_Fn_NAm_THD_data(Fx_Index, Phase_Pointer, Fx_Vpp_Pointer, NormAm_Pointer, *THD_Pointer);
 }
 
 /* 用归一化幅值+各分量相位 还原波形 */
