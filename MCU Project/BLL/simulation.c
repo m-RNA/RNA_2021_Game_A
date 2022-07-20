@@ -22,8 +22,19 @@ float Simulation_NormAm[Simulation_Times][Synthesize_Precision - 1] = {
     */
     {0.0f, 0.0f, 0.0f, 0.0f},
     {0.00f, -0.1111111111f, 0.00f, 0.04f}, //, 0.0f, -0.0204081633f, 0.0f, 0.0123456790f, 0.0f, -0.0082644628f, 0.0f, 0.0059171598f},
-    {0.00f, 0.3333333333f, 0.0f, 0.2f}, //, 0.0f, 0.1428571429f, 0.0f, 0.1111111111f, 0.0f, 0.0909090909f, 0.0f, 0.0769230769f},
-    {0.5f, 0.3333333333f, 0.25f, 0.2f}, //, 0.1666666667f, 0.1428571429f, 0.125f, 0.1111111111f, 0.1f, 0.0909090909f, 0.0833333333f, 0.0769230769f},
+    {0.00f, 0.3333333333f, 0.0f, 0.2f},    //, 0.0f, 0.1428571429f, 0.0f, 0.1111111111f, 0.0f, 0.0909090909f, 0.0f, 0.0769230769f},
+    {0.5f, 0.3333333333f, 0.25f, 0.2f},    //, 0.1666666667f, 0.1428571429f, 0.125f, 0.1111111111f, 0.1f, 0.0909090909f, 0.0833333333f, 0.0769230769f},
+};
+
+u16 Simulation_Fx_Vpp_Data[Simulation_Times][Synthesize_Precision] = {
+    {400, 0, 80, 0, 60}, // 电赛测试信号1 THDo = 25.0%
+    {200, 0, 16, 30, 0}, // 电赛测试信号2 THDo = 17.0%
+    {30, 0, 0, 0, 3},    // 电赛测试信号3 THDo = 10.0%
+
+    {100}, // 自定义
+    {83},
+    {65},
+    {48},
 };
 
 u16 Simulation_F0_Vpp_Data[Simulation_Times] = {
@@ -48,15 +59,15 @@ u32 Simulation_CCR_Data[Simulation_Times] = {
     TimerSourerFreq / 600000,
 };
 
-float Simulation_Phase_Data[Simulation_Times] = {
-    0.00f, // 电赛测试信号1
-    0.00f, // 电赛测试信号2
-    0.00f, // 电赛测试信号3
+float Simulation_Phase_Data[Simulation_Times][Synthesize_Precision] = {
+    {0.00f, 0.00f, 0.00f, 0.00f, 0.00f}, // 电赛测试信号1
+    {0.00f, 0.00f, 0.00f, 0.00f, 0.00f}, // 电赛测试信号2
+    {0.00f, 0.00f, 0.00f, 0.00f, 0.00f}, // 电赛测试信号3
 
-    0.00f, // 自定义
-    0.00f,
-    0.00f,
-    0.00f,
+    {0.00f, 0.00f, 0.00f, 0.00f, 0.00f}, // 自定义
+    {0.00f, 0.00f, 0.00f, 0.00f, 0.00f},
+    {0.00f, 0.00f, 0.00f, 0.00f, 0.00f},
+    {0.00f, 0.00f, 0.00f, 0.00f, 0.00f},
 };
 
 u16 Simulate_Fs_ARR = 0;
@@ -70,6 +81,7 @@ void Simulate_Signal_Synthesizer(u16 *SimulateWaveData, u16 Length)
     u16 i, j;
     u16 Data_Index;
     u16 Freq_Multiple;
+    // u16 MinIndex;
     extern u8 OverSamplingFlag;
     if (!OverSamplingFlag)
     {
@@ -86,8 +98,15 @@ void Simulate_Signal_Synthesizer(u16 *SimulateWaveData, u16 Length)
     2. Simulation_CCR_MAX  is Too Small.\r\n\
     3. Simulation_CCR_Data is Too Large(Setting Frequency is too Low).\r\n");
 
-    Signal_Synthesizer(SimulateWaveData, Freq_Multiple, (Simulation_F0_Vpp_Data[Simulation_Times_Index] * 4096 / 3300) >> 1,
-                       Simulation_NormAm[Simulation_Times_Index], (void *)0, Synthesize_Precision);
+    Signal_Synthesizer_Vpp(SimulateWaveData, Freq_Multiple, Simulation_Fx_Vpp_Data[Simulation_Times_Index],
+                       Simulation_Phase_Data[Simulation_Times_Index], Synthesize_Precision);
+//    //找出最小的小数的位置
+//    MinIndex = Min_Short((short *)SimulateWaveData, Freq_Multiple);
+//    for (i = 0; i < Freq_Multiple; ++i)
+//    {
+//        // 将小数全转为以0为起点的正数
+//        SimulateWaveData[i] = (short)((short)SimulateWaveData[i] - (short)SimulateWaveData[MinIndex]);
+//    }
 
     // 复制数据
     for (i = 1; i <= Length / Freq_Multiple; ++i)

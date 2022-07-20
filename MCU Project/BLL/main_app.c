@@ -46,9 +46,11 @@ u32 Signal_Captured_Value;                   // 滞回比较器 定时器捕获�
 u16 Signal_ADC_Data[ADC_SAMPLING_NUM];       // 信号采样ADC数据
 u16 WaveformData_Restored[OLED_X_MAX] = {0}; // 还原平滑波形数据
 
-float THDx = 0.0f;                      // 失真度测量值
-float NormalizedAm[4] = {0};            // 归一化幅值：2-5次谐波
-float Phase[5] = {0};                   // 各分量相位（占位，还没用上）
+float THDx = 0.0f;           // 失真度测量值
+float NormalizedAm[4] = {0}; // 归一化幅值：2-5次谐波
+float Phase[5] = {0};        // 各分量相位（占位，还没用上）
+
+u16 Fx_Vpp[5] = {0};
 float Amplitude_Data[ADC_SAMPLING_NUM]; // 各个频率分量幅值(FFT后)
 
 int main(void)
@@ -81,12 +83,12 @@ int main(void)
         Signal_Fs_Adjust(Signal_Captured_Value);   // 调整fs(判断是否需要等效采样) 红灯
         SignalSample_Start(Signal_ADC_Data);       // 开启ADC采集DMA传输 关灯
 
-        CalculateAmplitude_By_FFT(Amplitude_Data, Signal_ADC_Data);                // 通过FFT 计算各个频率分量幅值 白灯
-        NormalizedAm_And_CalculateTHD(Phase, NormalizedAm, &THDx, Amplitude_Data); // 归一化幅值 计算各分量相位 计算THDx 绿色
-        Restore_Waveform(WaveformData_Restored, NormalizedAm, Phase);              // 用归一化幅值+各分量相位 还原波形（长度内定为OLED的X分辨率128） 品红
+        CalculateAmplitude_By_FFT(Amplitude_Data, Signal_ADC_Data);                        // 通过FFT 计算各个频率分量幅值 白灯
+        NormalizedAm_And_CalculateTHD(Phase, NormalizedAm, Fx_Vpp, &THDx, Amplitude_Data); // 归一化幅值 计算各分量相位 计算THDx 绿色
+        Restore_Waveform_By_Vpp(WaveformData_Restored, Fx_Vpp, Phase);                     // 用归一化幅值+各分量相位 还原波形（长度内定为OLED的X分辨率128） 品红
 
         OLEDInterface_Update_Data(NormalizedAm, THDx, Signal_Captured_Value); // OLED显示信息更新 青色
-        OLEDInterface_Update_Waveform(WaveformData_Restored);                 // OLED显示波形更新 单红
+        // OLEDInterface_Update_Waveform(WaveformData_Restored);                 // OLED显示波形更新 单红
 
         Bluetooth_SendDate_To_Phone(NormalizedAm, THDx, WaveformData_Restored); // 将数据通过蓝牙发至手机 蓝色
 
