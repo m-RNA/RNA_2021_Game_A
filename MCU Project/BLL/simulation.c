@@ -4,12 +4,12 @@
 #include "log.h"
 #include "stdlib.h"
 
-#define Simulate_WaveformDate_Period_Length SignalSampleFreq_Multiple
-#define Add_Noise (rand() % Simulate_Sample_ADC_Noise)
+#define Simulate_WaveformDate_Period_Length SIGNAL_SAMPLE_FREQ_MULTIPLE
+#define ADD_NOISE (rand() % SIMULATE_SAMPLE_ADC_NOISE)
 u8 Simulation_Times_Index = 0;
 
-#define Synthesize_Precision 5 // 精度 - 到几次谐波
-u16 Simulation_Fx_Vpp_Data[Simulation_Times][Synthesize_Precision] = {
+#define SYNTHESIZE_PRECISION 5 // 精度 - 到几次谐波
+u16 Simulation_Fx_Vpp_Data[SIMULATION_TIMES][SYNTHESIZE_PRECISION] = {
     {400, 0, 80, 0, 60}, // 电赛测试信号1 THDo = 25.0%
     {200, 0, 16, 30, 0}, // 电赛测试信号2 THDo = 17.0%
     {30, 0, 0, 0, 3},    // 电赛测试信号3 THDo = 10.0%
@@ -20,18 +20,18 @@ u16 Simulation_Fx_Vpp_Data[Simulation_Times][Synthesize_Precision] = {
     {10, 0, 0, 0, 1}, // 自定义 THDo = 10.0%
 };
 
-u32 Simulation_CCR_Data[Simulation_Times] = {
-    TimerSourerFreq / 1000,   // 电赛测试信号1
-    TimerSourerFreq / 50000,  // 电赛测试信号2
-    TimerSourerFreq / 100000, // 电赛测试信号3
+u32 Simulation_CCR_Data[SIMULATION_TIMES] = {
+    TIMER_SOURER_FREQ / 1000,   // 电赛测试信号1
+    TIMER_SOURER_FREQ / 50000,  // 电赛测试信号2
+    TIMER_SOURER_FREQ / 100000, // 电赛测试信号3
 
-    0xFFFF,                   // 最小采样率
-    SignalSamplePeriod_MIN,   // 最大采样率
-    TimerSourerFreq / 300000, // 自定义
-    TimerSourerFreq / 600000,
+    0xFFFF,                     // 最小采样率
+    SIGNAL_SAMPLE_PERIOD_MIN,   // 最大采样率
+    TIMER_SOURER_FREQ / 300000, // 自定义
+    TIMER_SOURER_FREQ / 600000,
 };
 
-float Simulation_Phase_Data[Simulation_Times][Synthesize_Precision] = {
+float Simulation_Phase_Data[SIMULATION_TIMES][SYNTHESIZE_PRECISION] = {
     {0.00f, 0.00f, 0.00f, 0.00f, 0.00f}, // 电赛测试信号1
     {0.00f, 0.00f, 0.00f, 0.00f, 0.00f}, // 电赛测试信号2
     {0.00f, 0.00f, 0.00f, 0.00f, 0.00f}, // 电赛测试信号3
@@ -42,7 +42,7 @@ float Simulation_Phase_Data[Simulation_Times][Synthesize_Precision] = {
     {0.00f, 0.00f, 0.00f, 0.00f, 0.00f},
 };
 
-float Simulation_NormAm[Simulation_Times][Synthesize_Precision - 1] = {
+float Simulation_NormAm[SIMULATION_TIMES][SYNTHESIZE_PRECISION - 1] = {
     {0.00f, 0.20f, 0.00f, 0.15f}, // 电赛测试信号1 THDo = 25.0%
     {0.00f, 0.08f, 0.15f, 0.00f}, // 电赛测试信号2 THDo = 17.0%
     {0.00f, 0.00f, 0.00f, 0.10f}, // 电赛测试信号3 THDo = 10.0%
@@ -59,7 +59,7 @@ float Simulation_NormAm[Simulation_Times][Synthesize_Precision - 1] = {
     {0.5f, 0.3333333333f, 0.25f, 0.2f},    //, 0.1666666667f, 0.1428571429f, 0.125f, 0.1111111111f, 0.1f, 0.0909090909f, 0.0833333333f, 0.0769230769f},
 };
 
-u16 Simulation_F0_Vpp_Data[Simulation_Times] = {
+u16 Simulation_F0_Vpp_Data[SIMULATION_TIMES] = {
     400, // 电赛测试信号1
     200, // 电赛测试信号2
     30,  // 电赛测试信号3
@@ -89,17 +89,17 @@ void Simulate_Signal_Synthesizer(u16 *SimulateWaveData, u16 Length)
     }
     else
     {
-        Freq_Multiple = (SignalSampleFreq_Multiple + 1) * Simulation_CCR_Data[Simulation_Times_Index] / Simulate_Fs_ARR;
+        Freq_Multiple = (SIGNAL_SAMPLE_FREQ_MULTIPLE + 1) * Simulation_CCR_Data[Simulation_Times_Index] / Simulate_Fs_ARR;
     }
     if (Freq_Multiple >= Signal_Synthesizer_Wave_Length_MAX)
         log_assert("\r\n\
     Simulated ERROR: Freq_Multiple is too Big! MayBe:\r\n\
     1. ADC_SAMPLING_NUM    is Too Large.\r\n\
-    2. Simulation_CCR_MAX  is Too Small.\r\n\
+    2. SIMULATION_CCR_MAX  is Too Small.\r\n\
     3. Simulation_CCR_Data is Too Large(Setting Frequency is too Low).\r\n");
 
     Signal_Synthesizer_Vpp(SimulateWaveData, Freq_Multiple, Simulation_Fx_Vpp_Data[Simulation_Times_Index],
-                           Simulation_Phase_Data[Simulation_Times_Index], Synthesize_Precision);
+                           Simulation_Phase_Data[Simulation_Times_Index], SYNTHESIZE_PRECISION);
     //    //找出最小的小数的位置
     //    MinIndex = Min_Short((short *)SimulateWaveData, Freq_Multiple);
     //    for (i = 0; i < Freq_Multiple; ++i)
@@ -114,14 +114,14 @@ void Simulate_Signal_Synthesizer(u16 *SimulateWaveData, u16 Length)
         for (j = 0; j < Freq_Multiple; ++j)
         {
             Data_Index = j + i * Freq_Multiple;
-            SimulateWaveData[Data_Index] = SimulateWaveData[j] + Add_Noise;
+            SimulateWaveData[Data_Index] = SimulateWaveData[j] + ADD_NOISE;
             if (Data_Index >= Length)
                 break;
         }
     }
     for (j = 0; j < Freq_Multiple; ++j)
     {
-        SimulateWaveData[j] += Add_Noise;
+        SimulateWaveData[j] += ADD_NOISE;
     }
 }
 
@@ -198,7 +198,7 @@ void Simulate_Signal_WaveformData(u16 *SimulateWaveData)
     {
         for (u16 j = 0; j < Simulate_WaveformDate_Period_Length; ++j)
         {
-            SimulateWaveData[j + i * Simulate_WaveformDate_Period_Length] = Simulation_ADC_Data[j] + Add_Noise;
+            SimulateWaveData[j + i * Simulate_WaveformDate_Period_Length] = Simulation_ADC_Data[j] + ADD_NOISE;
         }
     }
 }

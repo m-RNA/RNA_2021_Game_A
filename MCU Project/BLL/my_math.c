@@ -173,7 +173,7 @@ void NormalizedAm_And_CalculateTHD(float *Phase_Pointer, float *NormAm_Pointer, 
 
     /* 找出基波位置 */
     Fx_Index[0] = Max_Float_WithinRange(Am_Data_Pointer, 1 + (FFT_To_Am_IndexErrorRange >> 1), (ADC_SAMPLING_NUM >> 1));
-    Fx_Vpp_Pointer[0] = Am_Data_Pointer[Fx_Index[0]] * 4 * Fx_Vpp_Multiple / ADC_SAMPLING_NUM;
+    Fx_Vpp_Pointer[0] = Am_Data_Pointer[Fx_Index[0]] * 4 * FX_VPP_MULTIPLE / ADC_SAMPLING_NUM;
     Phase_Pointer[0] = atan2((FFT_Input_Buf[Fx_Index[0] << 1] + 1), (FFT_Input_Buf[Fx_Index[0] << 1] + 0));
     for (i = 1; i < 5; ++i)
     {
@@ -187,7 +187,7 @@ void NormalizedAm_And_CalculateTHD(float *Phase_Pointer, float *NormAm_Pointer, 
         Phase_Pointer[i] = atan2f((FFT_Input_Buf[Fx_Index[i] << 1] + 1), (FFT_Input_Buf[Fx_Index[i] << 1] + 0));
 
         /* 幅值计算 */
-        Fx_Vpp_Pointer[i] = Am_Data_Pointer[Fx_Index[i]] * 4 * Fx_Vpp_Multiple / ADC_SAMPLING_NUM;
+        Fx_Vpp_Pointer[i] = Am_Data_Pointer[Fx_Index[i]] * 4 * FX_VPP_MULTIPLE / ADC_SAMPLING_NUM;
 
         /* 归一化幅值计算 */
         NormAm_Pointer[i - 1] = Am_Data_Pointer[Fx_Index[i]] / Am_Data_Pointer[Fx_Index[0]];

@@ -12,7 +12,7 @@ void Signal_F0_Measure(u32 *Captured_Value)
     *Captured_Value = BSP_Get_Signal_CCR();
 
     log_debug("F0 Captured Value:%u\r\n", *Captured_Value);
-    log_debug("F0(Captured):%ukHz\r\n", TimerSourerFreq / 1000 / (*Captured_Value));
+    log_debug("F0(Captured):%ukHz\r\n", TIMER_SOURER_FREQ / 1000 / (*Captured_Value));
 }
 
 void Signal_Fs_Adjust(u32 Captured_Value)
@@ -20,8 +20,8 @@ void Signal_Fs_Adjust(u32 Captured_Value)
     u32 Signal_Fs_ARR = 0;
     log_detail("Signal Fs Adjusting...\r\n");
 
-    Signal_Fs_ARR = Captured_Value / SignalSampleFreq_Multiple;
-    OverSamplingFlag = Captured_Value <= (SignalSamplePeriod_MIN * SignalSampleFreq_Multiple);
+    Signal_Fs_ARR = Captured_Value / SIGNAL_SAMPLE_FREQ_MULTIPLE;
+    OverSamplingFlag = Captured_Value <= (SIGNAL_SAMPLE_PERIOD_MIN * SIGNAL_SAMPLE_FREQ_MULTIPLE);
     if (OverSamplingFlag)
     {
         Signal_Fs_ARR += Captured_Value;

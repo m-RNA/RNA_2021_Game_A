@@ -3,7 +3,7 @@
 #include "arm_math.h"
 
 #if Simulation
-#define Signal_Captured_Period Simulation_CCR
+#define Signal_Captured_Period SIMULATION_CCR
 #else
 #include "bsp_it.h"
 #define Signal_Captured_Period BSP_Signal_Capture_Value
@@ -14,16 +14,16 @@ void log_Fs_data(u32 F0_CCR, u32 Fs_CCR, u8 Flag)
     if (Flag)
     {
         log_debug("Fs CCR: %u\r\n", Fs_CCR);
-        log_debug("Fs: %ukHz(Equivalent), %ukHz(Actual)\r\n", SignalSampleFreq_Multiple * TimerSourerFreq / 1000 / F0_CCR, TimerSourerFreq / 1000 / Fs_CCR);
+        log_debug("Fs: %ukHz(Equivalent), %ukHz(Actual)\r\n", SIGNAL_SAMPLE_FREQ_MULTIPLE * TIMER_SOURER_FREQ / 1000 / F0_CCR, TIMER_SOURER_FREQ / 1000 / Fs_CCR);
     }
     else
     {
         log_debug("Fs CCR: %u\r\n", Fs_CCR);
-        log_debug("Fs: %ukHz\r\n", TimerSourerFreq / 1000 / Fs_CCR);
+        log_debug("Fs: %ukHz\r\n", TIMER_SOURER_FREQ / 1000 / Fs_CCR);
     }
 }
 
-#define Fs (SignalSampleFreq_Multiple * TimerSourerFreq / Signal_Captured_Period)
+#define Fs (SIGNAL_SAMPLE_FREQ_MULTIPLE * TIMER_SOURER_FREQ / Signal_Captured_Period)
 #define FFT_Freq_Calculate(Index) (Index * Fs / ADC_SAMPLING_NUM)
 void log_Fn_NAm_THD_data(u16 *Fx_Index, float *Phase, u16 *Fx_Vpp_Pointer, float *NormAm, float THD)
 
@@ -34,9 +34,9 @@ void log_Fn_NAm_THD_data(u16 *Fx_Index, float *Phase, u16 *Fx_Vpp_Pointer, float
     //      log_debug("F%u: %ukHz\r\n", (i + 1), FFT_Freq_Calculate(Fx_Index[i]) / 1000);
     log_debug("Phase: %.1f, %.1f, %.1f, %.1f, %.1f\r\n", (Phase[0] * 180 / PI),
               (Phase[1] * 180 / PI), (Phase[2] * 180 / PI), (Phase[3] * 180 / PI), (Phase[4] * 180 / PI)); // 相位
-    log_debug("Vpp: %umV, %umV, %umV, %umV, %umV\r\n", Fx_Vpp_Pointer[0] / Fx_Vpp_Multiple, Fx_Vpp_Pointer[1] / Fx_Vpp_Multiple,
-              Fx_Vpp_Pointer[2] / Fx_Vpp_Multiple, Fx_Vpp_Pointer[3] / Fx_Vpp_Multiple, Fx_Vpp_Pointer[4] / Fx_Vpp_Multiple); // 幅值
-    log_debug("GYH: 1.000, %0.3f, %0.3f, %0.3f, %0.3f\r\n", NormAm[0], NormAm[1], NormAm[2], NormAm[3]);            // 归一化幅值
+    log_debug("Vpp: %umV, %umV, %umV, %umV, %umV\r\n", Fx_Vpp_Pointer[0] / FX_VPP_MULTIPLE, Fx_Vpp_Pointer[1] / FX_VPP_MULTIPLE,
+              Fx_Vpp_Pointer[2] / FX_VPP_MULTIPLE, Fx_Vpp_Pointer[3] / FX_VPP_MULTIPLE, Fx_Vpp_Pointer[4] / FX_VPP_MULTIPLE); // 幅值
+    log_debug("GYH: 1.000, %0.3f, %0.3f, %0.3f, %0.3f\r\n", NormAm[0], NormAm[1], NormAm[2], NormAm[3]);                      // 归一化幅值
 
     log_debug("THDx: %.3f%%\r\n\r\n", THD);
 }
@@ -83,7 +83,7 @@ void log_data_to_draw_ascii(u16 *Signal_ADC_Data, float *Amplitude_Data,
 
     // log_draw_ascii_blank(RSWave, 25, "%u", WaveformData_Restored[0]);
     for (i = 0; i < OLED_X_MAX; ++i)
-        log_draw_ascii(RSWave, "%.1f", WaveformData_Restored[i] / (float)Fx_Vpp_Multiple);
+        log_draw_ascii(RSWave, "%.1f", WaveformData_Restored[i] / (float)FX_VPP_MULTIPLE);
 
     // for (i = 0; i < 5; ++i)
     // {
@@ -139,7 +139,7 @@ void log_data_to_draw(u16 *Signal_ADC_Data, float *Amplitude_Data,
     log_indata("\r\n*********************\r\n");
 
     log_indata("Period:(us)\r\n"); // 信号周期
-    log_indata("%u\r\n", Signal_Captured_Value * 1000000 / TimerSourerFreq);
+    log_indata("%u\r\n", Signal_Captured_Value * 1000000 / TIMER_SOURER_FREQ);
 }
 
 #ifdef USE_HAL_DRIVER

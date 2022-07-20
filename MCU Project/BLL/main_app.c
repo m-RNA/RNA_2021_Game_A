@@ -50,7 +50,7 @@ float THDx = 0.0f;           // 失真度测量值
 float NormalizedAm[4] = {0}; // 归一化幅值：2-5次谐波
 float Phase[5] = {0};        // 各分量相位（占位，还没用上）
 
-u16 Fx_Vpp[5] = {0}; // 幅值(uV)
+u16 Fx_Vpp[5] = {0};                    // 幅值(uV)
 float Amplitude_Data[ADC_SAMPLING_NUM]; // 各个频率分量幅值(FFT后)
 
 int main(void)
@@ -103,7 +103,7 @@ int main(void)
     }
 }
 #else
-        if (++Simulation_Times_Index >= Simulation_Times)
+        if (++Simulation_Times_Index >= SIMULATION_TIMES)
         {
             Simulation_Times_Index = 0;
             log_debug("Simulate Loop!\r\n");

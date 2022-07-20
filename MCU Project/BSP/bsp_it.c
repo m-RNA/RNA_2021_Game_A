@@ -24,7 +24,7 @@ void TA2_N_IRQHandler(void)
         Internal_Cap_Register = 0;
         return;
     }
-    if (CapTimer_SyncState <= Cap_Times) //
+    if (CapTimer_SyncState <= CAP_TIMES) //
     {
         Internal_Cap_Register += MAP_Timer_A_getCaptureCompareCount(SIGNAL_CAPTURE_TIMER, SIGNAL_CAPTURE_TIMER_REGISTER);
         return;
@@ -33,7 +33,7 @@ void TA2_N_IRQHandler(void)
     BSP_Timer_Stop(Signal_Capture_Timer);
 
     CapTimer_SyncState = 0;
-    BSP_Signal_Capture_Value = Internal_Cap_Register / Cap_Times;
+    BSP_Signal_Capture_Value = Internal_Cap_Register / CAP_TIMES;
 }
 
 void DMA_INT1_IRQHandler(void)
@@ -59,7 +59,7 @@ void HAL_TIM_IC_CaptureCallback(TIM_HandleTypeDef *htim)
                 Internal_Cap_Register = 0;
                 return;
             }
-            if (CapTimer_SyncState <= Cap_Times) //
+            if (CapTimer_SyncState <= CAP_TIMES) //
             {
                 Internal_Cap_Register += HAL_TIM_ReadCapturedValue(htim, SIGNAL_CAPTURE_TIMER_CHANNEL) + 1; //※是TIM_CHANNEL_1 要记得加1
                 return;
@@ -67,7 +67,7 @@ void HAL_TIM_IC_CaptureCallback(TIM_HandleTypeDef *htim)
             Internal_Cap_Register += HAL_TIM_ReadCapturedValue(htim, SIGNAL_CAPTURE_TIMER_CHANNEL) + 1; //※是TIM_CHANNEL_1 要记得加1
             BSP_Timer_Stop(Signal_Capture_Timer);
 
-            BSP_Signal_Capture_Value = Internal_Cap_Register / Cap_Times; //※是TIM_CHANNEL_1 要记得加1
+            BSP_Signal_Capture_Value = Internal_Cap_Register / CAP_TIMES; //※是TIM_CHANNEL_1 要记得加1
         }
     }
 }

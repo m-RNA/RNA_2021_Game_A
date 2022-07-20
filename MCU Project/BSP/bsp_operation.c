@@ -34,11 +34,11 @@ void BSP_ADC_DMA_Start(u16 *Data, u16 Num)
 u32 BSP_Get_Signal_CCR(void)
 {
 #if Simulation
-    if (Simulation_CCR_Data[Simulation_Times_Index] != Simulation_CCR)
-        log_debug("Warning: Simulation_CCR Spilling!!!\r\n");
-    return Simulation_CCR;
+    if (Simulation_CCR_Data[Simulation_Times_Index] != SIMULATION_CCR)
+        log_debug("Warning: SIMULATION_CCR Spilling!!!\r\n");
+    return SIMULATION_CCR;
 #else
-    delay_ms(5 * Cap_Times); // 信号捕获最多时长也就 1.4ms * 4 = 8.2ms 
+    delay_ms(5 * CAP_TIMES); // 信号捕获最多时长也就 1.4ms * 4 = 8.2ms
     return BSP_Signal_Capture_Value;
 #endif
 }

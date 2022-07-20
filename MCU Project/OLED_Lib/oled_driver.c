@@ -57,7 +57,7 @@ void WriteCmd(unsigned char cmd) //写命令
 	MAP_I2C_masterSendMultiByteStartWithTimeout(EUSCI_BX, 0x00, EUSCI_B_I2C_TIMEOUT_31_MS);
 	MAP_I2C_masterSendMultiByteFinishWithTimeout(EUSCI_BX, cmd, EUSCI_B_I2C_TIMEOUT_31_MS);
 #else
-    HAL_I2C_Mem_Write(OLED_Internal_IIC, OLED_ADDRESS, 0x00, I2C_MEMADD_SIZE_8BIT, &cmd, 1, 10);
+    HAL_I2C_Mem_Write(OLED_IIC, OLED_ADDRESS, 0x00, I2C_MEMADD_SIZE_8BIT, &cmd, 1, 10);
 #endif
 }
 
@@ -67,7 +67,7 @@ void WriteDat(unsigned char dat) //写数据
 	MAP_I2C_masterSendMultiByteStartWithTimeout(EUSCI_BX, 0x40, EUSCI_B_I2C_TIMEOUT_31_MS);
 	MAP_I2C_masterSendMultiByteFinishWithTimeout(EUSCI_BX, dat, EUSCI_B_I2C_TIMEOUT_31_MS);
 #else
-    HAL_I2C_Mem_Write(OLED_Internal_IIC, OLED_ADDRESS, 0x40, I2C_MEMADD_SIZE_8BIT, &dat, 1, 10);
+    HAL_I2C_Mem_Write(OLED_IIC, OLED_ADDRESS, 0x40, I2C_MEMADD_SIZE_8BIT, &dat, 1, 10);
 #endif
 
 }
@@ -94,8 +94,8 @@ void OLED_FILL(unsigned char BMP[])
 		MAP_I2C_masterSendMultiByteFinishWithTimeout(EUSCI_BX, *p++, EUSCI_B_I2C_TIMEOUT_31_MS);
 	}
 #else
-    while(*OLED_Internal_IIC.State != HAL_I2C_STATE_READY);
-    HAL_I2C_Mem_Write_DMA(OLED_Internal_IIC, OLED_ADDRESS, 0x40, I2C_MEMADD_SIZE_8BIT, p, SCREEN_PAGE_NUM * SCREEN_PAGEDATA_NUM);   
+    while(*OLED_IIC.State != HAL_I2C_STATE_READY);
+    HAL_I2C_Mem_Write_DMA(OLED_IIC, OLED_ADDRESS, 0x40, I2C_MEMADD_SIZE_8BIT, p, SCREEN_PAGE_NUM * SCREEN_PAGEDATA_NUM);   
 #endif
 
 }

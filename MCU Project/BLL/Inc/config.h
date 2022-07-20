@@ -7,10 +7,10 @@
 #define ENABLE_LOG_DEBUG (1u)  // 打印调试信息
 #define ENABLE_LOG_DRAW (1u)   // 打印内部数据去画波形
 
-#define ADC_SAMPLING_NUM 512u         // ADC采样点数
-#define Fx_Vpp_Multiple 10            // 计算的到的幅值乘以的倍数
-#define SignalSampleFreq_Multiple 16u // 采样频率设定为信号基波频率的几倍（Fs = ? F0）
-#define SignalSamplePeriod_MIN (TimerSourerFreq / SignalSampleFreq_MAX)
+#define ADC_SAMPLING_NUM 512u           // ADC采样点数
+#define SIGNAL_SAMPLE_FREQ_MULTIPLE 16u // 采样频率设定为信号基波频率的几倍（Fs = ? F0）
+#define SIGNAL_SAMPLE_PERIOD_MIN (TIMER_SOURER_FREQ / SIGNAL_SAMPLE_FREQ_MAX)
+#define FX_VPP_MULTIPLE 10 // 计算的到的幅值乘以的倍数
 
 #ifdef __MSP432P401R__
 #include "sysinit.h"
@@ -21,16 +21,16 @@
 #endif
 
 #if defined __MSP432P401R__
-#define TimerSourerFreq 48000000u
-#define SignalSampleFreq_MAX 1000000u
+#define TIMER_SOURER_FREQ 48000000u
+#define SIGNAL_SAMPLE_FREQ_MAX 1000000u
 
 #elif defined __STM32F1xx_HAL_H
-#define TimerSourerFreq 48000000u
-#define SignalSampleFreq_MAX 1000000u
+#define TIMER_SOURER_FREQ 48000000u
+#define SIGNAL_SAMPLE_FREQ_MAX 1000000u
 
 #elif defined STM32G431xx
-#define TimerSourerFreq 170000000u
-#define SignalSampleFreq_MAX 2000000u
+#define TIMER_SOURER_FREQ 170000000u
+#define SIGNAL_SAMPLE_FREQ_MAX 2000000u
 #endif
 
 #if defined __MSP432P401R__
@@ -66,14 +66,14 @@ extern DMA_HandleTypeDef hdma_adc1;
 #define SIGNAL_CAPTURE_TIMER &htim2
 #define SIGNAL_CAPTURE_TIMER_CHANNEL TIM_CHANNEL_1
 #define SIGNAL_CAPTURE_TIMER_ACTIVE_CHANNEL HAL_TIM_ACTIVE_CHANNEL_1
-#define OLED_Internal_IIC &hi2c1
+#define OLED_IIC &hi2c1
 #define BLUETOOTH_UART &huart2
 
 #else
 #endif
 
-#if (TimerSourerFreq >= 0xFFFF * 1000)
-//#warning In this version, it is better for TimerSourerFreq to be Lower than 65535000.
+#if (TIMER_SOURER_FREQ >= 0xFFFF * 1000)
+//#warning In this version, it is better for TIMER_SOURER_FREQ to be Lower than 65535000.
 #endif
 
 #include "oled_config.h"
