@@ -25,13 +25,16 @@ void log_Fs_data(u32 F0_CCR, u32 Fs_CCR, u8 Flag)
 
 #define Fs (SignalSampleFreq_Multiple * TimerSourerFreq / Signal_Captured_Period)
 #define FFT_Freq_Calculate(Index) (Index * Fs / ADC_SAMPLING_NUM)
-void log_Fn_NAm_THD_data(u16 *Fx_Index, float *NormAm, float THD)
+void log_Fn_NAm_THD_data(u16 *Fx_Index,float * Phase, float *NormAm, float THD)
+
 {
     // u8 i;
     log_debug("F0: %ukHz\r\n", FFT_Freq_Calculate(Fx_Index[0]) / 1000);
     // for (i = 1; i < 5; ++i)
     //      log_debug("F%u: %ukHz\r\n", (i + 1), FFT_Freq_Calculate(Fx_Index[i]) / 1000);
     log_debug("Normalized Am: 1.000, %0.3f, %0.3f, %0.3f, %0.3f\r\n", NormAm[0], NormAm[1], NormAm[2], NormAm[3]); // 归一化幅值
+    log_debug("Phase: %0.3f, %0.3f, %0.3f, %0.3f, %0.3f\r\n", (Phase[0] * 180 / PI), 
+    (Phase[1] * 180 / PI),(Phase[2] * 180 / PI),(Phase[3] * 180 / PI),(Phase[4] * 180 / PI)); // 归一化幅值
     log_debug("THDx: %.3f%%\r\n\r\n", THD);
 }
 
