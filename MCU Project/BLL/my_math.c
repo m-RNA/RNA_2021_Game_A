@@ -118,7 +118,7 @@ void Signal_Synthesizer(u16 *Output, u16 Length, u16 F0_Vpp, float *NormAm, floa
 void CalculateAmplitude_By_FFT(float *Am_Pointer, u16 *SampleData_Pointer)
 {
     u16 i;
-    log_debug("Calculating Amplitude...\r\n");
+    log_detail("Calculating Amplitude...\r\n");
 
     for (i = 0; i < ADC_SAMPLING_NUM; ++i)
     {
@@ -128,7 +128,7 @@ void CalculateAmplitude_By_FFT(float *Am_Pointer, u16 *SampleData_Pointer)
     arm_cfft_f32(&ARM_FFT_USING_STRUCTURE, FFT_Input_Buf, 0, 1);    // FFT计算
     arm_cmplx_mag_f32(FFT_Input_Buf, Am_Pointer, ADC_SAMPLING_NUM); //把运算结果复数求模得幅值
 
-    log_debug("Calculating Amplitude Completed!\r\n");
+    log_detail("Calculating Amplitude Completed!\r\n");
 }
 
 /*  计算各个频率分量幅值 */
@@ -165,10 +165,10 @@ void NormalizedAm_And_CalculateTHD(float *Phase_Pointer, float *NormAm_Pointer, 
 /* 用归一化幅值+各分量相位 还原波形 */
 void Restore_Waveform(u16 *RestoreWaveform_Pointer, float *NormAm_Pointer, float *Phase_Pointer)
 {
-    log_debug("Transforming Normalized Am To Waveform Data...\r\n");
+    log_detail("Transforming Normalized Am To Waveform Data...\r\n");
 
     Signal_Synthesizer(RestoreWaveform_Pointer, OLED_X_MAX, 256, // 这个256是随便定的，目的是把小数转换为整数；OLED显示函数会进一步处理范围
                        NormAm_Pointer, (void *)0, 5);
 
-    log_debug("Transforming Completed!\r\n");
+    log_detail("Transforming Completed!\r\n");
 }

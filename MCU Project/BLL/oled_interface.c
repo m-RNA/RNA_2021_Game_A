@@ -88,7 +88,7 @@ void OLEDInterface_Update_Waveform(u16 *WaveformData)
     u16 i = 0;
     u16 Max_Data;
     u16 Y, Y_Old;
-    log_debug("OLEDInterface Updating Waveform...\r\n");
+    log_detail("OLEDInterface Updating Waveform...\r\n");
     SelectUpOLED();
     ClearScreen();
     // WaveBox();
@@ -108,7 +108,7 @@ void OLEDInterface_Update_Waveform(u16 *WaveformData)
         Y_Old = Y;
     }
     UpdateScreen();
-    log_debug("OLEDInterface Update Waveform Completed!\r\n");
+    log_detail("OLEDInterface Update Waveform Completed!\r\n");
 }
 
 /* OLED显示信息更新 */
@@ -116,7 +116,7 @@ void OLEDInterface_Update_Data(float *NormalizedAm, float THD, u32 Period)
 {
     uint8_t i;
     char strBuf[9];
-    log_debug("OLEDInterface Updating Data...\r\n");
+    log_detail("OLEDInterface Updating Data...\r\n");
     SelectDownOLED();
     ClearScreen();
     OLEDInterface_Display_NormAm_XY();
@@ -133,13 +133,13 @@ void OLEDInterface_Update_Data(float *NormalizedAm, float THD, u32 Period)
     snprintf(strBuf, 9, "T:%4dus", Period * 1000000 / TimerSourerFreq); // 测量周期
     DrawString(80, 0, strBuf);
     UpdateScreen();
-    log_debug("OLEDInterface Update Data Completed!\r\n");
+    log_detail("OLEDInterface Update Data Completed!\r\n");
 }
 
 /* 显示 Ti和电赛 Logo */
 void OLEDInterface_Display_TiGame_Logo(void)
 {
-    log_debug("OLEDInterface Drawing TiGame Logo...\r\n");
+    log_detail("OLEDInterface Drawing TiGame Logo...\r\n");
     SelectUpOLED();                      // 选用上屏
     DrawBitmap(0, 0, TiLOGO, 128, 64);   // Ti logo
     UpdateScreen();                      // 更新屏幕
@@ -147,5 +147,5 @@ void OLEDInterface_Display_TiGame_Logo(void)
     ClearScreen();                       // 清屏
     DrawBitmap(0, 0, GameLOGO, 128, 64); // 电赛 logo
     UpdateScreen();                      // 更新屏幕
-    log_debug("OLEDInterface Draw Completed!\r\n");
+    log_detail("OLEDInterface Draw Completed!\r\n");
 }

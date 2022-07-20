@@ -3,8 +3,9 @@
 
 #define Simulation (1u) // 仿真输入信号
 
-#define DEBUG (1u)                     // 打印调试信息
-#define DEBUG_PRINT_INTERNAL_DATA (1u) // 打印内部数据
+#define ENABLE_LOG_DETAIL (1u) // 打印过程细节
+#define ENABLE_LOG_DEBUG (1u)  // 打印调试信息
+#define ENABLE_LOG_DRAW (1u)   // 打印内部数据去画波形
 
 #define ADC_SAMPLING_NUM 512u         // ADC采样点数
 #define SignalSampleFreq_Multiple 16u // 采样频率设定为信号基波频率的几倍（Fs = ? F0）

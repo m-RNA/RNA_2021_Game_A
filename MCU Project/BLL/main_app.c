@@ -88,9 +88,9 @@ int main(void)
 
         Bluetooth_SendDate_To_Phone(NormalizedAm, THDx, WaveformData_Restored); // 将数据通过蓝牙发至手机 蓝色
 
-        log_Internal_data(Signal_ADC_Data, Amplitude_Data,
-                          WaveformData_Restored, NormalizedAm, Phase,
-                          THDx, Signal_Captured_Value); // 打印内部数据
+        log_data_to_draw_ascii(Signal_ADC_Data, Amplitude_Data,
+                               WaveformData_Restored, NormalizedAm, Phase,
+                               THDx, Signal_Captured_Value); // 打印内部数据
 
         log_debug("\r\n\r\n***********************  0%u0  ****************************\r\n\r\n", i++);
 
