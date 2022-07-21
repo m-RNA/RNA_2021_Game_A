@@ -23,8 +23,8 @@
  *
  * 默认调试器串口会打印大量信息
  * 可去"config.h"修改宏定义
- * DEBUG_PRINT_INTERNAL_DATA
- * 为0，来关闭打印大量内部信息
+ * ENABLE_LOG_DRAW 为0
+ * 来关闭打印大量内部信息
  *
  * 信息的查看可以使用纸飞机串口调试助手
  * ascii协议通过log_data_to_draw_ascii
@@ -59,8 +59,8 @@ int main(void)
     /***  ↑↑↑     请仔细阅读     ↑↑↑  ***/
     /***  ↑↑↑ 使用工程提示在上面 ↑↑↑  ***/
     u16 i = 1;
-    HAL_Init();
-    SystemClock_Config();
+    HAL_Init();           // (Stm32HAL初始化)
+    SystemClock_Config(); // 第3讲 时钟配置（48M）
 
     BSP_GPIO_Init();    // 第2讲 GPIO配置
     BSP_Uart_PC_Init(); // 第7讲 串口配置（调试）
