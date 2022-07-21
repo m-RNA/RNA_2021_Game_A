@@ -55,7 +55,7 @@ void ADC_Config(void)
 {
   /* Initializing ADC (MCLK/1/1) */
   MAP_ADC14_enableModule();                                                                 // 使能ADC14模块
-  MAP_ADC14_initModule(ADC_CLOCKSOURCE_MCLK, ADC_PREDIVIDER_1, ADC_DIVIDER_1, ADC_NOROUTE); // 初始化ADC时钟 超频至48MHz
+  MAP_ADC14_initModule(ADC_CLOCKSOURCE_MCLK, ADC_PREDIVIDER_1, ADC_DIVIDER_2, ADC_NOROUTE); // 初始化ADC时钟 48MHz(超频?)
 
   MAP_GPIO_setAsPeripheralModuleFunctionInputPin(GPIO_PORT_P4, GPIO_PIN6, GPIO_TERTIARY_MODULE_FUNCTION); // 模拟输入
   MAP_ADC14_configureSingleSampleMode(ADC_MEM0, true);                                                    // 单通道配置 多次转化true
