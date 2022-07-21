@@ -10,6 +10,7 @@
 #define __ADC_H
 #include "sysinit.h"
 
+// 宏定义 @BiliBili：物联世界
 #define ADC_TRIGGER_TA0_C1 ADC_TRIGGER_SOURCE1
 #define ADC_TRIGGER_TA0_C2 ADC_TRIGGER_SOURCE2
 #define ADC_TRIGGER_TA1_C1 ADC_TRIGGER_SOURCE3
