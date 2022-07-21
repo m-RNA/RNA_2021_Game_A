@@ -9,6 +9,7 @@ void Signal_F0_Measure(u32 *Captured_Value)
 {
     log_detail("Signal F0 Measuring...\r\n");
 
+    BSP_Timer_Start(Signal_Capture_Timer);
     *Captured_Value = BSP_Get_Signal_CCR();
 
     log_debug("F0 Captured Value:%u\r\n", *Captured_Value);
