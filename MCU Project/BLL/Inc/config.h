@@ -38,7 +38,7 @@
 #include "delay.h"
 #include "adc.h"
 #include "usart.h"
-#include "usart3.h"
+#include "usart2.h"
 #include "led.h"
 #define BLUETOOTH_UART EUSCI_A2_BASE
 #define SIGNAL_SAMPLE_TIMER TIMER_A0_BASE

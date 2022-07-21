@@ -24,7 +24,7 @@ void BSP_OLEDInterface_Init(void)
 void BSP_Uart_PC_Init(void)
 {
 #ifdef __MSP432P401R__
-    uart_init(1382400); // 第7讲 串口配置（调试）
+    uart0_init(1382400); // 第7讲 串口配置（调试）
 #else
     MX_USART1_UART_Init(); // 第7讲 串口配置（调试）
 #endif
@@ -35,7 +35,7 @@ void BSP_Uart_Bluetooth_Init(void)
 {
     log_detail("Uart Bluetooth Init...\r\n");
 #ifdef __MSP432P401R__
-    usart3_init(9600);
+    uart2_init(9600); // 第7讲 串口配置（蓝牙）
 #else
     MX_USART2_UART_Init();
 #endif

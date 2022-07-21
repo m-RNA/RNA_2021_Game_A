@@ -124,7 +124,7 @@ int fputc(int ch, FILE *f)
  *****************   说明结束   *****************/
 #endif
 
-void uart_init(uint32_t baudRate)
+void uart0_init(uint32_t baudRate)
 {
 #ifdef EUSCI_A_UART_7_BIT_LEN
   //固件库v3_40_01_02

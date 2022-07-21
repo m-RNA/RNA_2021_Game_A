@@ -479,9 +479,9 @@
               <FilePath>..\Hardware\timA.c</FilePath>
             </File>
             <File>
-              <FileName>usart3.c</FileName>
+              <FileName>usart2.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\Hardware\usart3.c</FilePath>
+              <FilePath>..\Hardware\usart2.c</FilePath>
             </File>
           </Files>
         </Group>
