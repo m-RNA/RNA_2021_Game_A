@@ -1,7 +1,7 @@
 #ifndef __CONFIG_H
 #define __CONFIG_H
 
-#define SIMULATION (1u) // 仿真输入信号
+#define SIMULATION (0u) // 仿真输入信号
 
 #define ENABLE_LOG_DETAIL (1u) // 打印过程细节
 #define ENABLE_LOG_DEBUG (1u)  // 打印调试信息
