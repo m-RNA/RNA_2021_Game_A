@@ -1,7 +1,7 @@
 #ifndef __CONFIG_H
 #define __CONFIG_H
 
-#define Simulation (1u) // 仿真输入信号
+#define SIMULATION (1u) // 仿真输入信号
 
 #define ENABLE_LOG_DETAIL (1u) // 打印过程细节
 #define ENABLE_LOG_DEBUG (1u)  // 打印调试信息
@@ -73,12 +73,12 @@ extern DMA_HandleTypeDef hdma_adc1;
 #endif
 
 #if (TIMER_SOURER_FREQ >= 0xFFFF * 1000)
-//#warning In this version, it is better for TIMER_SOURER_FREQ to be Lower than 65535000.
+#warning In this version, it is better for TIMER_SOURER_FREQ to be Lower than 65535000.
 #endif
 
 #include "oled_config.h"
 
-#if Simulation
+#if SIMULATION
 #include "simulation.h"
 #endif
 

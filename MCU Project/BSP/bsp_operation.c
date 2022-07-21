@@ -7,7 +7,7 @@
 /*********************************   操作类函数  ********************************************/
 void BSP_ADC_DMA_Start(u16 *Data, u16 Num)
 {
-#if Simulation
+#if SIMULATION
 #if 1 // 两种仿真输入信号生成方式选择（选一个就好）
     Simulate_Signal_Synthesizer(Data, Num);
 #else
@@ -33,7 +33,7 @@ void BSP_ADC_DMA_Start(u16 *Data, u16 Num)
 
 u32 BSP_Get_Signal_CCR(void)
 {
-#if Simulation
+#if SIMULATION
     if (Simulation_CCR_Data[Simulation_Times_Index] != SIMULATION_CCR)
         log_debug("Warning: SIMULATION_CCR Spilling!!!\r\n");
     return SIMULATION_CCR;
@@ -45,7 +45,7 @@ u32 BSP_Get_Signal_CCR(void)
 
 void BSP_Set_Fs_ARR(u32 Fs_ARR)
 {
-#if Simulation
+#if SIMULATION
     Simulation_Set_Fs_ARR(Fs_ARR);
 #else
 #ifdef __MSP432P401R__

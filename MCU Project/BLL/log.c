@@ -2,7 +2,7 @@
 #include "oled_interface.h"
 #include "arm_math.h"
 
-#if Simulation
+#if SIMULATION
 #define Signal_Captured_Period SIMULATION_CCR
 #else
 #include "bsp_it.h"

@@ -98,7 +98,7 @@ int main(void)
 
         log_debug("***********************  0%u0  ****************************\r\n", i++);
 
-#if !Simulation
+#if !SIMULATION
         delay_ms(100); //延时100ms
     }
 }
