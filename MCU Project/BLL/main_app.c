@@ -105,6 +105,7 @@ int main(void)
     }
 }
 #else
+        delay_ms(500); //延时500ms
         if (++Simulation_Times_Index >= SIMULATION_TIMES)
         {
             Simulation_Times_Index = 0;
