@@ -6,7 +6,7 @@
 #define Signal_Captured_Period SIMULATION_CCR
 #else
 #include "bsp_it.h"
-#define Signal_Captured_Period BSP_Signal_Capture_Value
+#define Signal_Captured_Period BSP_Signal_Avrg_Cap_Val
 #endif
 
 void log_Fs_data(u32 F0_CCR, u32 Fs_CCR, u8 Flag)
