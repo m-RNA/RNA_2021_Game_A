@@ -60,8 +60,8 @@ void Bluetooth_SendDate_To_Phone(float *NormalizedAm, float THDx, u16 *WaveData)
     /* 发送归一化幅值 */
     for (i = 0; i < 4; ++i)
     {
-        BSP_Bluetooth_SendByte(((uint16_t)(NormalizedAm[i + 1] * 100)) >> 8);
-        BSP_Bluetooth_SendByte(((uint16_t)(NormalizedAm[i + 1] * 100)) & 0xFF);
+        BSP_Bluetooth_SendByte(((uint16_t)(NormalizedAm[i] * 100)) >> 8);
+        BSP_Bluetooth_SendByte(((uint16_t)(NormalizedAm[i] * 100)) & 0xFF);
     }
     log_detail("Bluetooth Sending Completed!\r\n");
 }
