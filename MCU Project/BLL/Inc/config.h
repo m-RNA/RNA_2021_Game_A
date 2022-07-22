@@ -1,7 +1,7 @@
 #ifndef __CONFIG_H
 #define __CONFIG_H
 
-#define SIMULATION (0u) // 仿真输入信号
+#define SIMULATION (1u) // 仿真输入信号
 
 #define ENABLE_LOG_DETAIL (1u) // 打印过程细节
 #define ENABLE_LOG_DEBUG (1u)  // 打印调试信息
@@ -23,14 +23,21 @@
 #if defined __MSP432P401R__
 #define TIMER_SOURER_FREQ 48000000u
 #define SIGNAL_SAMPLE_FREQ_MAX 1000000u
+#define ADC_MAX 16384u
+#define ADC_RF_V_MV 2500u
 
 #elif defined __STM32F1xx_HAL_H
 #define TIMER_SOURER_FREQ 48000000u
 #define SIGNAL_SAMPLE_FREQ_MAX 1000000u
+#define ADC_MAX 4096u
+#define ADC_RF_V_MV 3300u
 
 #elif defined STM32G431xx
 #define TIMER_SOURER_FREQ 170000000u
 #define SIGNAL_SAMPLE_FREQ_MAX 2000000u
+#define ADC_MAX 4096u
+#define ADC_RF_V_MV 3300u
+
 #endif
 
 #if defined __MSP432P401R__
