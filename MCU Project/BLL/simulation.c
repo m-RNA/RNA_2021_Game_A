@@ -42,34 +42,6 @@ float Simulation_Phase_Data[SIMULATION_TIMES][SYNTHESIZE_PRECISION] = {
     {0.00f, 0.00f, 0.00f, 0.00f, 0.00f},
 };
 
-float Simulation_NormAm[SIMULATION_TIMES][SYNTHESIZE_PRECISION - 1] = {
-    {0.00f, 0.20f, 0.00f, 0.15f}, // 电赛测试信号1 THDo = 25.0%
-    {0.00f, 0.08f, 0.15f, 0.00f}, // 电赛测试信号2 THDo = 17.0%
-    {0.00f, 0.00f, 0.00f, 0.10f}, // 电赛测试信号3 THDo = 10.0%
-
-    /*
-       正弦波 THDo = 00.0%
-       三角波 THDo = 11.8%
-       方波   THDo = 38.87%
-       锯齿波 THDo = 68.0%
-    */
-    {0.0f, 0.0f, 0.0f, 0.0f},
-    {0.00f, -0.1111111111f, 0.00f, 0.04f}, //, 0.0f, -0.0204081633f, 0.0f, 0.0123456790f, 0.0f, -0.0082644628f, 0.0f, 0.0059171598f},
-    {0.00f, 0.3333333333f, 0.0f, 0.2f},    //, 0.0f, 0.1428571429f, 0.0f, 0.1111111111f, 0.0f, 0.0909090909f, 0.0f, 0.0769230769f},
-    {0.5f, 0.3333333333f, 0.25f, 0.2f},    //, 0.1666666667f, 0.1428571429f, 0.125f, 0.1111111111f, 0.1f, 0.0909090909f, 0.0833333333f, 0.0769230769f},
-};
-
-u16 Simulation_F0_Vpp_Data[SIMULATION_TIMES] = {
-    400, // 电赛测试信号1
-    200, // 电赛测试信号2
-    30,  // 电赛测试信号3
-
-    100, // 自定义
-    83,
-    65,
-    48,
-};
-
 u16 Simulate_Fs_ARR = 0;
 void Simulation_Set_Fs_ARR(u16 Fs_ARR)
 {
@@ -100,13 +72,6 @@ void Simulate_Signal_Synthesizer(u16 *SimulateWaveData, u16 Length)
 
     Signal_Synthesizer_Vpp(SimulateWaveData, Freq_Multiple, Simulation_Fx_Vpp_Data[Simulation_Times_Index],
                            Simulation_Phase_Data[Simulation_Times_Index], SYNTHESIZE_PRECISION);
-    //    //找出最小的小数的位置
-    //    MinIndex = Min_Short((short *)SimulateWaveData, Freq_Multiple);
-    //    for (i = 0; i < Freq_Multiple; ++i)
-    //    {
-    //        // 将小数全转为以0为起点的正数
-    //        SimulateWaveData[i] = (short)((short)SimulateWaveData[i] - (short)SimulateWaveData[MinIndex]);
-    //    }
 
     // 复制数据
     for (i = 1; i <= Length / Freq_Multiple; ++i)
@@ -114,14 +79,16 @@ void Simulate_Signal_Synthesizer(u16 *SimulateWaveData, u16 Length)
         for (j = 0; j < Freq_Multiple; ++j)
         {
             Data_Index = j + i * Freq_Multiple;
-            SimulateWaveData[Data_Index] = SimulateWaveData[j] + ADD_NOISE;
+            // MSP432 的ADC为14位 同时选用内部2.5V参考电压源
+            SimulateWaveData[Data_Index] = (SimulateWaveData[j] + ADD_NOISE) * ADC_MAX / ADC_RF_V_MV;
             if (Data_Index >= Length)
                 break;
         }
     }
     for (j = 0; j < Freq_Multiple; ++j)
     {
-        SimulateWaveData[j] += ADD_NOISE;
+        // MSP432 的ADC为14位 同时选用内部2.5V参考电压源
+        SimulateWaveData[j] = (SimulateWaveData[j] + ADD_NOISE) * ADC_MAX / ADC_RF_V_MV;
     }
 }
 
