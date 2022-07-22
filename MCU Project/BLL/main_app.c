@@ -77,7 +77,7 @@ int main(void)
 
     /* 初始化完毕 可以测量 */
     log_detail("All Init Completed!\r\n");
-    log_debug("\r\n\r\n***********************  000  ****************************\r\n\r\n");
+    log_debug("\r\n\r\n***********************  0  ****************************\r\n\r\n");
 
     while (1)
     {
@@ -98,7 +98,7 @@ int main(void)
                                WaveformData_Restored, NormalizedAm, Phase,
                                THDx, Signal_Captured_Value); // 打印内部数据
 
-        log_debug("***********************  0%u0  ****************************\r\n", i++);
+        log_debug("***********************  %u  ****************************\r\n", i++);
 
 #if !SIMULATION
         delay_ms(100); //延时100ms
