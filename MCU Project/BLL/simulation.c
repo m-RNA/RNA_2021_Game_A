@@ -79,16 +79,16 @@ void Simulate_Signal_Synthesizer(u16 *SimulateWaveData, u16 Length)
         for (j = 0; j < Freq_Multiple; ++j)
         {
             Data_Index = j + i * Freq_Multiple;
-            // MSP432 的ADC为14位 同时选用内部2.5V参考电压源
-            SimulateWaveData[Data_Index] = (SimulateWaveData[j] + ADD_NOISE) * ADC_MAX / ADC_RF_V_MV;
+            // ADC位数 参考电压源 相关
+            SimulateWaveData[Data_Index] = (SimulateWaveData[j] + ADD_NOISE) * ADC_MAX / (float)ADC_RF_V_MV;
             if (Data_Index >= Length)
                 break;
         }
     }
     for (j = 0; j < Freq_Multiple; ++j)
     {
-        // MSP432 的ADC为14位 同时选用内部2.5V参考电压源
-        SimulateWaveData[j] = (SimulateWaveData[j] + ADD_NOISE) * ADC_MAX / ADC_RF_V_MV;
+        // ADC位数 参考电压源 相关
+        SimulateWaveData[j] = (SimulateWaveData[j] + ADD_NOISE) * ADC_MAX / (float)ADC_RF_V_MV;
     }
 }
 
