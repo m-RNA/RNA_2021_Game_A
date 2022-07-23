@@ -110,7 +110,7 @@ void log_data_to_draw(u16 *Signal_ADC_Data, float *Amplitude_Data,
     log_indata("ADC Sampling Data:\r\n");
     for (i = 0; i < (ADC_SAMPLING_NUM); ++i)
         log_indata("%u\r\n", Signal_ADC_Data[i] * ADC_RF_V_MV / ADC_MAX);
-    log_indata("%u\r\n", Signal_ADC_Data[0]) * ADC_RF_V_MV / ADC_MAX;
+    log_indata("%u\r\n", Signal_ADC_Data[0] * ADC_RF_V_MV / ADC_MAX);
     log_indata("\r\n*********************\r\n");
 
     log_indata("Am Data(a half):\r\n");
