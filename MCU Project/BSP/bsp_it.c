@@ -1,7 +1,7 @@
 #include "bsp_it.h"
 #include "bsp_operation.h"
 
-vu32 Cap_Val[2] = {0};                  // 捕获值
+vu32 Cap_Val[CAP_TIMES] = {0};                  // 捕获值
 static vu8 CapTimer_SyncState = 0;      // 捕获信号同步状态
 static vu8 CapTimer_Spilling_Times = 0; // 捕获溢出次数
 
@@ -25,29 +25,30 @@ void TA2_N_IRQHandler(void)
         {
             MAP_Timer_A_clearTimer(SIGNAL_CAPTURE_TIMER); // 与信号同步
             CapTimer_SyncState = 1;
-            return;
         }
-
-        if (CapTimer_SyncState == 1)
+        else if (CapTimer_SyncState == 1)
         {
             Cap_Val[0] = MAP_Timer_A_getCaptureCompareCount(SIGNAL_CAPTURE_TIMER, SIGNAL_CAPTURE_TIMER_REGISTER) +
                          (CapTimer_Spilling_Times * 0xFFFF);
             CapTimer_SyncState = 2;
-            return;
         }
-        if (CapTimer_SyncState < CAP_TIMES) //
+        else if (CapTimer_SyncState < CAP_TIMES) //
         {
-            MAP_Timer_A_getCaptureCompareCount(SIGNAL_CAPTURE_TIMER, SIGNAL_CAPTURE_TIMER_REGISTER);
+            Cap_Val[CapTimer_SyncState - PASS_TIMES] = MAP_Timer_A_getCaptureCompareCount(SIGNAL_CAPTURE_TIMER, SIGNAL_CAPTURE_TIMER_REGISTER) +
+                         (CapTimer_Spilling_Times * 0xFFFF);
             CapTimer_SyncState++;
-            return;
         }
-        Cap_Val[1] = MAP_Timer_A_getCaptureCompareCount(SIGNAL_CAPTURE_TIMER, SIGNAL_CAPTURE_TIMER_REGISTER) +
-                     (CapTimer_Spilling_Times * 0xFFFF);
+        else
+        {
+            Cap_Val[CapTimer_SyncState - PASS_TIMES] = MAP_Timer_A_getCaptureCompareCount(SIGNAL_CAPTURE_TIMER, SIGNAL_CAPTURE_TIMER_REGISTER) +
+                         (CapTimer_Spilling_Times * 0xFFFF);
 
-        BSP_Timer_Stop(Signal_Capture_Timer);
-        CapTimer_SyncState = 0;
-        CapTimer_Spilling_Times = 0;
-        BSP_Signal_Avrg_Cap_Val = (Cap_Val[1] - Cap_Val[0]) / (CAP_TIMES - 1);
+            BSP_Timer_Stop(Signal_Capture_Timer);
+            CapTimer_SyncState = 0;
+            CapTimer_Spilling_Times = 0;
+            BSP_Signal_Avrg_Cap_Val = (Cap_Val[CAP_TIMES - 1] - Cap_Val[0]) / (CAP_TIMES - 1);        
+        }
+
     }
 
     if (MAP_Timer_A_getEnabledInterruptStatus(SIGNAL_CAPTURE_TIMER)) //溢出中断
