@@ -40,7 +40,7 @@ u32 BSP_Get_Signal_CCR(void)
 #else
     delay_ms(22 * CAP_TIMES); // 最低信号频率位45Hz = 21.845ms
 
-    log_debug("This BUG Make Me Aaaaaa: Cap Val:");
+    log_debug("This BUG Make Me Aaaaaa: Cap Val:\r\n");
 
     log_debug("1:%u, 4:%u\r\n", Cap_Val[0], Cap_Val[1]);
     log_debug("deta:%u\r\n", Cap_Val[1] - Cap_Val[0]);
