@@ -47,8 +47,8 @@ void log_data_to_draw_stamp(u16 *Signal_ADC_Data, float *Amplitude_Data,
 {
     u16 i;
     for (i = 0; i < ADC_SAMPLING_NUM; ++i)
-        log_draw_stamp(ADC, i, "%u", Signal_ADC_Data[i]);
-    log_draw_stamp(ADC, i, "%u", Signal_ADC_Data[0]);
+        log_draw_stamp(ADC, i, "%u", Signal_ADC_Data[i] * ADC_RF_V_MV / ADC_MAX);
+    log_draw_stamp(ADC, i, "%u", Signal_ADC_Data[0] * ADC_RF_V_MV / ADC_MAX);
 
     for (i = 0; i < (ADC_SAMPLING_NUM >> 1); ++i)
         log_draw_stamp(AM, i, "%.3f", Amplitude_Data[i]);
@@ -74,8 +74,8 @@ void log_data_to_draw_ascii(u16 *Signal_ADC_Data, float *Amplitude_Data,
     // u16 log_times_temp;
     // log_draw_ascii_blank(ADC, 50, "%u", Signal_ADC_Data[0]);
     for (i = 0; i < ADC_SAMPLING_NUM; ++i)
-        log_draw_ascii(ADC, "%u", Signal_ADC_Data[i]);
-    log_draw_ascii(ADC, "%u", Signal_ADC_Data[0]);
+        log_draw_ascii(ADC, "%u", Signal_ADC_Data[i] * ADC_RF_V_MV / ADC_MAX);
+    log_draw_ascii(ADC, "%u", Signal_ADC_Data[0] * ADC_RF_V_MV / ADC_MAX);
 
     // log_draw_ascii_blank(AM, 50, "0");
     for (i = 0; i < (ADC_SAMPLING_NUM >> 1); ++i)
@@ -109,8 +109,8 @@ void log_data_to_draw(u16 *Signal_ADC_Data, float *Amplitude_Data,
 
     log_indata("ADC Sampling Data:\r\n");
     for (i = 0; i < (ADC_SAMPLING_NUM); ++i)
-        log_indata("%u\r\n", Signal_ADC_Data[i]);
-    log_indata("%u\r\n", Signal_ADC_Data[0]);
+        log_indata("%u\r\n", Signal_ADC_Data[i] * ADC_RF_V_MV / ADC_MAX);
+    log_indata("%u\r\n", Signal_ADC_Data[0]) * ADC_RF_V_MV / ADC_MAX;
     log_indata("\r\n*********************\r\n");
 
     log_indata("Am Data(a half):\r\n");
