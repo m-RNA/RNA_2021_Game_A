@@ -30,21 +30,21 @@ void TA2_N_IRQHandler(void)
 
         if (CapTimer_SyncState == 1)
         {
-            Cap_Val[0] = (CapTimer_Spilling_Times * 0xFFFF) +
-                         MAP_Timer_A_getCaptureCompareCount(SIGNAL_CAPTURE_TIMER, SIGNAL_CAPTURE_TIMER_REGISTER);
+            Cap_Val[0] = MAP_Timer_A_getCaptureCompareCount(SIGNAL_CAPTURE_TIMER, SIGNAL_CAPTURE_TIMER_REGISTER) +
+                         (CapTimer_Spilling_Times * 0xFFFF);
             CapTimer_SyncState = 2;
             return;
         }
-
         if (CapTimer_SyncState < CAP_TIMES) //
         {
+            MAP_Timer_A_getCaptureCompareCount(SIGNAL_CAPTURE_TIMER, SIGNAL_CAPTURE_TIMER_REGISTER);
             CapTimer_SyncState++;
             return;
         }
-        BSP_Timer_Stop(Signal_Capture_Timer);
+        Cap_Val[1] = MAP_Timer_A_getCaptureCompareCount(SIGNAL_CAPTURE_TIMER, SIGNAL_CAPTURE_TIMER_REGISTER) +
+                     (CapTimer_Spilling_Times * 0xFFFF);
 
-        Cap_Val[1] = (CapTimer_Spilling_Times * 0xFFFF) +
-                     MAP_Timer_A_getCaptureCompareCount(SIGNAL_CAPTURE_TIMER, SIGNAL_CAPTURE_TIMER_REGISTER);
+        BSP_Timer_Stop(Signal_Capture_Timer);
         CapTimer_SyncState = 0;
         CapTimer_Spilling_Times = 0;
         BSP_Signal_Avrg_Cap_Val = (Cap_Val[1] - Cap_Val[0]) / (CAP_TIMES - 1);
