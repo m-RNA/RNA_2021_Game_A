@@ -1,9 +1,10 @@
 ## 0.新版工程提示（MCU Project）
 2022/07/15
 - 新版支持MSP432和STM32(其中Stm32工程支持Keil仿真)。特点：代码比旧版优雅；采用分层思想编写，移植，有手就行。
-- ADC采样点数、采样频率倍数、仿真信号输入等等,可去"config.h"头文件配置。
--  默认自带仿真输入信号，即 **无需** ADC前端电路、信号发生器输入信号，也可测试算法。更多仿真输入信号配置，可去"simulation.h"和"simulation.c"文件中配置。
--  默认调试器串口会打印大量信息，可去"config.h"修改宏定义DEBUG_PRINT_INTERNAL_DATA为0，来关闭打印大量内部信息，信息的查看可以复制后，粘贴到\RNA_2021_Game_A\Doc\AnalyzeData.xlsx表格里，有多个分表，ADC采样点数不同请粘贴到对应位置。
+-  新版经网友测试，定时器捕获必须接入幅值需要超过1V的信号才不会卡住，原因未知；测量信号频率拓宽到47Hz-200kHz。
+-  ADC采样点数、采样频率倍数、仿真信号输入等等,可去"config.h"头文件配置。
+-  自带仿真输入信号，即 **无需** ADC前端电路、信号发生器输入信号，可去"config.h"修改宏定义SIMULATION 为 1，即可开启也可测试算法。更多仿真输入信号配置，可去"simulation.h"和"simulation.c"文件中配置。
+-  默认调试器串口会打印大量信息，可去"config.h"修改宏定义ENABLE_LOG_DRAW为0，来关闭打印大量内部信息，信息的查看可以使用在Tool文件夹里的纸飞机串口调试助手，选用ASCII协议，主函数死循环调用log_data_to_draw_ascii()打印；或者调用log_data_to_draw()打印，然后将信息复制后，粘贴到Doc文件夹里的AnalyzeData.xlsx表格，有多个分表，ADC采样点数不同请粘贴到对应位置。
 
 旧版工程在 MSP32P4 Project 文件夹里。
 ***
