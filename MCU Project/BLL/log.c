@@ -38,7 +38,7 @@ void log_Fn_NAm_THD_data(u16 *Fx_Index, float *Phase, u16 *Fx_Vpp_Pointer, float
               Fx_Vpp_Pointer[2] / FX_VPP_MULTIPLE, Fx_Vpp_Pointer[3] / FX_VPP_MULTIPLE, Fx_Vpp_Pointer[4] / FX_VPP_MULTIPLE); // 幅值
     log_debug("GYH: 1.000, %0.3f, %0.3f, %0.3f, %0.3f\r\n", NormAm[0], NormAm[1], NormAm[2], NormAm[3]);                      // 归一化幅值
 
-    log_debug("THDx: %.3f%%\r\n\r\n", THD);
+    log_debug("THD: %.3f%%\r\n\r\n", THD);
 }
 
 void log_data_to_draw_stamp(u16 *Signal_ADC_Data, float *Amplitude_Data,
