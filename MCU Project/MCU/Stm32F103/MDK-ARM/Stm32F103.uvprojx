@@ -720,6 +720,11 @@
               <FileType>1</FileType>
               <FilePath>..\..\..\BSP\bsp_it.c</FilePath>
             </File>
+            <File>
+              <FileName>bsp_led.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Core\Src\bsp_led.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
