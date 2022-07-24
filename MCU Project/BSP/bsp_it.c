@@ -76,18 +76,13 @@ void HAL_TIM_IC_CaptureCallback(TIM_HandleTypeDef *htim)
             if (CapTimer_SyncState == 1) // 第一次捕获值位于信号同步 不使用该数据
             {
                 HAL_TIM_ReadCapturedValue(htim, SIGNAL_CAPTURE_TIMER_CHANNEL); // 将该值读走
-                Cap_Val[0] = 0;
-                return;
             }
-            if (CapTimer_SyncState <= CAP_TIMES) //
+            else
             {
-                Cap_Val[0] += HAL_TIM_ReadCapturedValue(htim, SIGNAL_CAPTURE_TIMER_CHANNEL) + 1; //※是TIM_CHANNEL_1 要记得加1
-                return;
+                BSP_Signal_Avrg_Cap_Val = HAL_TIM_ReadCapturedValue(htim, SIGNAL_CAPTURE_TIMER_CHANNEL) + 1; //※是TIM_CHANNEL_1 要记得加1
+                BSP_Timer_Stop(Signal_Capture_Timer);
+                CapTimer_SyncState = 0;
             }
-            BSP_Timer_Stop(Signal_Capture_Timer);
-            Cap_Val[0] += HAL_TIM_ReadCapturedValue(htim, SIGNAL_CAPTURE_TIMER_CHANNEL) + 1; //※是TIM_CHANNEL_1 要记得加1
-
-            BSP_Signal_Avrg_Cap_Val = Cap_Val[0] / CAP_TIMES; //※是TIM_CHANNEL_1 要记得加1
         }
     }
 }
