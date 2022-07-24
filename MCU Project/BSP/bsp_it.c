@@ -59,8 +59,6 @@ void TA2_N_IRQHandler(void)
 void DMA_INT1_IRQHandler(void)
 {
     MAP_DMA_clearInterruptFlag(7);
-    MAP_DMA_disableChannel(7); // dma will auto disable channel if complete
-    // MAP_ADC14_clearInterruptFlag(ADC_INT0);
 
     BSP_Timer_Stop(Signal_Sample_Timer);
     DMA_Transmit_Completed_Flag = 1;
