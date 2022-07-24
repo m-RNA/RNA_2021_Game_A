@@ -9,10 +9,10 @@
 void BSP_GPIO_Init(void)
 {
 #ifdef __MSP432P401R__
-    LED_Init(); // LED
 #else
     MX_GPIO_Init();
 #endif
+    LED_Init(); // LED
 }
 
 void BSP_OLEDInterface_Init(void)

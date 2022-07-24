@@ -88,6 +88,8 @@ void OLEDInterface_Update_Waveform(u16 *WaveformData)
     u16 i = 0;
     u16 Max_Data;
     u16 Y, Y_Old;
+    LED_W_Off();
+    LED_RED_On();
     log_detail("OLEDInterface Updating Waveform...\r\n");
     SelectUpOLED();
     ClearScreen();
@@ -116,6 +118,7 @@ void OLEDInterface_Update_Data(float *NormalizedAm, float THD, u32 Period)
 {
     uint8_t i;
     char strBuf[9];
+    LED_C_On();
     log_detail("OLEDInterface Updating Data...\r\n");
     SelectDownOLED();
     ClearScreen();

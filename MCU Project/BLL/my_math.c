@@ -151,6 +151,7 @@ void Signal_Synthesizer_Vpp(u16 *Output, u16 Length, u16 *Fx_Vpp, float *Phase, 
 void CalculateAmplitude_By_FFT(float *Am_Pointer, u16 *SampleData_Pointer)
 {
     u16 i;
+    LED_W_On();
     log_detail("Calculating Amplitude...\r\n");
 
     for (i = 0; i < ADC_SAMPLING_NUM; ++i)
@@ -170,6 +171,7 @@ void NormalizedAm_And_CalculateTHD(float *Phase_Pointer, float *NormAm_Pointer, 
     u16 i;
     u16 Fx_Index[5] = {0};
     float Square_Sum = 0.0f;
+    LED_G_On();
 
     /* 找出基波位置 */
     Fx_Index[0] = Max_Float_WithinRange(Am_Data_Pointer, 1 + (FFT_To_Am_IndexErrorRange >> 1), (ADC_SAMPLING_NUM >> 1));
@@ -215,6 +217,7 @@ void Restore_Waveform(u16 *RestoreWaveform_Pointer, float *NormAm_Pointer, float
 /* 用幅值+各分量相位 还原波形 */
 void Restore_Waveform_By_Vpp(u16 *RestoreWaveform, u16 *Fx_Vpp, float *Phase)
 {
+    LED_P_On();
     log_detail("Transforming Normalized Am To Waveform Data...\r\n");
 
     Signal_Synthesizer_Vpp(RestoreWaveform, OLED_X_MAX, Fx_Vpp, (void *)0, 5);

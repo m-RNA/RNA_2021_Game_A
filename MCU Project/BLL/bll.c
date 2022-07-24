@@ -7,6 +7,7 @@ u8 OverSamplingFlag = 0;
 
 void Signal_F0_Measure(u32 *Captured_Value)
 {
+    LED_Y_On();
     log_detail("Signal F0 Measuring...\r\n");
 
     BSP_Timer_Start(Signal_Capture_Timer);
@@ -19,6 +20,7 @@ void Signal_F0_Measure(u32 *Captured_Value)
 void Signal_Fs_Adjust(u32 Captured_Value)
 {
     u32 Signal_Fs_ARR = 0;
+    LED_R_On();
     log_detail("Signal Fs Adjusting...\r\n");
 
     Signal_Fs_ARR = Captured_Value / SIGNAL_SAMPLE_FREQ_MULTIPLE;
@@ -34,6 +36,7 @@ void Signal_Fs_Adjust(u32 Captured_Value)
 
 void SignalSample_Start(u16 *Data)
 {
+    LED_W_Off();
     log_detail("Signal Sampling...\r\n");
 
     BSP_ADC_DMA_Start(Data, ADC_SAMPLING_NUM);
@@ -44,6 +47,8 @@ void SignalSample_Start(u16 *Data)
 void Bluetooth_SendDate_To_Phone(float *NormalizedAm, float THDx, u16 *WaveData)
 {
     uint8_t i;
+    LED_RED_Off();
+    LED_B_On();
     log_detail("Bluetooth Sending Date To Phone...\r\n");
 
     /* 发送THD */
@@ -64,4 +69,5 @@ void Bluetooth_SendDate_To_Phone(float *NormalizedAm, float THDx, u16 *WaveData)
         BSP_Bluetooth_SendByte(((uint16_t)(NormalizedAm[i] * 100)) & 0xFF);
     }
     log_detail("Bluetooth Sending Completed!\r\n");
+    LED_W_Off();
 }
