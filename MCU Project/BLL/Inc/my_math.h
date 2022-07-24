@@ -12,7 +12,7 @@
 #if (ADC_SAMPLING_NUM < 1024u)
 #define Signal_Synthesizer_Wave_Length_MAX ADC_SAMPLING_NUM
 #else
-#define Signal_Synthesizer_Wave_Length_MAX 170u
+#define Signal_Synthesizer_Wave_Length_MAX 640u
 #endif
 #else
 #warning...
