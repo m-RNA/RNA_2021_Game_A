@@ -158,8 +158,8 @@ void CalculateAmplitude_By_FFT(float *Am_Pointer, u16 *SampleData_Pointer)
         FFT_Input_Buf[0 + (i << 1)] = SampleData_Pointer[i]; // 实部为数据
         FFT_Input_Buf[1 + (i << 1)] = 0;                     // 虚部为0
     }
-    arm_cfft_f32(&ARM_FFT_USING_STRUCTURE, FFT_Input_Buf, 0, 1);    // FFT计算
-    arm_cmplx_mag_f32(FFT_Input_Buf, Am_Pointer, ADC_SAMPLING_NUM); //把运算结果复数求模得幅值
+    arm_cfft_f32(&ARM_FFT_USING_STRUCTURE, FFT_Input_Buf, 0, 1);        // FFT计算
+    arm_cmplx_mag_f32(FFT_Input_Buf, Am_Pointer, ADC_SAMPLING_NUM / 2); //把运算结果复数求模得幅值
 
     log_detail("Calculating Amplitude Completed!\r\n");
 }

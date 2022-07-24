@@ -53,7 +53,7 @@ float NormalizedAm[4] = {0}; // 归一化幅值：2-5次谐波
 float Phase[5] = {0};        // 各分量相位（占位，还没用上）
 
 u16 Fx_Vpp[5] = {0};                    // 幅值(uV)
-float Amplitude_Data[ADC_SAMPLING_NUM]; // 各个频率分量幅值(FFT后)
+float Amplitude_Data[ADC_SAMPLING_NUM / 2]; // 各个频率分量幅值(FFT后)
 
 int main(void)
 {
