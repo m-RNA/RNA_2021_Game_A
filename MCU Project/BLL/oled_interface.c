@@ -130,7 +130,7 @@ void OLEDInterface_Update_Data(float *NormalizedAm, float THD, u32 Period)
     }
     snprintf(strBuf, 6, "%2.2f", THD); // THDx 小数显示
     DrawString(30, 0, strBuf);
-    snprintf(strBuf, 9, "T:%4dus", Period / (TIMER_SOURER_FREQ / 1000000)); // 测量周期
+    snprintf(strBuf, 9, "T:%4dus", Period / (TIMER_SOURCE_FREQ / 1000000)); // 测量周期
     DrawString(80, 0, strBuf);
     UpdateScreen();
     log_detail("OLEDInterface Update Data Completed!\r\n");

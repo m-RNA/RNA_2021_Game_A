@@ -13,7 +13,7 @@ void Signal_F0_Measure(u32 *Captured_Value)
     *Captured_Value = BSP_Get_Signal_CCR();
 
     log_debug("F0 Captured Value:%u\r\n", *Captured_Value);
-    log_debug("F0(Captured):%ukHz\r\n", TIMER_SOURER_FREQ / 1000 / (*Captured_Value));
+    log_debug("F0(Captured):%ukHz\r\n", TIMER_SOURCE_FREQ / 1000 / (*Captured_Value));
 }
 
 void Signal_Fs_Adjust(u32 Captured_Value)

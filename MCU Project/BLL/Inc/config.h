@@ -9,7 +9,7 @@
 
 #define ADC_SAMPLING_NUM 512u           // ADC采样点数
 #define SIGNAL_SAMPLE_FREQ_MULTIPLE 16u // 采样频率设定为信号基波频率的几倍（Fs = ? F0）
-#define SIGNAL_SAMPLE_PERIOD_MIN (TIMER_SOURER_FREQ / SIGNAL_SAMPLE_FREQ_MAX)
+#define SIGNAL_SAMPLE_PERIOD_MIN (TIMER_SOURCE_FREQ / SIGNAL_SAMPLE_FREQ_MAX)
 #define FX_VPP_MULTIPLE 10 // 计算的到的幅值乘以的倍数
 
 #ifdef __MSP432P401R__
@@ -21,19 +21,20 @@
 #endif
 
 #if defined __MSP432P401R__
-#define TIMER_SOURER_FREQ 48000000u
+#define TIMER_SOURCE_DIV TIMER_A_CLOCKSOURCE_DIVIDER_1 // 定时器时钟源分频
+#define TIMER_SOURCE_FREQ (48000000u / TIMER_SOURCE_DIV)
 #define SIGNAL_SAMPLE_FREQ_MAX 1000000u
 #define ADC_MAX 16384u
 #define ADC_RF_V_MV 2500u
 
 #elif defined __STM32F1xx_HAL_H
-#define TIMER_SOURER_FREQ 48000000u
+#define TIMER_SOURCE_FREQ 48000000u
 #define SIGNAL_SAMPLE_FREQ_MAX 1000000u
 #define ADC_MAX 4096u
 #define ADC_RF_V_MV 3300u
 
 #elif defined STM32G431xx
-#define TIMER_SOURER_FREQ 170000000u
+#define TIMER_SOURCE_FREQ 170000000u
 #define SIGNAL_SAMPLE_FREQ_MAX 2000000u
 #define ADC_MAX 4096u
 #define ADC_RF_V_MV 3300u
@@ -79,8 +80,8 @@ extern DMA_HandleTypeDef hdma_adc1;
 #else
 #endif
 
-#if (TIMER_SOURER_FREQ >= 0xFFFF * 1000)
-#warning In this version, it is better for TIMER_SOURER_FREQ to be Lower than 65535000.
+#if (TIMER_SOURCE_FREQ >= 0xFFFF * 1000)
+#warning In this version, it is better for TIMER_SOURCE_FREQ to be Lower than 65535000.
 #endif
 
 #include "oled_config.h"

@@ -14,16 +14,16 @@ void log_Fs_data(u32 F0_CCR, u32 Fs_CCR, u8 Flag)
     if (Flag)
     {
         log_debug("Fs CCR: %u\r\n", Fs_CCR);
-        log_debug("Fs: %ukHz(Equivalent), %ukHz(Actual)\r\n", SIGNAL_SAMPLE_FREQ_MULTIPLE * TIMER_SOURER_FREQ / 1000 / F0_CCR, TIMER_SOURER_FREQ / 1000 / Fs_CCR);
+        log_debug("Fs: %ukHz(Equivalent), %ukHz(Actual)\r\n", SIGNAL_SAMPLE_FREQ_MULTIPLE * TIMER_SOURCE_FREQ / 1000 / F0_CCR, TIMER_SOURCE_FREQ / 1000 / Fs_CCR);
     }
     else
     {
         log_debug("Fs CCR: %u\r\n", Fs_CCR);
-        log_debug("Fs: %ukHz\r\n", TIMER_SOURER_FREQ / 1000 / Fs_CCR);
+        log_debug("Fs: %ukHz\r\n", TIMER_SOURCE_FREQ / 1000 / Fs_CCR);
     }
 }
 
-#define Fs (SIGNAL_SAMPLE_FREQ_MULTIPLE * TIMER_SOURER_FREQ / Signal_Captured_Period)
+#define Fs (SIGNAL_SAMPLE_FREQ_MULTIPLE * TIMER_SOURCE_FREQ / Signal_Captured_Period)
 #define FFT_Freq_Calculate(Index) (Index * Fs / ADC_SAMPLING_NUM)
 void log_Fn_NAm_THD_data(u16 *Fx_Index, float *Phase, u16 *Fx_Vpp_Pointer, float *NormAm, float THD)
 
@@ -139,7 +139,7 @@ void log_data_to_draw(u16 *Signal_ADC_Data, float *Amplitude_Data,
     log_indata("\r\n*********************\r\n");
 
     log_indata("Period:(us)\r\n"); // 信号周期
-    log_indata("%u\r\n", Signal_Captured_Value * 1000000 / TIMER_SOURER_FREQ);
+    log_indata("%u\r\n", Signal_Captured_Value * 1000000 / TIMER_SOURCE_FREQ);
 }
 
 #ifdef USE_HAL_DRIVER

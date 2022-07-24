@@ -21,14 +21,14 @@ u16 Simulation_Fx_Vpp_Data[SIMULATION_TIMES][SYNTHESIZE_PRECISION] = {
 };
 
 u32 Simulation_CCR_Data[SIMULATION_TIMES] = {
-    TIMER_SOURER_FREQ / 1000,   // 电赛测试信号1
-    TIMER_SOURER_FREQ / 50000,  // 电赛测试信号2
-    TIMER_SOURER_FREQ / 100000, // 电赛测试信号3
+    TIMER_SOURCE_FREQ / 1000,   // 电赛测试信号1
+    TIMER_SOURCE_FREQ / 50000,  // 电赛测试信号2
+    TIMER_SOURCE_FREQ / 100000, // 电赛测试信号3
 
     0xFFFF,                     // 最小采样率
     SIGNAL_SAMPLE_PERIOD_MIN,   // 最大采样率
-    TIMER_SOURER_FREQ / 300000, // 自定义
-    TIMER_SOURER_FREQ / 600000,
+    TIMER_SOURCE_FREQ / 300000, // 自定义
+    TIMER_SOURCE_FREQ / 600000,
 };
 
 float Simulation_Phase_Data[SIMULATION_TIMES][SYNTHESIZE_PRECISION] = {
