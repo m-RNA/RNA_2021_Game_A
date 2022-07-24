@@ -5,19 +5,20 @@
 #include "stdlib.h"
 
 #define Simulate_WaveformDate_Period_Length SIGNAL_SAMPLE_FREQ_MULTIPLE
-#define ADD_NOISE (rand() % SIMULATE_SAMPLE_ADC_NOISE)
-u8 Simulation_Times_Index = 0;
-
+#define ADD_NOISE (rand() % (Simulate_Sample_ADC_Noise * ADC_RF_V_MV / ADC_MAX))
 #define SYNTHESIZE_PRECISION 5 // 精度 - 到几次谐波
-u16 Simulation_Fx_Vpp_Data[SIMULATION_TIMES][SYNTHESIZE_PRECISION] = {
-    {400, 0, 80, 0, 60}, // 电赛测试信号1 THDo = 25.0%
-    {200, 0, 16, 30, 0}, // 电赛测试信号2 THDo = 17.0%
-    {30, 0, 0, 0, 3},    // 电赛测试信号3 THDo = 10.0%
+u8 Simulation_Times_Index = 0;
+u8 Simulate_Sample_ADC_Noise = 4; // ADC采样过程噪声(mV)
 
-    {30, 0, 0, 3, 0}, // 自定义 THDo = 10.0%
-    {30, 0, 3, 0, 0}, // 自定义 THDo = 10.0%
-    {30, 3, 0, 0, 0}, // 自定义 THDo = 10.0%
-    {10, 0, 0, 0, 1}, // 自定义 THDo = 10.0%
+u16 Simulation_Fx_Vpp_Data[SIMULATION_TIMES][SYNTHESIZE_PRECISION] = {
+    {400, 0, 80, 0, 60}, // 电赛测试信号1 THDo = 25.0%; 归一化 1, 0, 0.20, 0.00, 0.15
+    {200, 0, 16, 30, 0}, // 电赛测试信号2 THDo = 17.0%; 归一化 1, 0, 0.80, 0.15, 0.00
+    {30, 0, 0, 0, 3},    // 电赛测试信号3 THDo = 10.0%; 归一化 1, 0, 0.00, 0.00, 0.10
+
+    {30, 0, 0, 3, 0}, // 自定义 THDo = 10.0%; 归一化 1, 0.0, 0.0, 0.1, 0.0
+    {30, 0, 3, 0, 0}, // 自定义 THDo = 10.0%; 归一化 1, 0.0, 0.1, 0.0, 0.0
+    {30, 3, 0, 0, 0}, // 自定义 THDo = 10.0%; 归一化 1, 0.1, 0.0, 0.0, 0.0
+    {10, 0, 0, 0, 1}, // 自定义 THDo = 10.0%; 归一化 1, 0.0, 0.0, 0.0, 0.1
 };
 
 u32 Simulation_CCR_Data[SIMULATION_TIMES] = {

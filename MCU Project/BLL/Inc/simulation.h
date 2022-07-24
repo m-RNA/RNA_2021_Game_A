@@ -3,7 +3,6 @@
 #include "config.h"
 
 #define SIMULATION_TIMES 7          // 仿真次数
-#define SIMULATE_SAMPLE_ADC_NOISE 1 // ADC采样过程噪声
 #define SIMULATION_CCR_MAX 0xFFFF   // 定时器最大值 16位为 0xFFFF 32位为 0xFFFFFFFF
 #define SIMULATION_CCR (SIMULATION_CCR_MAX & Simulation_CCR_Data[Simulation_Times_Index])
 
