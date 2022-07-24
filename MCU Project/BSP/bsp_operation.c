@@ -38,13 +38,7 @@ u32 BSP_Get_Signal_CCR(void)
         log_debug("Warning: SIMULATION_CCR Spilling!!!\r\n");
     return SIMULATION_CCR;
 #else
-    delay_ms(22 * CAP_TIMES); // 最低信号频率位45Hz = 21.845ms
-
-    log_debug("BUG BUG BUG BUG BUG Cap Val:\r\n");
-    for(u8 i = 0; i < CAP_TIMES; ++i)
-    {
-        log_debug("%u\r\n", Cap_Val[i]);
-    }
+    delay_ms(66); // 最低信号频率位45Hz = 21.845ms
 
     return BSP_Signal_Avrg_Cap_Val;
 #endif
