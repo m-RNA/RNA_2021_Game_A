@@ -18,14 +18,14 @@ void TimA0_Base_Init(uint16_t ccr0, uint16_t psc)
         psc,                                 //时钟分频 范围1-64
         ccr0,                                //自动重装载值（ARR）
         TIMER_A_TAIE_INTERRUPT_DISABLE,      //禁用 tim溢出中断
-        TIMER_A_CCIE_CCR0_INTERRUPT_DISABLE, //启用 ccr0更新中断
+        TIMER_A_CCIE_CCR0_INTERRUPT_DISABLE, //禁用 ccr0更新中断
         TIMER_A_DO_CLEAR,                    // Clear Counter
     };
     const Timer_A_CompareModeConfig compareConfig = {
         TIMER_A_CAPTURECOMPARE_REGISTER_1,        // Use CCR1
         TIMER_A_CAPTURECOMPARE_INTERRUPT_DISABLE, // Disable CCR interrupt
         TIMER_A_OUTPUTMODE_SET_RESET,             // Toggle output but
-        24,                                       //  Period
+        1,                                        // CCR
     };
     MAP_Timer_A_configureUpMode(SIGNAL_SAMPLE_TIMER, &upConfig); //选择定时器A1 TIMER_A0
     MAP_Timer_A_initCompare(SIGNAL_SAMPLE_TIMER, &compareConfig);
